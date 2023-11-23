@@ -7,11 +7,40 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .green
+//MARK: - Impl
+
+final class MainViewController: BaseController {
+    
+    private let viewModel: MainViewModelProtocol
+
+    init(
+        viewModel: MainViewModelProtocol
+    ) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        
     }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
 }
 
+
+//MARK: - Base
+
+extension MainViewController {
+    
+    override func setupView() {
+        super.setupView()
+        
+    }
+    
+    override func setupLayout() {
+        super.setupLayout()
+        
+    }
+}
