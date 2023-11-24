@@ -16,9 +16,14 @@ final class MainViewController: BaseController {
     private let titleLabel = UILabel()
     private let searchController = UISearchController()
     private let tableView = UITableView()
-    private let recordingView = RecordingView()
+    
+    private let recordingView = Assembly.builder.build(subModule: .record)
     
     private let viewModel: MainViewModelProtocol
+    
+    private var recordingViewHeight: CGFloat = {
+        UIScreen.main.bounds.height * 0.2
+    }()
 
     
     //MARK: Init
@@ -36,7 +41,7 @@ final class MainViewController: BaseController {
     }
     
     
-    //MARK: Seutp methods
+    //MARK: Seutp
     
     private func seutpNavigationBar() {
         navigationItem.rightBarButtonItem = editButton
@@ -83,6 +88,13 @@ final class MainViewController: BaseController {
                            forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
     }
     
+    private func setupRecordingViewHeight() {
+        if viewModel.isRecording {
+            recordingViewHeight = UIScreen.main.bounds.height * 0.4
+        } else {
+            recordingViewHeight = UIScreen.main.bounds.height * 0.2
+        }
+    }
 }
 
 
@@ -106,9 +118,7 @@ extension MainViewController {
     
     override func setupLayout() {
         super.setupLayout()
-        
-        let recordingViewHeight = UIScreen.main.bounds.height * 0.2
-                        
+        setupRecordingViewHeight()
         NSLayoutConstraint.activate([
             recordingView.heightAnchor.constraint(equalToConstant: recordingViewHeight),
             recordingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

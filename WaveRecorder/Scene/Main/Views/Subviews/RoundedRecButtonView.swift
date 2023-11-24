@@ -8,15 +8,30 @@
 import Foundation
 import UIKit
 
+//MARK: - Protocol
+
+protocol RoundedRecButtonViewDelegate: AnyObject {
+    func recButtonDidTapped()
+}
+
 //MARK: - Impl
 
 final class RoundedRecButtonView: BaseView {
     
-    let radius: CGFloat
+    weak var delegate: RoundedRecButtonViewDelegate?
+    
+    private let radius: CGFloat
     
     private let button = UIButton()
-
-    private let secondaryRoundedLayer = CAShapeLayer()
+    private let roundedLayer = CAShapeLayer()
+    
+    private var isRecording = false {
+        didSet {
+            isRecording 
+            ? record(hasStarted: true)
+            : record(hasStarted: false)
+        }
+    }
     
     
     //MARK: - Init
@@ -46,13 +61,13 @@ final class RoundedRecButtonView: BaseView {
     
     private func setupButtonAppearence() {
         button.backgroundColor = .red
-        button.layer.cornerRadius = button.frame.width / 2
+        button.layer.cornerRadius = radius
         button.clipsToBounds = true
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
     }
     
-    private func setupOverlay() {
+    private func setupRoundedLayer() {
         let circularPath = UIBezierPath(
             arcCenter: CGPoint(x: radius, y: radius),
             radius: radius + 2,
@@ -61,18 +76,45 @@ final class RoundedRecButtonView: BaseView {
             clockwise: false
         )
         
-        secondaryRoundedLayer.path = circularPath.cgPath
-        secondaryRoundedLayer.strokeColor = UIColor.gray.cgColor
-        secondaryRoundedLayer.fillColor = UIColor.clear.cgColor
-        secondaryRoundedLayer.lineWidth = 3
+        roundedLayer.path = circularPath.cgPath
+        roundedLayer.strokeColor = UIColor.gray.cgColor
+        roundedLayer.fillColor = UIColor.clear.cgColor
+        roundedLayer.lineWidth = 3
         
-        layer.addSublayer(secondaryRoundedLayer)
+        layer.addSublayer(roundedLayer)
     }
+    
+    
+    //MARK: - Methods
+    
+    private func record(hasStarted isRecording: Bool) {
+        // Tap effect
+        UIView.animate(withDuration: 0.2) {
+            self.button.alpha = 0.5
+        } completion: { _ in
+            self.button.alpha = 1
+        }
+        // Transformation
+        UIView.animate(withDuration: 0.75) {
+            if isRecording {
+                self.button.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+                self.button.layer.cornerRadius = self.radius / 3
+                self.button.backgroundColor = .systemBlue
+                print("Start recording ...")
+            } else {
+                self.button.transform = CGAffineTransform(scaleX: 1, y: 1)
+                self.button.layer.cornerRadius = self.radius
+                self.button.backgroundColor = .red
+                print("Finish recording!")
+            }
+        }
+    }
+    
     
     @objc private func buttonDidTapped() {
-        print("rec rec rec")
+        isRecording.toggle()
+        delegate?.recButtonDidTapped()
     }
-    
 }
 
 //MARK: - Base
@@ -87,7 +129,7 @@ extension RoundedRecButtonView {
     override func setupLayout() {
         super.setupLayout()
         setupButtonAppearence()
-        setupOverlay()
+        setupRoundedLayer()
         
         NSLayoutConstraint.activate([
             button.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.95),
