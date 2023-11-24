@@ -15,7 +15,8 @@ final class MainViewController: BaseController {
     private let editButton = UIBarButtonItem()
     private let titleLabel = UILabel()
     private let searchController = UISearchController()
-    private let tableView = UITableView(frame: .zero)
+    private let tableView = UITableView()
+    private let recordingView = RecordingView()
     
     private let viewModel: MainViewModelProtocol
 
@@ -39,12 +40,13 @@ final class MainViewController: BaseController {
     
     private func seutpNavigationBar() {
         navigationItem.rightBarButtonItem = editButton
-        navigationItem.titleView = titleLabel
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
         navigationItem.searchController = searchController
     }
     
     private func setupContentView() {
         view.addNewSubview(tableView)
+        view.addNewSubview(recordingView)
     }
     
     private func setupEditButton() {
@@ -74,7 +76,6 @@ final class MainViewController: BaseController {
     }
     
     private func setupTableView() {
-        tableView.tableHeaderView = titleLabel
         tableView.backgroundColor = R.Colors.primaryBackgroundColor
         tableView.dataSource = self
         tableView.delegate = self
@@ -105,12 +106,19 @@ extension MainViewController {
     
     override func setupLayout() {
         super.setupLayout()
-                
+        
+        let recordingViewHeight = UIScreen.main.bounds.height * 0.2
+                        
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: searchController.searchBar.bottomAnchor, constant: 8),
+            recordingView.heightAnchor.constraint(equalToConstant: recordingViewHeight),
+            recordingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            recordingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            recordingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            tableView.topAnchor.constraint(equalTo: searchController.searchBar.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: recordingView.topAnchor)
         ])
     }
 }
@@ -133,7 +141,7 @@ extension MainViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        cell.configureCell()
+        cell.configureCell(name: "Record 2020-20-01", date: "20.01.2020", duraiton: "04:17")
         return cell
     }
     

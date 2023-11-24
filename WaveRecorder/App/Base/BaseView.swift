@@ -10,8 +10,11 @@ class BaseView: UIView {
             
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         setupView()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
         setupLayout()
     }
     

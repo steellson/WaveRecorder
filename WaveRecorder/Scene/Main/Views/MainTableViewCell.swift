@@ -13,10 +13,32 @@ final class MainTableViewCell: BaseCell {
     
     static let mainTableViewCellIdentifier = R.Strings.mainTableViewCellIdentifier.rawValue
     
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        label.textAlignment = .left
+        return label
+    }()
+    
+    private let dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14, weight: .light)
+        label.textAlignment = .left
+        return label
+    }()
+    
+    private let durationLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14, weight: .light)
+        label.textAlignment = .right
+        return label
+    }()
     
     
-    func configureCell() {
-        
+    func configureCell(name: String, date: String, duraiton: String) {
+        self.titleLabel.text = name
+        self.dateLabel.text = date
+        self.durationLabel.text = duraiton
     }
     
     
@@ -25,7 +47,15 @@ final class MainTableViewCell: BaseCell {
     private func setupContentView() {
         selectionStyle = .none
         contentView.layer.cornerRadius = 14
-        contentView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addNewSubview(titleLabel)
+        contentView.addNewSubview(dateLabel)
+        contentView.addNewSubview(durationLabel)
+    }
+    
+    private func clear() {
+        titleLabel.text = ""
+        dateLabel.text = ""
+        durationLabel.text = ""
     }
     
 }
@@ -37,16 +67,28 @@ extension MainTableViewCell {
     override func setupCell() {
         super.setupCell()
         setupContentView()
-        
     }
     
     override func setupCellLayout() {
         super.setupCellLayout()
         
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            
+            dateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
+            dateLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            dateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
+            
+            durationLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
+            durationLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            durationLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
+        ])
     }
     
     override func clearCell() {
         super.clearCell()
-        
+        clear()
     }
 }

@@ -20,6 +20,9 @@
 		3DEAFFB42B0F7F2A004CAE97 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFB32B0F7F2A004CAE97 /* UIView+Extension.swift */; };
 		3DEAFFB62B0F80C8004CAE97 /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFB52B0F80C8004CAE97 /* MainTableViewCell.swift */; };
 		3DEAFFB92B0F80E0004CAE97 /* BaseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFB82B0F80E0004CAE97 /* BaseCell.swift */; };
+		3DEAFFC12B1092C4004CAE97 /* RoundedRecButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC02B1092C4004CAE97 /* RoundedRecButtonView.swift */; };
+		3DEAFFC32B109B6D004CAE97 /* UINavigationController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC22B109B6D004CAE97 /* UINavigationController+Extension.swift */; };
+		3DEAFFC62B10A265004CAE97 /* RecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC52B10A265004CAE97 /* RecordingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +41,9 @@
 		3DEAFFB32B0F7F2A004CAE97 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		3DEAFFB52B0F80C8004CAE97 /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
 		3DEAFFB82B0F80E0004CAE97 /* BaseCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseCell.swift; sourceTree = "<group>"; };
+		3DEAFFC02B1092C4004CAE97 /* RoundedRecButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedRecButtonView.swift; sourceTree = "<group>"; };
+		3DEAFFC22B109B6D004CAE97 /* UINavigationController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extension.swift"; sourceTree = "<group>"; };
+		3DEAFFC52B10A265004CAE97 /* RecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +145,7 @@
 			isa = PBXGroup;
 			children = (
 				3DEAFFB32B0F7F2A004CAE97 /* UIView+Extension.swift */,
+				3DEAFFC22B109B6D004CAE97 /* UINavigationController+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -148,8 +155,18 @@
 			children = (
 				3DEAFF922B0F65F3004CAE97 /* MainViewController.swift */,
 				3DEAFFB52B0F80C8004CAE97 /* MainTableViewCell.swift */,
+				3DEAFFC42B10A244004CAE97 /* Custom */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		3DEAFFC42B10A244004CAE97 /* Custom */ = {
+			isa = PBXGroup;
+			children = (
+				3DEAFFC52B10A265004CAE97 /* RecordingView.swift */,
+				3DEAFFC02B1092C4004CAE97 /* RoundedRecButtonView.swift */,
+			);
+			path = Custom;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -224,12 +241,15 @@
 			files = (
 				3DEAFF932B0F65F3004CAE97 /* MainViewController.swift in Sources */,
 				3DEAFFA92B0F6713004CAE97 /* Resources.swift in Sources */,
+				3DEAFFC32B109B6D004CAE97 /* UINavigationController+Extension.swift in Sources */,
 				3DEAFFAC2B0F7651004CAE97 /* BaseView.swift in Sources */,
 				3DEAFFB42B0F7F2A004CAE97 /* UIView+Extension.swift in Sources */,
 				3DEAFFB62B0F80C8004CAE97 /* MainTableViewCell.swift in Sources */,
 				3DEAFFAF2B0F766E004CAE97 /* Assembly.swift in Sources */,
 				3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */,
 				3DEAFFB92B0F80E0004CAE97 /* BaseCell.swift in Sources */,
+				3DEAFFC12B1092C4004CAE97 /* RoundedRecButtonView.swift in Sources */,
+				3DEAFFC62B10A265004CAE97 /* RecordingView.swift in Sources */,
 				3DEAFFAD2B0F7651004CAE97 /* BaseController.swift in Sources */,
 				3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */,
 				3DEAFFB12B0F7770004CAE97 /* MainViewModel.swift in Sources */,
