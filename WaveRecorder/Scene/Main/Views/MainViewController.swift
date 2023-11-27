@@ -16,10 +16,13 @@ final class MainViewController: BaseController {
     private let titleLabel = UILabel()
     private let searchController = UISearchController()
     private let tableView = UITableView()
-    private let recordingView = RecordingView()
+    
+    private let recordingView = Assembly.builder.build(subModule: .record)
     
     private let viewModel: MainViewModelProtocol
-
+    
+    private var recordingViewHeight = UIScreen.main.bounds.height * 0.2
+        
     
     //MARK: Init
     
@@ -36,7 +39,7 @@ final class MainViewController: BaseController {
     }
     
     
-    //MARK: Seutp methods
+    //MARK: Seutp
     
     private func seutpNavigationBar() {
         navigationItem.rightBarButtonItem = editButton
@@ -57,7 +60,7 @@ final class MainViewController: BaseController {
     private func setupTitleLabel() {
         titleLabel.text = R.Strings.navigationTitleMain.rawValue
         titleLabel.textColor = .black
-        titleLabel.font = .systemFont(ofSize: 30, weight: .bold)
+        titleLabel.font = .systemFont(ofSize: 26, weight: .bold)
         titleLabel.textAlignment = .left
     }
     
@@ -77,12 +80,28 @@ final class MainViewController: BaseController {
     
     private func setupTableView() {
         tableView.backgroundColor = R.Colors.primaryBackgroundColor
+        tableView.layer.cornerRadius = 14
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(MainTableViewCell.self,
                            forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
     }
     
+    private func setupRecordingViewHeight() {
+        guard let recView = (recordingView as? RecordingView) else { return }
+        
+        recView.onRecord = { [weak self] isRecording in
+            UIView.animate(
+                withDuration: 0.5,
+                delay: 0.2,
+                options: .curveEaseIn
+            ) {
+                self?.recordingView.heightConstraint?.constant = isRecording
+                ? UIScreen.main.bounds.height * 0.33
+                : UIScreen.main.bounds.height * 0.2
+            }
+        }
+    }
 }
 
 
@@ -106,9 +125,8 @@ extension MainViewController {
     
     override func setupLayout() {
         super.setupLayout()
+        setupRecordingViewHeight()
         
-        let recordingViewHeight = UIScreen.main.bounds.height * 0.2
-                        
         NSLayoutConstraint.activate([
             recordingView.heightAnchor.constraint(equalToConstant: recordingViewHeight),
             recordingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -129,7 +147,7 @@ extension MainViewController {
 extension MainViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1
+        3
     }
     
     
@@ -141,7 +159,11 @@ extension MainViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        cell.configureCell(name: "Record 2020-20-01", date: "20.01.2020", duraiton: "04:17")
+        cell.configureCell(
+            name: "Record 2020-20-01",
+            date: "20.01.2020",
+            duraiton: "04:17"
+        )
         return cell
     }
     
@@ -152,7 +174,7 @@ extension MainViewController: UITableViewDataSource {
 //MARK: - TableView Delegate
 
 extension MainViewController: UITableViewDelegate {
-    
+        
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
     }

@@ -45,8 +45,7 @@ final class MainTableViewCell: BaseCell {
     //MARK: Setup
     
     private func setupContentView() {
-        selectionStyle = .none
-        contentView.layer.cornerRadius = 14
+        selectionStyle = .gray
         contentView.addNewSubview(titleLabel)
         contentView.addNewSubview(dateLabel)
         contentView.addNewSubview(durationLabel)

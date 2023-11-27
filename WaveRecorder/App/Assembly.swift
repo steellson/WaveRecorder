@@ -13,6 +13,7 @@ import UIKit
 
 protocol AssemblyProtocol: AnyObject {
     func build(module: Assembly.Module) -> UIViewController
+    func build(subModule: Assembly.SubModule) -> UIView
 }
 
 
@@ -31,6 +32,10 @@ final class Assembly: AssemblyProtocol {
         case main
     }
     
+    enum SubModule {
+        case record
+    }
+    
     
     //MARK: Build
     
@@ -41,6 +46,16 @@ final class Assembly: AssemblyProtocol {
             let viewModel: MainViewModelProtocol = MainViewModel()
             let viewController = MainViewController(viewModel: viewModel)
             return viewController
+        }
+    }
+    
+    func build(subModule: SubModule) -> UIView{
+        switch subModule {
+            
+        case .record:
+            let viewModel: RecordViewModelProtocol = RecordViewModel()
+            let view = RecordingView(viewModel: viewModel)
+            return view
         }
     }
 }
