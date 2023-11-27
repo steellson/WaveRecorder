@@ -43,13 +43,13 @@ final class Assembly: AssemblyProtocol {
         switch module {
             
         case .main:
-            let viewModel: MainViewModelProtocol = MainViewModel()
+            let viewModel: MainViewModelProtocol = MainViewModel(storageService: services.storageService)
             let viewController = MainViewController(viewModel: viewModel)
             return viewController
         }
     }
     
-    func build(subModule: SubModule) -> UIView{
+    func build(subModule: SubModule) -> UIView {
         switch subModule {
             
         case .record:
@@ -64,5 +64,5 @@ final class Assembly: AssemblyProtocol {
 //MARK: - Services
 
 struct Services {
-    
+    let storageService: StorageServiceProtocol = StorageService()
 }

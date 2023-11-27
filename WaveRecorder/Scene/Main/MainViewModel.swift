@@ -21,6 +21,15 @@ final class MainViewModel: MainViewModelProtocol {
 
     private(set) var isRecording = false
     
+    private let storageService: StorageServiceProtocol
+    
+    
+    init(
+        storageService: StorageServiceProtocol
+    ) {
+        self.storageService = storageService
+    }
+    
 }
 
 

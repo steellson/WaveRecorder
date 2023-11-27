@@ -24,6 +24,8 @@
 		3DEAFFC32B109B6D004CAE97 /* UINavigationController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC22B109B6D004CAE97 /* UINavigationController+Extension.swift */; };
 		3DEAFFC62B10A265004CAE97 /* RecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC52B10A265004CAE97 /* RecordingView.swift */; };
 		3DEAFFC82B10D5B9004CAE97 /* RecordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC72B10D5B9004CAE97 /* RecordViewModel.swift */; };
+		3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCA2B14B60D004CAE97 /* Record.swift */; };
+		3DEAFFCD2B14B884004CAE97 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCC2B14B884004CAE97 /* StorageService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +48,8 @@
 		3DEAFFC22B109B6D004CAE97 /* UINavigationController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extension.swift"; sourceTree = "<group>"; };
 		3DEAFFC52B10A265004CAE97 /* RecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingView.swift; sourceTree = "<group>"; };
 		3DEAFFC72B10D5B9004CAE97 /* RecordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordViewModel.swift; sourceTree = "<group>"; };
+		3DEAFFCA2B14B60D004CAE97 /* Record.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
+		3DEAFFCC2B14B884004CAE97 /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +84,7 @@
 			children = (
 				3DEAFF9C2B0F65F4004CAE97 /* Info.plist */,
 				3DEAFFA22B0F6669004CAE97 /* App */,
+				3DEAFFC92B14B5F6004CAE97 /* Entities */,
 				3DEAFFB22B0F7F0B004CAE97 /* Extensions */,
 				3DEAFFA62B0F66B9004CAE97 /* Scene */,
 				3DEAFFA42B0F6679004CAE97 /* Services */,
@@ -111,6 +116,7 @@
 		3DEAFFA42B0F6679004CAE97 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				3DEAFFCC2B14B884004CAE97 /* StorageService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -170,6 +176,14 @@
 				3DEAFFC02B1092C4004CAE97 /* RoundedRecButtonView.swift */,
 			);
 			path = Subviews;
+			sourceTree = "<group>";
+		};
+		3DEAFFC92B14B5F6004CAE97 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				3DEAFFCA2B14B60D004CAE97 /* Record.swift */,
+			);
+			path = Entities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,11 +262,13 @@
 				3DEAFFAC2B0F7651004CAE97 /* BaseView.swift in Sources */,
 				3DEAFFB42B0F7F2A004CAE97 /* UIView+Extension.swift in Sources */,
 				3DEAFFB62B0F80C8004CAE97 /* MainTableViewCell.swift in Sources */,
+				3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */,
 				3DEAFFAF2B0F766E004CAE97 /* Assembly.swift in Sources */,
 				3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */,
 				3DEAFFC82B10D5B9004CAE97 /* RecordViewModel.swift in Sources */,
 				3DEAFFB92B0F80E0004CAE97 /* BaseCell.swift in Sources */,
 				3DEAFFC12B1092C4004CAE97 /* RoundedRecButtonView.swift in Sources */,
+				3DEAFFCD2B14B884004CAE97 /* StorageService.swift in Sources */,
 				3DEAFFC62B10A265004CAE97 /* RecordingView.swift in Sources */,
 				3DEAFFAD2B0F7651004CAE97 /* BaseController.swift in Sources */,
 				3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */,
