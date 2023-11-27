@@ -26,6 +26,7 @@
 		3DEAFFC82B10D5B9004CAE97 /* RecordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC72B10D5B9004CAE97 /* RecordViewModel.swift */; };
 		3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCA2B14B60D004CAE97 /* Record.swift */; };
 		3DEAFFCD2B14B884004CAE97 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCC2B14B884004CAE97 /* StorageService.swift */; };
+		3DEAFFCF2B14D236004CAE97 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCE2B14D236004CAE97 /* Section.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		3DEAFFC72B10D5B9004CAE97 /* RecordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordViewModel.swift; sourceTree = "<group>"; };
 		3DEAFFCA2B14B60D004CAE97 /* Record.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
 		3DEAFFCC2B14B884004CAE97 /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
+		3DEAFFCE2B14D236004CAE97 /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -182,6 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				3DEAFFCA2B14B60D004CAE97 /* Record.swift */,
+				3DEAFFCE2B14D236004CAE97 /* Section.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -265,6 +268,7 @@
 				3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */,
 				3DEAFFAF2B0F766E004CAE97 /* Assembly.swift in Sources */,
 				3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */,
+				3DEAFFCF2B14D236004CAE97 /* Section.swift in Sources */,
 				3DEAFFC82B10D5B9004CAE97 /* RecordViewModel.swift in Sources */,
 				3DEAFFB92B0F80E0004CAE97 /* BaseCell.swift in Sources */,
 				3DEAFFC12B1092C4004CAE97 /* RoundedRecButtonView.swift in Sources */,
