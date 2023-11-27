@@ -13,9 +13,9 @@ final class RecordingView: BaseView {
     
     private let viewModel: RecordViewModelProtocol
     
-    private lazy var recButton = RoundedRecButtonView(radius: viewModel.buttonRadius)
+    private lazy var recButtonView = RoundedRecButtonView(radius: viewModel.buttonRadius)
     
-    var onRecord: (() -> Void)?
+    var onRecord: ((Bool) -> Void)?
     
     //MARK: Init
     
@@ -35,7 +35,11 @@ final class RecordingView: BaseView {
     
     private func seutupContentView() {
         backgroundColor = .white.withAlphaComponent(0.3)
-        addNewSubview(recButton)
+        addNewSubview(recButtonView)
+    }
+    
+    private func setupRecButtonView() {
+        recButtonView.delegate = self
     }
 }
 
@@ -47,16 +51,17 @@ extension RecordingView {
     override func setupView() {
         super.setupView()
         seutupContentView()
+        setupRecButtonView()
     }
     
     override func setupLayout() {
         super.setupLayout()
         
         NSLayoutConstraint.activate([
-            recButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-            recButton.centerYAnchor.constraint(equalTo: centerYAnchor),
-            recButton.heightAnchor.constraint(equalToConstant: viewModel.buttonRadius * 2),
-            recButton.widthAnchor.constraint(equalToConstant: viewModel.buttonRadius * 2)
+            recButtonView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            recButtonView.heightAnchor.constraint(equalToConstant: viewModel.buttonRadius * 2),
+            recButtonView.widthAnchor.constraint(equalToConstant: viewModel.buttonRadius * 2),
+            recButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
     }
 }
@@ -67,7 +72,6 @@ extension RecordingView {
 extension RecordingView: RoundedRecButtonViewDelegate {
     
     func recButtonDidTapped() {
-    
-        print("tapped")
+        onRecord?(recButtonView.isRecording)
     }
 }

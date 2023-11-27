@@ -25,7 +25,7 @@ final class RoundedRecButtonView: BaseView {
     private let button = UIButton()
     private let roundedLayer = CAShapeLayer()
     
-    private var isRecording = false {
+    private(set) var isRecording = false {
         didSet {
             isRecording 
             ? record(hasStarted: true)
@@ -95,17 +95,15 @@ final class RoundedRecButtonView: BaseView {
             self.button.alpha = 1
         }
         // Transformation
-        UIView.animate(withDuration: 0.75) {
+        UIView.animate(withDuration: 0.3) {
             if isRecording {
                 self.button.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
                 self.button.layer.cornerRadius = self.radius / 3
                 self.button.backgroundColor = .systemBlue
-                print("Start recording ...")
             } else {
                 self.button.transform = CGAffineTransform(scaleX: 1, y: 1)
                 self.button.layer.cornerRadius = self.radius
                 self.button.backgroundColor = .red
-                print("Finish recording!")
             }
         }
     }
