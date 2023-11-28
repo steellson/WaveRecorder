@@ -18,7 +18,7 @@ protocol RecordViewModelProtocol: AnyObject {
 
 final class RecordViewModel: RecordViewModelProtocol {
     
-    private(set) var buttonRadius: CGFloat = 36.0
+    private(set) var buttonRadius: CGFloat = 30.0
 }
 
 

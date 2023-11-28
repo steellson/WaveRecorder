@@ -28,7 +28,7 @@ final class MainViewController: BaseController {
     
     private let viewModel: MainViewModelProtocol
     
-    private var recordingViewHeight = UIScreen.main.bounds.height * 0.2
+    private var recordingViewHeight = UIScreen.main.bounds.height * 0.15
         
     
     //MARK: Init
@@ -108,8 +108,8 @@ final class MainViewController: BaseController {
                 options: .curveEaseIn
             ) {
                 self?.recordingView.heightConstraint?.constant = isRecording
-                ? UIScreen.main.bounds.height * 0.33
-                : UIScreen.main.bounds.height * 0.2
+                ? UIScreen.main.bounds.height * 0.25
+                : UIScreen.main.bounds.height * 0.15
             }
         }
     }

@@ -79,7 +79,7 @@ final class RoundedRecButtonView: BaseView {
         roundedLayer.path = circularPath.cgPath
         roundedLayer.strokeColor = UIColor.gray.cgColor
         roundedLayer.fillColor = UIColor.clear.cgColor
-        roundedLayer.lineWidth = 3
+        roundedLayer.lineWidth = 2.5
         
         layer.addSublayer(roundedLayer)
     }
