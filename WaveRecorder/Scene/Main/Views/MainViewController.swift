@@ -7,6 +7,11 @@
 
 import UIKit
 
+//MARK: - Types
+
+typealias DataSource = UITableViewDiffableDataSource<Section, Record>
+typealias DataSourceSnapshot = NSDiffableDataSourceSnapshot<Section, Record>
+
 
 //MARK: - Impl
 
@@ -16,6 +21,8 @@ final class MainViewController: BaseController {
     private let titleLabel = UILabel()
     private let searchController = UISearchController()
     private let tableView = UITableView()
+    
+    private var dataSource: DataSource!
     
     private let recordingView = Assembly.builder.build(subModule: .record)
     
@@ -81,7 +88,7 @@ final class MainViewController: BaseController {
     private func setupTableView() {
         tableView.backgroundColor = R.Colors.primaryBackgroundColor
         tableView.layer.cornerRadius = 14
-        tableView.dataSource = self
+        tableView.dataSource = dataSource
         tableView.delegate = self
         tableView.register(MainTableViewCell.self,
                            forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
@@ -116,6 +123,7 @@ extension MainViewController {
         setupTitleLabel()
         setupSearchController()
         setupTableView()
+        setupDataSource()
     }
     
     override func setupNavBar() {
@@ -126,6 +134,7 @@ extension MainViewController {
     override func setupLayout() {
         super.setupLayout()
         setupRecordingViewHeight()
+        updateSnapshot()
         
         NSLayoutConstraint.activate([
             recordingView.heightAnchor.constraint(equalToConstant: recordingViewHeight),
@@ -142,32 +151,44 @@ extension MainViewController {
 }
 
 
-//MARK: - Data Source
+///MARK: - DataSource + Snapshot
 
-extension MainViewController: UITableViewDataSource {
+private extension MainViewController {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        3
+    func setupDataSource() {
+        dataSource = UITableViewDiffableDataSource(
+            tableView: tableView,
+            cellProvider: { tableView, indexPath, record -> UITableViewCell? in
+
+                guard let mainTableViewCell = tableView.dequeueReusableCell(
+                    withIdentifier: MainTableViewCell.mainTableViewCellIdentifier,
+                    for: indexPath
+                ) as? MainTableViewCell else {
+                    print("ERROR: Couldnt dequeue cell with reuse identifier"); return UITableViewCell()
+                }
+                
+                mainTableViewCell.configureCell(
+                    name: record.name,
+                    date: record.date.description,
+                    duraiton: String(record.duration)
+                )
+                
+                return mainTableViewCell
+            })
     }
     
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func updateSnapshot() {
+        viewModel.getRecords()
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: MainTableViewCell.mainTableViewCellIdentifier,
-                                                       for: indexPath) as? MainTableViewCell else {
-            print(R.Strings.dequeueMainTableViewCellError.rawValue)
-            return UITableViewCell()
+        var snapshot = DataSourceSnapshot()
+        snapshot.appendSections([.records])
+        snapshot.appendItems(viewModel.records)
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.dataSource.apply(snapshot, animatingDifferences: true)
+            self?.tableView.reloadData()
         }
-        
-        cell.configureCell(
-            name: "Record 2020-20-01",
-            date: "20.01.2020",
-            duraiton: "04:17"
-        )
-        return cell
     }
-    
-    
 }
 
 
@@ -176,7 +197,9 @@ extension MainViewController: UITableViewDataSource {
 extension MainViewController: UITableViewDelegate {
         
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
         
+        cell.isEditing.toggle()
     }
 }
 
