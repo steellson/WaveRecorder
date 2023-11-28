@@ -34,7 +34,7 @@ final class RecordingView: BaseView {
     //MARK: Setup
     
     private func seutupContentView() {
-        backgroundColor = .white.withAlphaComponent(0.3)
+        backgroundColor = R.Colors.primaryBackgroundColor
         addNewSubview(recButtonView)
     }
     

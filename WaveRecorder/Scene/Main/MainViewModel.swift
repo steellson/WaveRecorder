@@ -10,7 +10,7 @@ import Foundation
 //MARK: - Protocol
 
 protocol MainViewModelProtocol: AnyObject {
-    var records: [Record] { get }
+    var records: [Record] { get set }
     
     func getRecords()
     func getRecord(withID id: String, completion: @escaping (Result<Record, Error>) -> Void)
@@ -23,7 +23,7 @@ protocol MainViewModelProtocol: AnyObject {
 
 final class MainViewModel: MainViewModelProtocol {
     
-    private(set) var records: [Record] = []
+    var records: [Record] = []
 
     private let storageService: StorageServiceProtocol
     
@@ -33,6 +33,7 @@ final class MainViewModel: MainViewModelProtocol {
     ) {
         self.storageService = storageService
   
+        getRecords()
     }
 }
 
@@ -71,7 +72,7 @@ extension MainViewModel {
     
     //MARK: Delete
     func deleteRecord(withID id: String, completion: ((Result<Bool, Error>) -> Void)?) {
-        storageService.deleteRecord(withID: id) { result in
+        storageService.deleteRecord(withID: id) { [weak self] result in
             switch result {
             case .success(let deleted):
                 print("SUCCESS: Record with id \(id) deleted!")

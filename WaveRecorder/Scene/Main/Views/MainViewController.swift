@@ -62,6 +62,8 @@ final class MainViewController: BaseController {
     private func setupEditButton() {
         editButton.title = R.Strings.editButtonTitle.rawValue
         editButton.tintColor = .black
+        editButton.target = self
+        editButton.action = #selector(editButtonDidTapped)
     }
     
     private func setupTitleLabel() {
@@ -86,9 +88,11 @@ final class MainViewController: BaseController {
     }
     
     private func setupTableView() {
-        tableView.backgroundColor = R.Colors.primaryBackgroundColor
-        tableView.layer.cornerRadius = 14
-        tableView.dataSource = dataSource
+        tableView.backgroundColor = R.Colors.secondaryBackgroundColor
+        tableView.showsVerticalScrollIndicator = false
+        tableView.layer.cornerRadius = 26
+        tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        tableView.dataSource = self
         tableView.delegate = self
         tableView.register(MainTableViewCell.self,
                            forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
@@ -109,6 +113,20 @@ final class MainViewController: BaseController {
             }
         }
     }
+    
+    
+    //MARK: Methods
+    
+    @objc
+    private func editButtonDidTapped() {
+        UIView.animate(withDuration: 0.5) {
+            self.tableView.isEditing.toggle()
+            
+            self.editButton.title = self.tableView.isEditing
+            ? R.Strings.stopEditButtonTitle.rawValue
+            : R.Strings.editButtonTitle.rawValue
+        }
+    }
 }
 
 
@@ -123,7 +141,6 @@ extension MainViewController {
         setupTitleLabel()
         setupSearchController()
         setupTableView()
-        setupDataSource()
     }
     
     override func setupNavBar() {
@@ -134,7 +151,6 @@ extension MainViewController {
     override func setupLayout() {
         super.setupLayout()
         setupRecordingViewHeight()
-        updateSnapshot()
         
         NSLayoutConstraint.activate([
             recordingView.heightAnchor.constraint(equalToConstant: recordingViewHeight),
@@ -143,51 +159,38 @@ extension MainViewController {
             recordingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             tableView.topAnchor.constraint(equalTo: searchController.searchBar.bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: recordingView.topAnchor)
         ])
     }
 }
 
 
-///MARK: - DataSource + Snapshot
+///MARK: - DataSource
 
-private extension MainViewController {
+extension MainViewController: UITableViewDataSource {
     
-    func setupDataSource() {
-        dataSource = UITableViewDiffableDataSource(
-            tableView: tableView,
-            cellProvider: { tableView, indexPath, record -> UITableViewCell? in
-
-                guard let mainTableViewCell = tableView.dequeueReusableCell(
-                    withIdentifier: MainTableViewCell.mainTableViewCellIdentifier,
-                    for: indexPath
-                ) as? MainTableViewCell else {
-                    print("ERROR: Couldnt dequeue cell with reuse identifier"); return UITableViewCell()
-                }
-                
-                mainTableViewCell.configureCell(
-                    name: record.name,
-                    date: record.date.description,
-                    duraiton: String(record.duration)
-                )
-                
-                return mainTableViewCell
-            })
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        viewModel.records.count
     }
     
-    func updateSnapshot() {
-        viewModel.getRecords()
-        
-        var snapshot = DataSourceSnapshot()
-        snapshot.appendSections([.records])
-        snapshot.appendItems(viewModel.records)
-        
-        DispatchQueue.main.async { [weak self] in
-            self?.dataSource.apply(snapshot, animatingDifferences: true)
-            self?.tableView.reloadData()
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: MainTableViewCell.mainTableViewCellIdentifier,
+            for: indexPath) as? MainTableViewCell else {
+            print("ERROR: Cant dequeue reusable cell")
+            return UITableViewCell()
         }
+        
+        let record = viewModel.records[indexPath.row]
+        
+        cell.configureCell(
+            name: record.name,
+            date: record.date.description,
+            duraiton: String(record.duration)
+        )
+        return cell
     }
 }
 
@@ -197,9 +200,29 @@ private extension MainViewController {
 extension MainViewController: UITableViewDelegate {
         
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        
-        cell.isEditing.toggle()
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        UISwipeActionsConfiguration(actions: [ UIContextualAction(
+            style: .destructive, 
+            title: "Delete",
+            handler: { action, view, result in
+                self.tableView.beginUpdates()
+                
+                let record = self.viewModel.records[indexPath.row]
+                self.viewModel.deleteRecord(withID: record.id) { [weak self] res in
+                    switch res {
+                    case .success:
+                        self?.viewModel.records.remove(at: indexPath.row)
+                        self?.tableView.deleteRows(at: [indexPath], with: .automatic)
+                    case .failure(let error):
+                        print(error)
+                    }
+                }
+                self.tableView.endUpdates()
+            }
+        )])
     }
 }
 

@@ -37,7 +37,6 @@ class BaseCell: UITableViewCell {
     
     func setupCell() { 
         backgroundColor = .clear
-        contentView.backgroundColor = R.Colors.secondaryBackgroundColor
     }
     
     func setupCellLayout() { }
