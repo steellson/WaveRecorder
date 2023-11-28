@@ -184,11 +184,13 @@ extension MainViewController: UITableViewDataSource {
         }
         
         let record = viewModel.records[indexPath.row]
+        let dateString = Formatter.instance.formatDate(record.date)
+        let durationString = Formatter.instance.formatDuration(record.duration)
         
         cell.configureCell(
             name: record.name,
-            date: record.date.description,
-            duraiton: String(record.duration)
+            date: dateString,
+            duraiton: durationString
         )
         return cell
     }

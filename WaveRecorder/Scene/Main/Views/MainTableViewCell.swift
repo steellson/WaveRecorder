@@ -55,8 +55,7 @@ final class MainTableViewCell: BaseCell {
         titleLabel.text = ""
         dateLabel.text = ""
         durationLabel.text = ""
-    }
-    
+    }  
 }
             
 //MARK: - Base

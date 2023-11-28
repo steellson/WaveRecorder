@@ -34,7 +34,12 @@ final class MainViewModel: MainViewModelProtocol {
         self.storageService = storageService
   
         getRecords()
+        
+//        saveRecord(Record(name: "test", duration: 3599, date: .now))
+//        saveRecord(Record(name: "test1", duration: 3600, date: .now))
+//        saveRecord(Record(name: "test2", duration: 3601, date: .now))
     }
+    
 }
 
 

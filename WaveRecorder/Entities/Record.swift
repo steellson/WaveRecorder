@@ -13,12 +13,12 @@ final class Record {
     
     @Attribute(.unique) var id: String
     var name: String
-    var duration: Int
+    var duration: TimeInterval
     var date: Date
     
     init(
         name: String,
-        duration: Int,
+        duration: TimeInterval,
         date: Date
     ) {
         self.id = UUID().uuidString
