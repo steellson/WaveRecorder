@@ -1,5 +1,5 @@
 //
-//  RecordingView.swift
+//  RecordView.swift
 //  WaveRecorder
 //
 //  Created by Andrew Steellson on 24.11.2023.
@@ -9,7 +9,7 @@ import UIKit
 
 //MARK: - Impl
 
-final class RecordingView: BaseView {
+final class RecordView: BaseView {
     
     private let viewModel: RecordViewModelProtocol
     
@@ -46,7 +46,7 @@ final class RecordingView: BaseView {
 
 //MARK: - Base
 
-extension RecordingView {
+extension RecordView {
     
     override func setupView() {
         super.setupView()
@@ -69,7 +69,7 @@ extension RecordingView {
 
 //MARK: - RoundedRecButtonView Delegate
 
-extension RecordingView: RoundedRecButtonViewDelegate {
+extension RecordView: RoundedRecButtonViewDelegate {
     
     func recButtonDidTapped() {
         onRecord?(recButtonView.isRecording)

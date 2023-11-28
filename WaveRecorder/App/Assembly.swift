@@ -54,7 +54,7 @@ final class Assembly: AssemblyProtocol {
             
         case .record:
             let viewModel: RecordViewModelProtocol = RecordViewModel()
-            let view = RecordingView(viewModel: viewModel)
+            let view = RecordView(viewModel: viewModel)
             return view
         }
     }

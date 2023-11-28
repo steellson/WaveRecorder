@@ -24,11 +24,11 @@ final class MainViewController: BaseController {
     
     private var dataSource: DataSource!
     
-    private let recordingView = Assembly.builder.build(subModule: .record)
+    private let recordView = Assembly.builder.build(subModule: .record)
+    private var recordViewHeight = UIScreen.main.bounds.height * 0.15
     
     private let viewModel: MainViewModelProtocol
     
-    private var recordingViewHeight = UIScreen.main.bounds.height * 0.15
         
     
     //MARK: Init
@@ -56,7 +56,7 @@ final class MainViewController: BaseController {
     
     private func setupContentView() {
         view.addNewSubview(tableView)
-        view.addNewSubview(recordingView)
+        view.addNewSubview(recordView)
     }
     
     private func setupEditButton() {
@@ -99,7 +99,7 @@ final class MainViewController: BaseController {
     }
     
     private func setupRecordingViewHeight() {
-        guard let recView = (recordingView as? RecordingView) else { return }
+        guard let recView = (recordView as? RecordView) else { return }
         
         recView.onRecord = { [weak self] isRecording in
             UIView.animate(
@@ -107,7 +107,7 @@ final class MainViewController: BaseController {
                 delay: 0.2,
                 options: .curveEaseIn
             ) {
-                self?.recordingView.heightConstraint?.constant = isRecording
+                self?.recordView.heightConstraint?.constant = isRecording
                 ? UIScreen.main.bounds.height * 0.25
                 : UIScreen.main.bounds.height * 0.15
             }
@@ -153,15 +153,15 @@ extension MainViewController {
         setupRecordingViewHeight()
         
         NSLayoutConstraint.activate([
-            recordingView.heightAnchor.constraint(equalToConstant: recordingViewHeight),
-            recordingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            recordingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            recordingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            recordView.heightAnchor.constraint(equalToConstant: recordViewHeight),
+            recordView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            recordView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            recordView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             tableView.topAnchor.constraint(equalTo: searchController.searchBar.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: recordingView.topAnchor)
+            tableView.bottomAnchor.constraint(equalTo: recordView.topAnchor)
         ])
     }
 }
