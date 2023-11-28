@@ -14,6 +14,7 @@ protocol MainViewModelProtocol: AnyObject {
     
     func getRecords()
     func getRecord(withID id: String, completion: @escaping (Result<Record, Error>) -> Void)
+    func deleteRecord(withID id: String, completion: ((Result<Bool, Error>) -> Void)?)
     func saveRecord(_ record: Record)
     func searchRecord(withText text: String)
 }
@@ -22,11 +23,7 @@ protocol MainViewModelProtocol: AnyObject {
 
 final class MainViewModel: MainViewModelProtocol {
     
-    private(set) var records: [Record] = [] {
-        didSet {
-            print(records)
-        }
-    }
+    private(set) var records: [Record] = []
 
     private let storageService: StorageServiceProtocol
     
@@ -35,7 +32,7 @@ final class MainViewModel: MainViewModelProtocol {
         storageService: StorageServiceProtocol
     ) {
         self.storageService = storageService
-    
+  
     }
 }
 
@@ -49,9 +46,9 @@ extension MainViewModel {
         storageService.getRecords() { [weak self] result in
             switch result {
             case .success(let records):
-                self?.records += records.sorted(by: { $0.date > $1.date })
+                self?.records = records
             case .failure(let error):
-                print(error.localizedDescription)
+                print("ERROR: \(error)")
                 self?.records = []
             }
         }
@@ -65,11 +62,27 @@ extension MainViewModel {
             case .success(let record):
                 completion(.success(record))
             case .failure(let error):
-                print(error.localizedDescription)
+                print("ERROR: \(error)")
                 completion(.failure(error))
             }
         }
     }
+    
+    
+    //MARK: Delete
+    func deleteRecord(withID id: String, completion: ((Result<Bool, Error>) -> Void)?) {
+        storageService.deleteRecord(withID: id) { result in
+            switch result {
+            case .success(let deleted):
+                print("SUCCESS: Record with id \(id) deleted!")
+                completion?(.success(deleted))
+            case .failure(let error):
+                print("ERROR: \(error)")
+                completion?(.failure(error))
+            }
+        }
+    }
+    
     
     //MARK: Search
     func searchRecord(withText text: String) {

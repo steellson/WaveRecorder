@@ -11,18 +11,17 @@ import SwiftData
 @Model
 final class Record {
     
-    @Attribute(.unique) var id: UUID
+    @Attribute(.unique) var id: String
     var name: String
     var duration: Int
     var date: Date
     
     init(
-        id: UUID,
         name: String,
         duration: Int,
         date: Date
     ) {
-        self.id = id
+        self.id = UUID().uuidString
         self.name = name
         self.duration = duration
         self.date = date

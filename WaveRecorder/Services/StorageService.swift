@@ -22,9 +22,12 @@ protocol StorageServiceProtocol: AnyObject {
                      completion: @escaping (Result<[Record], StorageError>) -> Void)
 
     
+    func deleteRecord(withID 
+                      id: String,
+                      completion: @escaping (Result<Bool, StorageError>) -> Void)
+    
     func save(record: Record)
     func renameRecord(withID id: String, newName name: String)
-    func deleteRecord(withID id: String)
 }
 
 //MARK: Storage error
@@ -34,6 +37,7 @@ enum StorageError: Error {
     case cantGetRecordsFormStorage
     case cantGetRecordWithIDFormStorage
     case cantFetchRecordWithDescriptor
+    case cantDeleteRecord
     case fetchedRecordsEmpty
 }
 
@@ -71,7 +75,7 @@ extension StorageService {
             return
         }
         
-        let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.date > $0.date })
+        let fetchDescriptor = FetchDescriptor<Record>(sortBy: [SortDescriptor<Record>(\.date)])
         
         do {
             let records = try context.fetch(fetchDescriptor)
@@ -101,7 +105,7 @@ extension StorageService {
             return
         }
         
-        let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.id.uuidString == id })
+        let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.id == id })
         
         do {
             guard let record = try context.fetch(fetchDescriptor).first else {
@@ -144,7 +148,7 @@ extension StorageService {
             return
         }
         
-        let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.id.uuidString == id })
+        let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.id == id })
         
         do {
             guard let oldRecord = try context.fetch(fetchDescriptor).first else {
@@ -154,7 +158,6 @@ extension StorageService {
             
             context.insert(
                 Record(
-                    id: oldRecord.id,
                     name: name,
                     duration: oldRecord.duration,
                     date: oldRecord.date
@@ -168,22 +171,26 @@ extension StorageService {
     
     //MARK: Delete
     
-    func deleteRecord(withID id: String) {
+    func deleteRecord(withID id: String, completion: @escaping (Result<Bool, StorageError>) -> Void) {
         guard let context else {
             print("ERROR: Cant get storage context")
+            completion(.failure(.cantGetStorageContext))
             return
         }
         
-        let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.id.uuidString == id })
+        let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.id == id })
         
         do {
             guard let record = try context.fetch(fetchDescriptor).first else {
                 print("ERROR: Cant get record widh id \(id) from storage")
+                completion(.failure(.cantGetRecordWithIDFormStorage))
                 return
             }
             context.delete(record)
+            completion(.success(true))
         } catch {
             print("ERROR: Cant delete record with id \(id), error: \(error)")
+            completion(.failure(.cantDeleteRecord))
             return
         }
     }

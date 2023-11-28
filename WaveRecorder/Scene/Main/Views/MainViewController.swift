@@ -124,7 +124,6 @@ extension MainViewController {
         setupSearchController()
         setupTableView()
         setupDataSource()
-        viewModel.saveRecord(.init(id: UUID(), name: "sd", duration: 23, date: .now))
     }
     
     override func setupNavBar() {
