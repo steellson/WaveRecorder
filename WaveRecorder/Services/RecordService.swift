@@ -102,7 +102,7 @@ extension RecordService {
         try? recordingSession.setActive(false)
 
         // Check
-        audioRecorder.isRecording
+        !audioRecorder.isRecording
         ? print(">>> RECORD STOPPED!")
         : print(">>> RECORD IS NOT STOPPED! SOMETHING WRONG")
     }
