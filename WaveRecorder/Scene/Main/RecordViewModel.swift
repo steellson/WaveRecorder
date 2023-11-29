@@ -38,10 +38,10 @@ final class RecordViewModel: RecordViewModelProtocol {
 extension RecordViewModel {
     
     func startRecord() {
-        recordService.startRecord()
+        recordService.startRecord(withName: "somerec")
     }
     
     func stopRecord() {
-        recordService.stopRecord()
+        recordService.stopRecord(success: true)
     }
 }

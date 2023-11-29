@@ -5,20 +5,17 @@
 //  Created by Andrew Steellson on 29.11.2023.
 //
 
-import Foundation
 import AVFoundation
+
 
 //MARK: - Protocol
 
-protocol RecordServiceDelegate: AnyObject {
-    
-}
-
 protocol RecordServiceProtocol: AnyObject {
-    var delegate: RecordServiceDelegate? { get set }
+//    var record:
+    var delegate: AVAudioRecorderDelegate? { get set }
     var isAudioRecordingAllowed: Bool { get }
 
-    func startRecord()
+    func startRecord(withName name: String)
     func stopRecord(success: Bool)
 }
 
@@ -27,7 +24,7 @@ protocol RecordServiceProtocol: AnyObject {
 
 final class RecordService: RecordServiceProtocol {
     
-    weak var delegate: RecordServiceDelegate?
+    weak var delegate: AVAudioRecorderDelegate?
     
     var isAudioRecordingAllowed = false
         
@@ -40,14 +37,20 @@ final class RecordService: RecordServiceProtocol {
    
     private func setupAudioRecorder() {
         do {
-            try recordingSession.setCategory(.playAndRecord, mode: .default)
-            try recordingSession.setActive(true)
-            AVAudioApplication.requestRecordPermission() { [weak self] allowed in
-                if !allowed {
-                    print("ERROR: Audio permission is not allowed!")
-                    self?.isAudioRecordingAllowed = false
-                } else {
-                    self?.isAudioRecordingAllowed = true
+            try recordingSession.setCategory(.record, mode: .default)
+            AVAudioApplication.requestRecordPermission() { allowed in
+                DispatchQueue.main.async { [weak self] in
+                    if !allowed {
+                        print("ERROR: Audio permission is not allowed!")
+                        self?.isAudioRecordingAllowed = false
+                    } else {
+                        print("SUCCESS: Audio permission allowed!")
+                        self?.isAudioRecordingAllowed = true
+                        self?.audioRecorder.isMeteringEnabled = true
+                        self?.audioRecorder.prepareToRecord()
+                        guard let delegate = self?.delegate else { return }
+                        self?.audioRecorder.delegate = delegate
+                    }
                 }
             }
         } catch {
@@ -66,24 +69,29 @@ final class RecordService: RecordServiceProtocol {
 
 extension RecordService {
    
-    func startRecord() {
+    func startRecord(withName name: String) {
         guard isAudioRecordingAllowed else {
             print("ERROR: Cant start recording because it is not allowed!")
             return
         }
         
-        let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.m4a")
+        let audioFilename = getDocumentsDirectory().appendingPathComponent("\(name).m4a")
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVSampleRateKey: 12000,
-            AVNumberOfChannelsKey: 1,
+            AVSampleRateKey: 44100,
+            AVNumberOfChannelsKey: 2,
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]
         
         do {
+            try recordingSession.setActive(true)
             audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
-//            audioRecorder.delegate = self
             audioRecorder.record()
+            
+            // Check
+            audioRecorder.isRecording
+            ? print(">>> RECORD STARTED!")
+            : print(">>> RECORD IS NOT STARTERD! SOMETHING WRONG")
         } catch {
             stopRecord(success: false)
         }
@@ -91,5 +99,11 @@ extension RecordService {
     
     func stopRecord(success: Bool) {
         audioRecorder.stop()
+        try? recordingSession.setActive(false)
+
+        // Check
+        audioRecorder.isRecording
+        ? print(">>> RECORD STOPPED!")
+        : print(">>> RECORD IS NOT STOPPED! SOMETHING WRONG")
     }
 }
