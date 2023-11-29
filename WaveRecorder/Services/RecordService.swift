@@ -31,6 +31,10 @@ final class RecordService: RecordServiceProtocol {
     private var recordingSession: AVAudioSession = AVAudioSession.sharedInstance()
     private var audioRecorder: AVAudioRecorder = AVAudioRecorder()
     
+    private let storedInFolderWithName = "WRRecords"
+    private let storeWithFormatName = "m4a"
+    
+    
     init() {
         setupAudioRecorder()
     }
@@ -57,11 +61,6 @@ final class RecordService: RecordServiceProtocol {
             print("ERROR: Cant setup audio recorder. \(error)")
         }
     }
-    
-    private func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0]
-    }
 }
 
 
@@ -75,7 +74,14 @@ extension RecordService {
             return
         }
         
-        let audioFilename = getDocumentsDirectory().appendingPathComponent("\(name).m4a")
+//        let audioPath = URL.createNewDirPath(
+//            withDirectoryName: storedInFolderWithName,
+//            fileName: name,
+//            formatName: storeWithFormatName
+//        )
+        let audioPath = URL.getDocumentsDirectory().absoluteString + "\(name)"
+        print("** Record will be saved to: \(audioPath)")
+        
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 44100,
@@ -83,27 +89,31 @@ extension RecordService {
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]
         
-        do {
-            try recordingSession.setActive(true)
-            audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
-            audioRecorder.record()
-            
-            // Check
-            audioRecorder.isRecording
-            ? print(">>> RECORD STARTED!")
-            : print(">>> RECORD IS NOT STARTERD! SOMETHING WRONG")
-        } catch {
-            stopRecord(success: false)
+        DispatchQueue.global().async { [unowned self] in
+            do {
+                try self.recordingSession.setActive(true)
+                self.audioRecorder = try AVAudioRecorder(url: URL(string: audioPath)!, settings: settings)
+                self.audioRecorder.record()
+                
+                // Check
+                self.audioRecorder.isRecording
+                ? print(">>> RECORD STARTED!")
+                : print(">>> RECORD IS NOT STARTERD! SOMETHING WRONG")
+            } catch {
+                self.stopRecord(success: false)
+            }
         }
     }
     
     func stopRecord(success: Bool) {
-        audioRecorder.stop()
-        try? recordingSession.setActive(false)
-
-        // Check
-        !audioRecorder.isRecording
-        ? print(">>> RECORD STOPPED!")
-        : print(">>> RECORD IS NOT STOPPED! SOMETHING WRONG")
+        DispatchQueue.global().async { [unowned self] in
+            self.audioRecorder.stop()
+            try? self.recordingSession.setActive(false)
+            
+            // Check
+            !self.audioRecorder.isRecording
+            ? print(">>> RECORD STOPPED!")
+            : print(">>> RECORD IS NOT STOPPED! SOMETHING WRONG")
+        }
     }
 }

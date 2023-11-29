@@ -33,6 +33,7 @@
 		3DEAFFDE2B162111004CAE97 /* PlayTolbarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFDD2B162111004CAE97 /* PlayTolbarButton.swift */; };
 		3DEAFFE02B174749004CAE97 /* MainCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFDF2B174749004CAE97 /* MainCellView.swift */; };
 		3DEAFFE22B1758A5004CAE97 /* RecordService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFE12B1758A5004CAE97 /* RecordService.swift */; };
+		3DEAFFE42B17728C004CAE97 /* URL+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFE32B17728C004CAE97 /* URL+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +65,7 @@
 		3DEAFFDD2B162111004CAE97 /* PlayTolbarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayTolbarButton.swift; sourceTree = "<group>"; };
 		3DEAFFDF2B174749004CAE97 /* MainCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCellView.swift; sourceTree = "<group>"; };
 		3DEAFFE12B1758A5004CAE97 /* RecordService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordService.swift; sourceTree = "<group>"; };
+		3DEAFFE32B17728C004CAE97 /* URL+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +175,7 @@
 			children = (
 				3DEAFFB32B0F7F2A004CAE97 /* UIView+Extension.swift */,
 				3DEAFFC22B109B6D004CAE97 /* UINavigationController+Extension.swift */,
+				3DEAFFE32B17728C004CAE97 /* URL+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -309,6 +312,7 @@
 				3DEAFFD52B160F0E004CAE97 /* PlayToolbarView.swift in Sources */,
 				3DEAFFB42B0F7F2A004CAE97 /* UIView+Extension.swift in Sources */,
 				3DEAFFD82B16129D004CAE97 /* PlayToolbarViewModel.swift in Sources */,
+				3DEAFFE42B17728C004CAE97 /* URL+Extension.swift in Sources */,
 				3DEAFFB62B0F80C8004CAE97 /* MainTableViewCell.swift in Sources */,
 				3DEAFFDE2B162111004CAE97 /* PlayTolbarButton.swift in Sources */,
 				3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */,
