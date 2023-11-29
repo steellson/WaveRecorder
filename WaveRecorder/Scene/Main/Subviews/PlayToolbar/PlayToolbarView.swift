@@ -12,8 +12,8 @@ import UIKit
 //MARK: - Impl
 
 final class PlayToolbarView: BaseView {
-    
-    private let viewModel: PlayToolbarViewModel
+        
+    private let viewModel: PlayToolbarViewModelProtocol
     
     //MARK: Variables
     
@@ -29,7 +29,7 @@ final class PlayToolbarView: BaseView {
     //MARK: Init
     
     init(
-        viewModel: PlayToolbarViewModel
+        viewModel: PlayToolbarViewModelProtocol
     ) {
         self.viewModel = viewModel
         super.init(frame: .zero)
@@ -44,24 +44,26 @@ final class PlayToolbarView: BaseView {
     
     private func setupContentView() {
         addNewSubview(progressBar)
-        addNewSubview(startTimeLabel)
-        addNewSubview(endTimeLabel)
-        addNewSubview(goBackButton)
-        addNewSubview(playButton)
-        addNewSubview(goForwardButton)
-        addNewSubview(deleteButton)
+      addNewSubview(startTimeLabel)
+      addNewSubview(endTimeLabel)
+      addNewSubview(goBackButton)
+      addNewSubview(playButton)
+      addNewSubview(goForwardButton)
+      addNewSubview(deleteButton)
     }
     
     private func setupProgressBar() {
-        
+        progressBar.backgroundColor = .systemGray
     }
     
     private func setupStartTimeLabel() {
         startTimeLabel.text = "00:00"
+        startTimeLabel.font = .systemFont(ofSize: 12, weight: .light)
     }
     
     private func setupEndTimeLabel() {
         endTimeLabel.text = "03:04"
+        endTimeLabel.font = .systemFont(ofSize: 12, weight: .light)
     }
     
     private func setupButtonTargets() {
@@ -118,27 +120,33 @@ extension PlayToolbarView {
             progressBar.topAnchor.constraint(equalTo: topAnchor, constant: 12),
             progressBar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
             progressBar.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-            progressBar.heightAnchor.constraint(equalToConstant: 30),
+            progressBar.heightAnchor.constraint(equalToConstant: 2),
             
+            startTimeLabel.topAnchor.constraint(equalTo: progressBar.bottomAnchor, constant: 4),
+            startTimeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            
+            endTimeLabel.topAnchor.constraint(equalTo: progressBar.bottomAnchor, constant: 4),
+            endTimeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            
+            playButton.topAnchor.constraint(equalTo: endTimeLabel.bottomAnchor, constant: 12),
             playButton.widthAnchor.constraint(equalToConstant: 30),
             playButton.heightAnchor.constraint(equalToConstant: 30),
             playButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-            playButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
             
+            goBackButton.centerYAnchor.constraint(equalTo: playButton.centerYAnchor, constant: 2),
+            goBackButton.trailingAnchor.constraint(equalTo: playButton.leadingAnchor, constant: -24),
             goBackButton.widthAnchor.constraint(equalToConstant: 24),
             goBackButton.heightAnchor.constraint(equalToConstant: 24),
-            goBackButton.trailingAnchor.constraint(equalTo: playButton.leadingAnchor, constant: -12),
-            goBackButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
             
+            goForwardButton.centerYAnchor.constraint(equalTo: playButton.centerYAnchor, constant: 2),
             goForwardButton.widthAnchor.constraint(equalToConstant: 24),
             goForwardButton.heightAnchor.constraint(equalToConstant: 24),
-            goForwardButton.leadingAnchor.constraint(equalTo: playButton.trailingAnchor, constant: 12),
-            goForwardButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
+            goForwardButton.leadingAnchor.constraint(equalTo: playButton.trailingAnchor, constant: 24),
 
+            deleteButton.centerYAnchor.constraint(equalTo: playButton.centerYAnchor),
             deleteButton.widthAnchor.constraint(equalToConstant: 30),
             deleteButton.heightAnchor.constraint(equalToConstant: 30),
             deleteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-            deleteButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)
         ])
     }
 }

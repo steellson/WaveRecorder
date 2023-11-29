@@ -43,11 +43,11 @@ final class PlayTolbarButton: UIButton {
         
         switch type {
         case .goBack:
-            setImage(UIImage(systemName: "playpause.fill"), for: .normal)
-        case .play:
-            setImage(UIImage(systemName: "goforward.15"), for: .normal)
-        case .goForward:
             setImage(UIImage(systemName: "gobackward.15"), for: .normal)
+        case .play:
+            setImage(UIImage(systemName: "playpause.fill"), for: .normal)
+        case .goForward:
+            setImage(UIImage(systemName: "goforward.15"), for: .normal)
         case .delete:
             setImage(UIImage(systemName: "trash"), for: .normal)
         }

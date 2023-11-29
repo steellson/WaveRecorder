@@ -89,9 +89,12 @@ final class MainViewController: BaseController {
     
     private func setupTableView() {
         tableView.backgroundColor = R.Colors.secondaryBackgroundColor
-        tableView.showsVerticalScrollIndicator = false
-        tableView.layer.cornerRadius = 26
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        tableView.layer.cornerRadius = 26
+        tableView.estimatedRowHeight = 200
+        tableView.showsVerticalScrollIndicator = false
+        tableView.alwaysBounceVertical = true
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(MainTableViewCell.self,
@@ -202,7 +205,8 @@ extension MainViewController: UITableViewDataSource {
 extension MainViewController: UITableViewDelegate {
         
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+        cell.isSelected = true
     }
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

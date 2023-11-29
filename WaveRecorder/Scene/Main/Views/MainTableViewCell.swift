@@ -13,32 +13,50 @@ final class MainTableViewCell: BaseCell {
     
     static let mainTableViewCellIdentifier = R.Strings.mainTableViewCellIdentifier.rawValue
     
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .semibold)
-        label.textAlignment = .left
-        return label
+    
+    //MARK: Variables
+
+    private let mainCellView = MainCellView()
+    private let playToolbar = Assembly.builder.build(subModule: .playToolbar)
+    private let mainContainerView = UIView()
+    
+    private lazy var collapsedConstraint: NSLayoutConstraint = {
+        let const = NSLayoutConstraint(
+            item: playToolbar,
+            attribute: .bottom,
+            relatedBy: .equal,
+            toItem: mainContainerView,
+            attribute: .bottom,
+            multiplier: 1,
+            constant: 0
+        )
+        const.priority = .defaultLow
+        return const
     }()
     
-    private let dateLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .light)
-        label.textAlignment = .left
-        return label
+    private lazy var expandedConstraint: NSLayoutConstraint = {
+        let const = NSLayoutConstraint(
+            item: mainCellView,
+            attribute: .bottom,
+            relatedBy: .equal,
+            toItem: mainContainerView,
+            attribute: .bottom,
+            multiplier: 1,
+            constant: 0
+        )
+        const.priority = .defaultLow
+        return const
     }()
     
-    private let durationLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .light)
-        label.textAlignment = .right
-        return label
-    }()
-    
+    override var isSelected: Bool {
+        didSet {
+            print("selected")
+            updateAppereance()
+        }
+    }
     
     func configureCell(name: String, date: String, duraiton: String) {
-        self.titleLabel.text = name
-        self.dateLabel.text = date
-        self.durationLabel.text = duraiton
+        mainCellView.configureView(name: name, date: date, duraiton: duraiton)
     }
     
     
@@ -46,16 +64,26 @@ final class MainTableViewCell: BaseCell {
     
     private func setupContentView() {
         selectionStyle = .gray
-        contentView.addNewSubview(titleLabel)
-        contentView.addNewSubview(dateLabel)
-        contentView.addNewSubview(durationLabel)
+        contentView.clipsToBounds = true
+        
+        contentView.addNewSubview(mainContainerView)
+        mainContainerView.addNewSubview(mainCellView)
+        mainContainerView.addNewSubview(playToolbar)
+    }
+
+    
+    private func setupToolBar() {
+
     }
     
-    private func clear() {
-        titleLabel.text = ""
-        dateLabel.text = ""
-        durationLabel.text = ""
-    }  
+    
+    //MARK: - Methods
+    
+    private func updateAppereance() {
+        playToolbar.isHidden = !isSelected
+        collapsedConstraint.isActive = !isSelected
+        expandedConstraint.isActive = isSelected
+    }
 }
             
 //MARK: - Base
@@ -65,28 +93,35 @@ extension MainTableViewCell {
     override func setupCell() {
         super.setupCell()
         setupContentView()
+        setupToolBar()
     }
     
     override func setupCellLayout() {
         super.setupCellLayout()
         
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            mainContainerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            mainContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            mainContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            mainContainerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             
-            dateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
-            dateLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            dateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
+            mainCellView.topAnchor.constraint(equalTo: mainContainerView.topAnchor),
+            mainCellView.leadingAnchor.constraint(equalTo: mainContainerView.leadingAnchor),
+            mainCellView.trailingAnchor.constraint(equalTo: mainContainerView.trailingAnchor),
+            mainCellView.heightAnchor.constraint(equalToConstant: 60),
+//            collapsedConstraint,
             
-            durationLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
-            durationLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
-            durationLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
+            playToolbar.topAnchor.constraint(equalTo: mainCellView.bottomAnchor),
+            playToolbar.leadingAnchor.constraint(equalTo: mainContainerView.leadingAnchor),
+            playToolbar.trailingAnchor.constraint(equalTo: mainContainerView.trailingAnchor),
+            playToolbar.heightAnchor.constraint(equalToConstant: 60),
+//            expandedConstraint
+
         ])
     }
     
     override func clearCell() {
         super.clearCell()
-        clear()
+        mainCellView.clearView()
     }
 }

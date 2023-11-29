@@ -31,6 +31,7 @@
 		3DEAFFD52B160F0E004CAE97 /* PlayToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD42B160F0E004CAE97 /* PlayToolbarView.swift */; };
 		3DEAFFD82B16129D004CAE97 /* PlayToolbarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD72B16129D004CAE97 /* PlayToolbarViewModel.swift */; };
 		3DEAFFDE2B162111004CAE97 /* PlayTolbarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFDD2B162111004CAE97 /* PlayTolbarButton.swift */; };
+		3DEAFFE02B174749004CAE97 /* MainCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFDF2B174749004CAE97 /* MainCellView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,7 @@
 		3DEAFFD42B160F0E004CAE97 /* PlayToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayToolbarView.swift; sourceTree = "<group>"; };
 		3DEAFFD72B16129D004CAE97 /* PlayToolbarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayToolbarViewModel.swift; sourceTree = "<group>"; };
 		3DEAFFDD2B162111004CAE97 /* PlayTolbarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayTolbarButton.swift; sourceTree = "<group>"; };
+		3DEAFFDF2B174749004CAE97 /* MainCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCellView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +157,8 @@
 			isa = PBXGroup;
 			children = (
 				3DEAFFB02B0F7770004CAE97 /* MainViewModel.swift */,
+				3DEAFFC72B10D5B9004CAE97 /* RecordViewModel.swift */,
+				3DEAFFD72B16129D004CAE97 /* PlayToolbarViewModel.swift */,
 				3DEAFFB72B0F80CD004CAE97 /* Views */,
 				3DEAFFC42B10A244004CAE97 /* Subviews */,
 			);
@@ -175,6 +179,7 @@
 			children = (
 				3DEAFF922B0F65F3004CAE97 /* MainViewController.swift */,
 				3DEAFFB52B0F80C8004CAE97 /* MainTableViewCell.swift */,
+				3DEAFFDF2B174749004CAE97 /* MainCellView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -208,7 +213,6 @@
 		3DEAFFD62B161287004CAE97 /* PlayToolbar */ = {
 			isa = PBXGroup;
 			children = (
-				3DEAFFD72B16129D004CAE97 /* PlayToolbarViewModel.swift */,
 				3DEAFFD42B160F0E004CAE97 /* PlayToolbarView.swift */,
 				3DEAFFDD2B162111004CAE97 /* PlayTolbarButton.swift */,
 			);
@@ -218,7 +222,6 @@
 		3DEAFFD92B16134E004CAE97 /* Recording */ = {
 			isa = PBXGroup;
 			children = (
-				3DEAFFC72B10D5B9004CAE97 /* RecordViewModel.swift */,
 				3DEAFFC52B10A265004CAE97 /* RecordView.swift */,
 				3DEAFFC02B1092C4004CAE97 /* RoundedRecButtonView.swift */,
 			);
@@ -317,6 +320,7 @@
 				3DEAFFAD2B0F7651004CAE97 /* BaseController.swift in Sources */,
 				3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */,
 				3DEAFFB12B0F7770004CAE97 /* MainViewModel.swift in Sources */,
+				3DEAFFE02B174749004CAE97 /* MainCellView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

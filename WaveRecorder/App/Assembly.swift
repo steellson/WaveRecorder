@@ -34,6 +34,7 @@ final class Assembly: AssemblyProtocol {
     
     enum SubModule {
         case record
+        case playToolbar
     }
     
     
@@ -55,6 +56,11 @@ final class Assembly: AssemblyProtocol {
         case .record:
             let viewModel: RecordViewModelProtocol = RecordViewModel()
             let view = RecordView(viewModel: viewModel)
+            return view
+            
+        case .playToolbar:
+            let viewModel: PlayToolbarViewModelProtocol = PlayToolbarViewModel(storageService: services.storageService)
+            let view = PlayToolbarView(viewModel: viewModel)
             return view
         }
     }
