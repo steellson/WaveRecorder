@@ -32,6 +32,7 @@
 		3DEAFFD82B16129D004CAE97 /* PlayToolbarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD72B16129D004CAE97 /* PlayToolbarViewModel.swift */; };
 		3DEAFFDE2B162111004CAE97 /* PlayTolbarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFDD2B162111004CAE97 /* PlayTolbarButton.swift */; };
 		3DEAFFE02B174749004CAE97 /* MainCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFDF2B174749004CAE97 /* MainCellView.swift */; };
+		3DEAFFE22B1758A5004CAE97 /* RecordService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFE12B1758A5004CAE97 /* RecordService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +63,7 @@
 		3DEAFFD72B16129D004CAE97 /* PlayToolbarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayToolbarViewModel.swift; sourceTree = "<group>"; };
 		3DEAFFDD2B162111004CAE97 /* PlayTolbarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayTolbarButton.swift; sourceTree = "<group>"; };
 		3DEAFFDF2B174749004CAE97 /* MainCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCellView.swift; sourceTree = "<group>"; };
+		3DEAFFE12B1758A5004CAE97 /* RecordService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +131,7 @@
 		3DEAFFA42B0F6679004CAE97 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				3DEAFFE12B1758A5004CAE97 /* RecordService.swift */,
 				3DEAFFCC2B14B884004CAE97 /* StorageService.swift */,
 			);
 			path = Services;
@@ -320,6 +323,7 @@
 				3DEAFFAD2B0F7651004CAE97 /* BaseController.swift in Sources */,
 				3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */,
 				3DEAFFB12B0F7770004CAE97 /* MainViewModel.swift in Sources */,
+				3DEAFFE22B1758A5004CAE97 /* RecordService.swift in Sources */,
 				3DEAFFE02B174749004CAE97 /* MainCellView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
