@@ -19,6 +19,8 @@ protocol MainViewModelProtocol: AnyObject {
     func deleteRecord(withID id: String, completion: ((Result<Bool, Error>) -> Void)?)
     func saveRecord(_ record: Record)
     func searchRecord(withText text: String)
+    
+    func playDidTapped(onRecord record: Record)
 }
 
 
@@ -48,6 +50,13 @@ final class MainViewModel: MainViewModelProtocol {
 //MARK: - Public
 
 extension MainViewModel {
+    
+    func playDidTapped(onRecord record: Record) {
+        childViewModels.map {
+            let a = $0 as? any PlayToolbarViewModelProtocol
+            a?.record = record
+        }
+    }
     
     //MARK: Get all
     func getRecords() {

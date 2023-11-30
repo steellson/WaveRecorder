@@ -10,7 +10,7 @@ import Foundation
 //MARK: - Protocol
 
 protocol PlayToolbarViewModelProtocol: AnyObject {
-    var record: Record? { get }
+    var record: Record? { get set }
     var isPaused: Bool { get set }
     
     func goBack()
@@ -53,12 +53,18 @@ extension PlayToolbarViewModel {
     }
     
     func playPause() {
+        self.record = Record(
+                name: "Record",
+                path: PathManager.instance.getPathOfRecord(witnName: "Record").path(),
+                duration: 2222,
+                date: .now
+            )
         guard let record else {
             print("ERROR: Cant play record / Reason: nil")
             return
         }
         
-        if !isPaused {
+        if isPaused {
             audioService.playAudio(withName: record.name)
             isPaused = false
         } else {

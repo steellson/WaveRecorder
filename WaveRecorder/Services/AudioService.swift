@@ -26,11 +26,28 @@ final class AudioService: AudioServiceProtocol {
     private(set) var isPlaying = false
         
     private var audioPlayer: AVAudioPlayer?
+    
+    private let writedFormat = "m4a"
 
    
     private func setupSettings(forPlayer player: AVAudioPlayer) {
         player.isMeteringEnabled = true
-        player.numberOfLoops = 1
+        player.numberOfLoops = 0
+    }
+    
+    private func startPlay(withPlayer player: AVAudioPlayer) {
+        if player.isPlaying {
+            player.stop()
+            self.isPlaying = false
+            
+            player.prepareToPlay()
+            player.play()
+            self.isPlaying = true
+        } else {
+            player.prepareToPlay()
+            player.play()
+            self.isPlaying = true
+        }
     }
 }
 
@@ -40,29 +57,27 @@ final class AudioService: AudioServiceProtocol {
 extension AudioService {
    
     func playAudio(withName name: String) {
-        guard PathManager.instance.checkExistanceOfFile(withName: name) else {
+        let audioPathURL = PathManager.instance
+            .getWRRecordsDirectory()
+            .appendingPathComponent(name)
+            .appendingPathExtension(writedFormat)
+
+        guard FileManager.default.fileExists(atPath: audioPathURL.path()) else {
             print("ERROR: File with name \(name) doesn't exist!")
             return
         }
         
-        let audioPath = PathManager.instance.getWRRecordsDirectory().appendingPathComponent(name)
-        print("** WIll start playing audio from device: \(audioPath) ...")
-        
         DispatchQueue.main.async { [unowned self] in
-            
             do {
-                self.audioPlayer = try AVAudioPlayer(contentsOf: audioPath)
+                
+                self.audioPlayer = try AVAudioPlayer(contentsOf: audioPathURL)
                 guard let audioPlayer = self.audioPlayer else { return }
                 setupSettings(forPlayer: audioPlayer)
                 
-                if audioPlayer.isPlaying {
-                    audioPlayer.stop()
-                    self.isPlaying = false
-                } else {
-                    audioPlayer.prepareToPlay()
-                    audioPlayer.play()
-                    self.isPlaying = true
-                }
+                print(">> Will start playing audio with path: \(audioPathURL)")
+        
+                self.startPlay(withPlayer: audioPlayer)
+                
             } catch {
                 print("ERROR: AudioPlayer could not be instantiated \(error)")
             }
@@ -73,6 +88,7 @@ extension AudioService {
         DispatchQueue.main.async { [unowned self] in
             guard let audioPlayer = self.audioPlayer else { return }
             audioPlayer.pause()
+            self.isPlaying = false
         }
     }
 }
