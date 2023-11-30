@@ -54,7 +54,7 @@ final class Assembly: AssemblyProtocol {
         switch subModule {
             
         case .record:
-            let viewModel: RecordViewModelProtocol = RecordViewModel()
+            let viewModel: RecordViewModelProtocol = RecordViewModel(recordService: services.recordService)
             let view = RecordView(viewModel: viewModel)
             return view
             
@@ -71,4 +71,5 @@ final class Assembly: AssemblyProtocol {
 
 struct Services {
     let storageService: StorageServiceProtocol = StorageService()
+    let recordService: RecordServiceProtocol = RecordService()
 }

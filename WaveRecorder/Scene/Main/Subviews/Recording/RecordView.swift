@@ -72,6 +72,12 @@ extension RecordView {
 extension RecordView: RoundedRecButtonViewDelegate {
     
     func recButtonDidTapped() {
-        onRecord?(recButtonView.isRecording)
+        if recButtonView.isRecording {
+            viewModel.startRecord()
+            onRecord?(recButtonView.isRecording)
+        } else {
+            viewModel.stopRecord()
+            onRecord?(!recButtonView.isRecording)
+        }
     }
 }
