@@ -77,7 +77,7 @@ extension MainViewModel {
     
     //MARK: Delete
     func deleteRecord(withID id: String, completion: ((Result<Bool, Error>) -> Void)?) {
-        storageService.deleteRecord(withID: id) { [weak self] result in
+        storageService.deleteRecord(withID: id) { result in
             switch result {
             case .success(let deleted):
                 print("SUCCESS: Record with id \(id) deleted!")

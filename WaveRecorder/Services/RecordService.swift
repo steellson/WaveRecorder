@@ -33,10 +33,12 @@ final class RecordService: RecordServiceProtocol {
     
     private let storedInFolderWithName = "WRRecords"
     private let storeWithFormatName = "m4a"
+
     
     
     init() {
         setupAudioRecorder()
+        prepareFolderForStoreOnDevice(withName: storedInFolderWithName)
     }
    
     private func setupAudioRecorder() {
@@ -61,6 +63,10 @@ final class RecordService: RecordServiceProtocol {
             print("ERROR: Cant setup audio recorder. \(error)")
         }
     }
+    
+    private func prepareFolderForStoreOnDevice(withName name: String) {
+        PathManager.instance.createFolder(withDirectoryName: name)
+    }
 }
 
 
@@ -74,12 +80,11 @@ extension RecordService {
             return
         }
         
-//        let audioPath = URL.createNewDirPath(
-//            withDirectoryName: storedInFolderWithName,
-//            fileName: name,
-//            formatName: storeWithFormatName
-//        )
-        let audioPath = URL.getDocumentsDirectory().absoluteString + "\(name)"
+        let audioPath = PathManager.instance.createNewFile(
+            withDirectoryName: storedInFolderWithName,
+            fileName: name,
+            formatName: storeWithFormatName
+        )
         print("** Record will be saved to: \(audioPath)")
         
         let settings = [
@@ -92,7 +97,7 @@ extension RecordService {
         DispatchQueue.global().async { [unowned self] in
             do {
                 try self.recordingSession.setActive(true)
-                self.audioRecorder = try AVAudioRecorder(url: URL(string: audioPath)!, settings: settings)
+                self.audioRecorder = try AVAudioRecorder(url: audioPath, settings: settings)
                 self.audioRecorder.record()
                 
                 // Check
