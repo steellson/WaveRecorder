@@ -41,6 +41,18 @@ final class PlayToolbarViewModel: PlayToolbarViewModelProtocol {
         self.record = record
     }
     
+    private func getNumberOfRecords() -> Int {
+        guard let parentViewModel else { return 0 }
+        let count = parentViewModel.records.count + 1
+        
+        return count
+    }
+    
+    private func setupRecord() {
+        let numberOfRecord = getNumberOfRecords()
+        let nameOfRecord = "Record \(numberOfRecord)"
+        
+    }
 }
 
 
@@ -53,12 +65,8 @@ extension PlayToolbarViewModel {
     }
     
     func playPause() {
-        self.record = Record(
-                name: "Record",
-                path: PathManager.instance.getPathOfRecord(witnName: "Record").path(),
-                duration: 2222,
-                date: .now
-            )
+        setupRecord()
+        
         guard let record else {
             print("ERROR: Cant play record / Reason: nil")
             return
@@ -78,6 +86,12 @@ extension PlayToolbarViewModel {
     }
     
     func deleteRecord() {
-         
+        guard let record,
+              let parentViewModel
+        else {
+            print("ERROR: Cant delete record!")
+            return
+        }
+        parentViewModel.deleteRecord(withID: record.id, completion: nil)
     }
 }

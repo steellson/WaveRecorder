@@ -9,9 +9,7 @@ import Foundation
 
 //MARK: - Protocols
 
-protocol MainViewModelProtocol: AnyObject {
-    var childViewModels: [AnyObject]? { get set }
-    
+protocol MainViewModelProtocol: AnyObject {    
     var records: [Record] { get set }
     
     func getRecords()
@@ -19,8 +17,6 @@ protocol MainViewModelProtocol: AnyObject {
     func deleteRecord(withID id: String, completion: ((Result<Bool, Error>) -> Void)?)
     func saveRecord(_ record: Record)
     func searchRecord(withText text: String)
-    
-    func playDidTapped(onRecord record: Record)
 }
 
 
@@ -29,11 +25,8 @@ protocol MainViewModelProtocol: AnyObject {
 final class MainViewModel: MainViewModelProtocol {
     
     var records: [Record] = []
-
-    var childViewModels: [AnyObject]?
     
     private let storageService: StorageServiceProtocol
-    
     
     
     init(
@@ -50,13 +43,6 @@ final class MainViewModel: MainViewModelProtocol {
 //MARK: - Public
 
 extension MainViewModel {
-    
-    func playDidTapped(onRecord record: Record) {
-        childViewModels.map {
-            let a = $0 as? any PlayToolbarViewModelProtocol
-            a?.record = record
-        }
-    }
     
     //MARK: Get all
     func getRecords() {

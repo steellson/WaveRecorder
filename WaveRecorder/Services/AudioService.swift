@@ -49,6 +49,12 @@ final class AudioService: AudioServiceProtocol {
             self.isPlaying = true
         }
     }
+    
+    private func pause() {
+        guard let audioPlayer = self.audioPlayer else { return }
+        audioPlayer.pause()
+        self.isPlaying = false
+    }
 }
 
 
@@ -86,9 +92,7 @@ extension AudioService {
     
     func pauseAudio() {
         DispatchQueue.main.async { [unowned self] in
-            guard let audioPlayer = self.audioPlayer else { return }
-            audioPlayer.pause()
-            self.isPlaying = false
+            self.pause()
         }
     }
 }

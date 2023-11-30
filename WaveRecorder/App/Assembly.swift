@@ -28,15 +28,7 @@ final class Assembly: AssemblyProtocol {
     private lazy var mainViewModel: MainViewModelProtocol = {
         MainViewModel(storageService: services.storageService)
     }()
-    
-    private lazy var recordViewModel: RecordViewModelProtocol = {
-        RecordViewModel(recordService: services.recordService, parentViewModel: mainViewModel)
-    }()
-    
-    private lazy var playToolbarViewModel: PlayToolbarViewModelProtocol = {
-        PlayToolbarViewModel(audioService: services.audioService, parentViewModel: mainViewModel)
-    }()
-    
+
     
     //MARK: Modules
     
@@ -57,7 +49,6 @@ final class Assembly: AssemblyProtocol {
         switch module {
             
         case .main:
-            mainViewModel.childViewModels = [recordViewModel, playToolbarViewModel]
             let viewController = MainViewController(viewModel: mainViewModel)
             return viewController
         }
