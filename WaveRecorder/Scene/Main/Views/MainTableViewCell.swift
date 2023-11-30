@@ -13,40 +13,11 @@ final class MainTableViewCell: BaseCell {
     
     static let mainTableViewCellIdentifier = R.Strings.mainTableViewCellIdentifier.rawValue
     
-    
     //MARK: Variables
 
     private let mainContainerView = UIView()
     private let mainCellView = MainCellView()
     private let playToolbar = Assembly.builder.build(subModule: .playToolbar)
-    
-    private lazy var collapsedConstraint: NSLayoutConstraint = {
-        let const = NSLayoutConstraint(
-            item: playToolbar,
-            attribute: .bottom,
-            relatedBy: .equal,
-            toItem: mainContainerView,
-            attribute: .bottom,
-            multiplier: 1,
-            constant: 0
-        )
-        const.priority = .defaultLow
-        return const
-    }()
-    
-    private lazy var expandedConstraint: NSLayoutConstraint = {
-        let const = NSLayoutConstraint(
-            item: mainCellView,
-            attribute: .bottom,
-            relatedBy: .equal,
-            toItem: mainContainerView,
-            attribute: .bottom,
-            multiplier: 1,
-            constant: 0
-        )
-        const.priority = .defaultLow
-        return const
-    }()
     
     override var isSelected: Bool {
         didSet {
@@ -56,8 +27,18 @@ final class MainTableViewCell: BaseCell {
     }
     
     
-    func configureCell(name: String, date: String, duraiton: String) {
-        mainCellView.configureView(name: name, date: date, duraiton: duraiton)
+    func configureCell(withRecord record: Record) {
+        mainCellView.configureView(
+            name: record.name,
+            date: Formatter.instance.formatDate(record.date),
+            duraiton: Formatter.instance.formatDuration(record.duration)
+        )
+        
+        guard let toolbar = playToolbar as? PlayToolbarView else {
+            print("ERROR: Couldnt setup play toolbar")
+            return
+        }
+        toolbar.configure(withRecord: record)
     }
 
     
@@ -71,19 +52,12 @@ final class MainTableViewCell: BaseCell {
         mainContainerView.addNewSubview(mainCellView)
         mainContainerView.addNewSubview(playToolbar)
     }
-
-    
-    private func setupToolBar() {
-
-    }
     
     
     //MARK: - Methods
     
     private func updateAppereance() {
         playToolbar.isHidden = !isSelected
-        collapsedConstraint.isActive = !isSelected
-        expandedConstraint.isActive = isSelected
     }
 }
             
@@ -94,7 +68,6 @@ extension MainTableViewCell {
     override func setupCell() {
         super.setupCell()
         setupContentView()
-        setupToolBar()
     }
     
     override func setupCellLayout() {
@@ -110,14 +83,11 @@ extension MainTableViewCell {
             mainCellView.leadingAnchor.constraint(equalTo: mainContainerView.leadingAnchor),
             mainCellView.trailingAnchor.constraint(equalTo: mainContainerView.trailingAnchor),
             mainCellView.heightAnchor.constraint(equalToConstant: 60),
-//            collapsedConstraint,
             
             playToolbar.topAnchor.constraint(equalTo: mainCellView.bottomAnchor),
             playToolbar.leadingAnchor.constraint(equalTo: mainContainerView.leadingAnchor),
             playToolbar.trailingAnchor.constraint(equalTo: mainContainerView.trailingAnchor),
             playToolbar.heightAnchor.constraint(equalToConstant: 60),
-//            expandedConstraint
-
         ])
     }
     

@@ -40,6 +40,11 @@ final class PlayToolbarView: BaseView {
     }
     
     
+    func configure(withRecord record: Record) {
+        self.viewModel.record = record
+    }
+    
+    
     //MARK: Setup
     
     private func setupContentView() {

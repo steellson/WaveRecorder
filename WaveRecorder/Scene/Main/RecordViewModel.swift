@@ -13,7 +13,7 @@ protocol RecordViewModelProtocol: AnyObject {
     var buttonRadius: CGFloat { get }
     
     func startRecord()
-    func stopRecord(completion: @escaping (Bool) -> Void)
+    func stopRecord(completion: ((Bool) -> Void)?)
 }
 
 
@@ -46,15 +46,15 @@ extension RecordViewModel {
         recordService.startRecord(withName: recordWillNamed)
     }
     
-    func stopRecord(completion: @escaping (Bool) -> Void) {
+    func stopRecord(completion: ((Bool) -> Void)?) {
         recordService.stopRecord(withName: recordWillNamed) { [weak self] record in
             guard let record else {
                 print("ERROR: Record is nil")
-                completion(false)
+                completion?(false)
                 return
             }
             self?.parentViewModel?.saveRecord(record)
-            completion(true)
+            completion?(true)
         }
     }
 }
