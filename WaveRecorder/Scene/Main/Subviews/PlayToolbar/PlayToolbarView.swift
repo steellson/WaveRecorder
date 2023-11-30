@@ -84,7 +84,7 @@ final class PlayToolbarView: BaseView {
     
     @objc
     private func goPlayButtonTapped() {
-        viewModel.play()
+        viewModel.playPause()
     }
     
     @objc

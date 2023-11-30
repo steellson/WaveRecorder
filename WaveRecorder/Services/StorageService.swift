@@ -159,6 +159,7 @@ extension StorageService {
             context.insert(
                 Record(
                     name: name,
+                    path: oldRecord.path,
                     duration: oldRecord.duration,
                     date: oldRecord.date
             ))

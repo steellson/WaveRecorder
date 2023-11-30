@@ -44,7 +44,9 @@ final class Assembly: AssemblyProtocol {
         switch module {
             
         case .main:
-            let viewModel: MainViewModelProtocol = MainViewModel(storageService: services.storageService)
+            let viewModel: MainViewModelProtocol = MainViewModel(
+                storageService: services.storageService
+            )
             let viewController = MainViewController(viewModel: viewModel)
             return viewController
         }
@@ -54,12 +56,17 @@ final class Assembly: AssemblyProtocol {
         switch subModule {
             
         case .record:
-            let viewModel: RecordViewModelProtocol = RecordViewModel(recordService: services.recordService)
+            let viewModel: RecordViewModelProtocol = RecordViewModel(
+                recordService: services.recordService
+            )
             let view = RecordView(viewModel: viewModel)
             return view
             
         case .playToolbar:
-            let viewModel: PlayToolbarViewModelProtocol = PlayToolbarViewModel(storageService: services.storageService)
+            let viewModel: PlayToolbarViewModelProtocol = PlayToolbarViewModel(
+                audioService: services.audioService,
+                storageService: services.storageService
+            )
             let view = PlayToolbarView(viewModel: viewModel)
             return view
         }
@@ -70,6 +77,7 @@ final class Assembly: AssemblyProtocol {
 //MARK: - Services
 
 struct Services {
-    let storageService: StorageServiceProtocol = StorageService()
+    let audioService: AudioServiceProtocol = AudioService()
     let recordService: RecordServiceProtocol = RecordService()
+    let storageService: StorageServiceProtocol = StorageService()
 }

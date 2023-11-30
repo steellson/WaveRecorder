@@ -11,9 +11,10 @@ import Foundation
 
 protocol PlayToolbarViewModelProtocol: AnyObject {
     var record: Record? { get }
+    var isPaused: Bool { get set }
     
     func goBack()
-    func play()
+    func playPause()
     func goForward()
     func deleteRecord()
 }
@@ -24,13 +25,17 @@ protocol PlayToolbarViewModelProtocol: AnyObject {
 final class PlayToolbarViewModel: PlayToolbarViewModelProtocol {
     
     var record: Record?
+    var isPaused = true
     
+    private let audioService: AudioServiceProtocol
     private let storageService: StorageServiceProtocol
     
     init(
+        audioService: AudioServiceProtocol,
         storageService: StorageServiceProtocol,
         record: Record? = nil
     ) {
+        self.audioService = audioService
         self.storageService = storageService
         self.record = record
     }
@@ -46,8 +51,19 @@ extension PlayToolbarViewModel {
         print("Go back")
     }
     
-    func play() {
-        print("Play")
+    func playPause() {
+        guard let record else {
+            print("ERROR: Cant play record / Reason: nil")
+            return
+        }
+        
+        if !isPaused {
+            audioService.playAudio(withName: record.name)
+            isPaused = false
+        } else {
+            audioService.pauseAudio()
+            isPaused = true
+        }
     }
     
     func goForward() {
@@ -55,6 +71,18 @@ extension PlayToolbarViewModel {
     }
     
     func deleteRecord() {
-        print("Deleted")
+        guard let record else {
+            print("ERROR: Cant play record / Reason: nil")
+            return
+        }
+        
+        storageService.deleteRecord(withID: record.id) { result in
+            switch result {
+            case .success:
+                break
+            case .failure(let error):
+                print("ERROR: Couldnt delete record \(error)")
+            }
+        }
     }
 }
