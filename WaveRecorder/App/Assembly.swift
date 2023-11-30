@@ -25,6 +25,18 @@ final class Assembly: AssemblyProtocol {
     
     private let services = Services()
     
+    private lazy var mainViewModel: MainViewModelProtocol = {
+        MainViewModel(storageService: services.storageService)
+    }()
+    
+    private lazy var recordViewModel: RecordViewModelProtocol = {
+        RecordViewModel(recordService: services.recordService, parentViewModel: mainViewModel)
+    }()
+    
+    private lazy var playToolbarViewModel: PlayToolbarViewModelProtocol = {
+        PlayToolbarViewModel(audioService: services.audioService, parentViewModel: mainViewModel)
+    }()
+    
     
     //MARK: Modules
     
@@ -38,26 +50,26 @@ final class Assembly: AssemblyProtocol {
     }
     
     
+    
     //MARK: Build
     
     func build(module: Module) -> UIViewController {
         switch module {
             
         case .main:
-            let viewModel: MainViewModelProtocol = MainViewModel(
-                storageService: services.storageService
-            )
-            let viewController = MainViewController(viewModel: viewModel)
+            mainViewModel.childViewModels = [recordViewModel, playToolbarViewModel]
+            let viewController = MainViewController(viewModel: mainViewModel)
             return viewController
         }
     }
     
     func build(subModule: SubModule) -> UIView {
+        
         switch subModule {
-            
         case .record:
             let viewModel: RecordViewModelProtocol = RecordViewModel(
-                recordService: services.recordService
+                recordService: services.recordService, 
+                parentViewModel: mainViewModel
             )
             let view = RecordView(viewModel: viewModel)
             return view
@@ -65,7 +77,7 @@ final class Assembly: AssemblyProtocol {
         case .playToolbar:
             let viewModel: PlayToolbarViewModelProtocol = PlayToolbarViewModel(
                 audioService: services.audioService,
-                storageService: services.storageService
+                parentViewModel: mainViewModel
             )
             let view = PlayToolbarView(viewModel: viewModel)
             return view
@@ -81,3 +93,4 @@ struct Services {
     let recordService: RecordServiceProtocol = RecordService()
     let storageService: StorageServiceProtocol = StorageService()
 }
+

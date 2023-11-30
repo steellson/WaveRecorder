@@ -76,8 +76,9 @@ extension RecordView: RoundedRecButtonViewDelegate {
             viewModel.startRecord()
             onRecord?(recButtonView.isRecording)
         } else {
-            viewModel.stopRecord()
-            onRecord?(!recButtonView.isRecording)
+            viewModel.stopRecord { [weak self] isRecorded in
+                self?.onRecord?(isRecorded)
+            }
         }
     }
 }

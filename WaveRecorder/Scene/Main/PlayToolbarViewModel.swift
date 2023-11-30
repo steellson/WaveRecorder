@@ -28,15 +28,16 @@ final class PlayToolbarViewModel: PlayToolbarViewModelProtocol {
     var isPaused = true
     
     private let audioService: AudioServiceProtocol
-    private let storageService: StorageServiceProtocol
+    private weak var parentViewModel: MainViewModelProtocol?
+
     
     init(
         audioService: AudioServiceProtocol,
-        storageService: StorageServiceProtocol,
+        parentViewModel: MainViewModelProtocol,
         record: Record? = nil
     ) {
         self.audioService = audioService
-        self.storageService = storageService
+        self.parentViewModel = parentViewModel
         self.record = record
     }
     
@@ -71,18 +72,6 @@ extension PlayToolbarViewModel {
     }
     
     func deleteRecord() {
-        guard let record else {
-            print("ERROR: Cant play record / Reason: nil")
-            return
-        }
-        
-        storageService.deleteRecord(withID: record.id) { result in
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                print("ERROR: Couldnt delete record \(error)")
-            }
-        }
+         
     }
 }

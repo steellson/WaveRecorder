@@ -29,7 +29,11 @@ final class PathManager {
     }
     
     func getWRRecordsDirectory() -> URL {
-        getDocumentsDirectory().appendingPathExtension("/WRRecords")
+        getDocumentsDirectory().appendingPathComponent("WRRecords")
+    }
+    
+    func getPathOfRecord(witnName name: String) -> URL {
+        getWRRecordsDirectory().appendingPathComponent("\(name)")
     }
     
     func checkExistanceOfFile(withName name: String) -> Bool {

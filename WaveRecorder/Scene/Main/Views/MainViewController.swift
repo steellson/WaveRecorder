@@ -24,7 +24,7 @@ final class MainViewController: BaseController {
     
     private var dataSource: DataSource!
     
-    private let recordView = Assembly.builder.build(subModule: .record)
+    private lazy var recordView = Assembly.builder.build(subModule: .record)
     private var recordViewHeight = UIScreen.main.bounds.height * 0.15
     
     private let viewModel: MainViewModelProtocol

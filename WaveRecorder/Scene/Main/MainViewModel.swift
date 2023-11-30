@@ -7,9 +7,11 @@
 
 import Foundation
 
-//MARK: - Protocol
+//MARK: - Protocols
 
 protocol MainViewModelProtocol: AnyObject {
+    var childViewModels: [AnyObject]? { get set }
+    
     var records: [Record] { get set }
     
     func getRecords()
@@ -19,13 +21,17 @@ protocol MainViewModelProtocol: AnyObject {
     func searchRecord(withText text: String)
 }
 
+
 //MARK: - Impl
 
 final class MainViewModel: MainViewModelProtocol {
     
     var records: [Record] = []
 
+    var childViewModels: [AnyObject]?
+    
     private let storageService: StorageServiceProtocol
+    
     
     
     init(
@@ -34,10 +40,6 @@ final class MainViewModel: MainViewModelProtocol {
         self.storageService = storageService
   
         getRecords()
-        
-//        saveRecord(Record(name: "test", duration: 3599, date: .now))
-//        saveRecord(Record(name: "test1", duration: 3600, date: .now))
-//        saveRecord(Record(name: "test2", duration: 3601, date: .now))
     }
     
 }
@@ -49,6 +51,7 @@ extension MainViewModel {
     
     //MARK: Get all
     func getRecords() {
+        records = []
         storageService.getRecords() { [weak self] result in
             switch result {
             case .success(let records):
@@ -99,5 +102,6 @@ extension MainViewModel {
     //MARK: Save
     func saveRecord(_ record: Record) {
         storageService.save(record: record)
+        getRecords()
     }
 }

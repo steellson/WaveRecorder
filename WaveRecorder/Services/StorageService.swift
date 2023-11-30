@@ -182,13 +182,20 @@ extension StorageService {
         let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.id == id })
         
         do {
+            // Delete from storage
             guard let record = try context.fetch(fetchDescriptor).first else {
                 print("ERROR: Cant get record widh id \(id) from storage")
                 completion(.failure(.cantGetRecordWithIDFormStorage))
                 return
             }
             context.delete(record)
+            
+            // Delete from file manager
+            let storedRecordURL = PathManager.instance.getPathOfRecord(witnName: record.name).appendingPathExtension("m4a")
+            print("** File will deleted: \(storedRecordURL)")
+            try FileManager.default.removeItem(at: storedRecordURL)
             completion(.success(true))
+            
         } catch {
             print("ERROR: Cant delete record with id \(id), error: \(error)")
             completion(.failure(.cantDeleteRecord))

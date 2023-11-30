@@ -16,9 +16,9 @@ final class MainTableViewCell: BaseCell {
     
     //MARK: Variables
 
+    private let mainContainerView = UIView()
     private let mainCellView = MainCellView()
     private let playToolbar = Assembly.builder.build(subModule: .playToolbar)
-    private let mainContainerView = UIView()
     
     private lazy var collapsedConstraint: NSLayoutConstraint = {
         let const = NSLayoutConstraint(
@@ -55,10 +55,11 @@ final class MainTableViewCell: BaseCell {
         }
     }
     
+    
     func configureCell(name: String, date: String, duraiton: String) {
         mainCellView.configureView(name: name, date: date, duraiton: duraiton)
     }
-    
+
     
     //MARK: Setup
     

@@ -11,12 +11,11 @@ import AVFoundation
 //MARK: - Protocol
 
 protocol RecordServiceProtocol: AnyObject {
-//    var record:
     var delegate: AVAudioRecorderDelegate? { get set }
     var isAudioRecordingAllowed: Bool { get }
 
     func startRecord(withName name: String)
-    func stopRecord(success: Bool)
+    func stopRecord(withName name: String, completion: ((Record?) -> Void)?)
 }
 
 
@@ -105,20 +104,31 @@ extension RecordService {
                 ? print(">>> RECORD STARTED!")
                 : print(">>> RECORD IS NOT STARTERD! SOMETHING WRONG")
             } catch {
-                self.stopRecord(success: false)
+                self.stopRecord(withName: name, completion: nil)
             }
         }
     }
     
-    func stopRecord(success: Bool) {
+    func stopRecord(withName name: String, completion: ((Record?) -> Void)?) {
         DispatchQueue.global().async { [unowned self] in
             self.audioRecorder.stop()
             try? self.recordingSession.setActive(false)
-            
+
             // Check
             !self.audioRecorder.isRecording
             ? print(">>> RECORD STOPPED!")
             : print(">>> RECORD IS NOT STOPPED! SOMETHING WRONG")
+     
+            let outputPath = audioRecorder.url
+            let track = AVPlayerItem(url: outputPath)
+            
+            let record = Record(
+                name: name,
+                path: outputPath.path(percentEncoded: true),
+                duration: track.duration.seconds,
+                date: .now
+            )
+            completion?(record)
         }
     }
 }
