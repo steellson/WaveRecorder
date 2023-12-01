@@ -38,9 +38,6 @@ final class PlayTolbarButton: UIButton {
     
     
     private func setupButton(ofType type: PlayToolbarButtonType) {
-        backgroundColor = .clear
-        tintColor = .black
-        
         switch type {
         case .goBack:
             setImage(UIImage(systemName: "gobackward.15"), for: .normal)
@@ -51,5 +48,9 @@ final class PlayTolbarButton: UIButton {
         case .delete:
             setImage(UIImage(systemName: "trash"), for: .normal)
         }
+        
+        backgroundColor = .clear
+        tintColor = .black
+        transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
     }
 }

@@ -61,7 +61,7 @@ extension RecordView {
             recButtonView.centerXAnchor.constraint(equalTo: centerXAnchor),
             recButtonView.heightAnchor.constraint(equalToConstant: viewModel.buttonRadius * 2),
             recButtonView.widthAnchor.constraint(equalToConstant: viewModel.buttonRadius * 2),
-            recButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10)
+            recButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -12)
         ])
     }
 }
@@ -76,8 +76,8 @@ extension RecordView: RoundedRecButtonViewDelegate {
             viewModel.startRecord()
             onRecord?(recButtonView.isRecording)
         } else {
-            viewModel.stopRecord()
-            onRecord?(!recButtonView.isRecording)
+            viewModel.stopRecord(completion: nil)
+            onRecord?(false)
         }
     }
 }

@@ -18,7 +18,7 @@ final class PathManager {
     private init() {}
     
     
-    //MARK: Methods
+    //MARK: Helps with get
     
     func getDocumentsDirectory() -> URL {
         let paths = fileManagerInstance.urls(
@@ -26,6 +26,18 @@ final class PathManager {
             in: .userDomainMask
         )
         return paths[0]
+    }
+    
+    func getWRRecordsDirectory() -> URL {
+        getDocumentsDirectory().appendingPathComponent("WRRecords")
+    }
+    
+    func getPathOfRecord(witnName name: String) -> URL {
+        getWRRecordsDirectory().appendingPathComponent("\(name)")
+    }
+    
+    func checkExistanceOfFile(withName name: String) -> Bool {
+        fileManagerInstance.fileExists(atPath: getWRRecordsDirectory().appendingPathComponent(name).path())
     }
     
     func createFolder(withDirectoryName name: String) {
@@ -42,6 +54,9 @@ final class PathManager {
                 }
             }
     }
+    
+    
+    //MARK: Helps with create
     
     func createNewFile(
         withDirectoryName dirName: String,

@@ -24,7 +24,7 @@ final class MainViewController: BaseController {
     
     private var dataSource: DataSource!
     
-    private let recordView = Assembly.builder.build(subModule: .record)
+    private lazy var recordView = Assembly.builder.build(subModule: .record)
     private var recordViewHeight = UIScreen.main.bounds.height * 0.15
     
     private let viewModel: MainViewModelProtocol
@@ -92,7 +92,7 @@ final class MainViewController: BaseController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tableView.layer.cornerRadius = 26
-        tableView.estimatedRowHeight = 200
+        tableView.estimatedRowHeight = 160
         tableView.showsVerticalScrollIndicator = false
         tableView.alwaysBounceVertical = true
         tableView.dataSource = self
@@ -186,15 +186,7 @@ extension MainViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        let record = viewModel.records[indexPath.row]
-        let dateString = Formatter.instance.formatDate(record.date)
-        let durationString = Formatter.instance.formatDuration(record.duration)
-        
-        cell.configureCell(
-            name: record.name,
-            date: dateString,
-            duraiton: durationString
-        )
+        cell.configureCell(withRecord: viewModel.records[indexPath.row])
         return cell
     }
 }
@@ -203,11 +195,13 @@ extension MainViewController: UITableViewDataSource {
 //MARK: - TableView Delegate
 
 extension MainViewController: UITableViewDelegate {
-        
+    
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        cell.isSelected = true
+//        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+//        cell.isSelected = true
     }
+
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         UISwipeActionsConfiguration(actions: [ UIContextualAction(

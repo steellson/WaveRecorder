@@ -17,7 +17,7 @@ final class PlayToolbarView: BaseView {
     
     //MARK: Variables
     
-    private let progressBar = UIProgressView()
+    private let progressSlider = UISlider()
     private let startTimeLabel = UILabel()
     private let endTimeLabel = UILabel()
     private let goBackButton = PlayTolbarButton(type: .goBack)
@@ -40,10 +40,15 @@ final class PlayToolbarView: BaseView {
     }
     
     
+    func configure(withRecord record: Record) {
+        self.viewModel.record = record
+    }
+    
+    
     //MARK: Setup
     
     private func setupContentView() {
-        addNewSubview(progressBar)
+        addNewSubview(progressSlider)
       addNewSubview(startTimeLabel)
       addNewSubview(endTimeLabel)
       addNewSubview(goBackButton)
@@ -52,51 +57,49 @@ final class PlayToolbarView: BaseView {
       addNewSubview(deleteButton)
     }
     
-    private func setupProgressBar() {
-        progressBar.backgroundColor = .systemGray
+    private func setupProgressSlider() {
+        progressSlider.backgroundColor = .systemGray
+        progressSlider.minimumValue = 0
+        progressSlider.maximumValue = Float(viewModel.record?.duration ?? 0)
+        progressSlider.thumbTintColor = .gray
     }
     
     private func setupStartTimeLabel() {
         startTimeLabel.text = "00:00"
-        startTimeLabel.font = .systemFont(ofSize: 12, weight: .light)
+        startTimeLabel.font = .systemFont(ofSize: 14, weight: .light)
     }
     
     private func setupEndTimeLabel() {
         endTimeLabel.text = "03:04"
-        endTimeLabel.font = .systemFont(ofSize: 12, weight: .light)
+        endTimeLabel.font = .systemFont(ofSize: 14, weight: .light)
     }
     
     private func setupButtonTargets() {
-        goBackButton.addTarget(self, action: #selector(goBackButtonTapped), for: .touchUpInside)
-        playButton.addTarget(self, action: #selector(goPlayButtonTapped), for: .touchUpInside)
-        goForwardButton.addTarget(self, action: #selector(goForwardButtonTapped), for: .touchUpInside)
-        deleteButton.addTarget(self, action: #selector(deleteButtonDidTapped), for: .touchUpInside)
+        goBackButton.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
+        playButton.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
+        goForwardButton.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
+        deleteButton.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
     }
-    
-    
-    
-    //MARK: Actions
-    
+
     @objc
-    private func goBackButtonTapped() {
-        viewModel.goBack()
+    private func buttonDidTapped(_ sender: PlayTolbarButton) {
+        UIView.animate(withDuration: 0.1) {
+            sender.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            sender.alpha = 0.2
+        } completion: { _ in
+            sender.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+            sender.alpha = 1
+        }
+        
+        DispatchQueue.main.async { [unowned self] in
+            switch sender.type {
+            case .goBack: self.viewModel.goBack()
+            case .play: self.viewModel.playPause()
+            case .goForward: self.viewModel.goForward()
+            case .delete: self.viewModel.deleteRecord()
+            }
+        }
     }
-    
-    @objc
-    private func goPlayButtonTapped() {
-        viewModel.play()
-    }
-    
-    @objc
-    private func goForwardButtonTapped() {
-        viewModel.goForward()
-    }
-    
-    @objc
-    private func deleteButtonDidTapped() {
-        viewModel.deleteRecord()
-    }
-    
 }
 
 
@@ -107,7 +110,7 @@ extension PlayToolbarView {
     override func setupView() {
         super.setupView()
         setupContentView()
-        setupProgressBar()
+        setupProgressSlider()
         setupStartTimeLabel()
         setupEndTimeLabel()
         setupButtonTargets()
@@ -117,36 +120,36 @@ extension PlayToolbarView {
         super.setupLayout()
         
         NSLayoutConstraint.activate([
-            progressBar.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            progressBar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            progressBar.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-            progressBar.heightAnchor.constraint(equalToConstant: 2),
-            
-            startTimeLabel.topAnchor.constraint(equalTo: progressBar.bottomAnchor, constant: 4),
-            startTimeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            
-            endTimeLabel.topAnchor.constraint(equalTo: progressBar.bottomAnchor, constant: 4),
-            endTimeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-            
-            playButton.topAnchor.constraint(equalTo: endTimeLabel.bottomAnchor, constant: 12),
-            playButton.widthAnchor.constraint(equalToConstant: 30),
-            playButton.heightAnchor.constraint(equalToConstant: 30),
+            playButton.widthAnchor.constraint(equalToConstant: 38),
+            playButton.heightAnchor.constraint(equalToConstant: 38),
             playButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            playButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24),
             
-            goBackButton.centerYAnchor.constraint(equalTo: playButton.centerYAnchor, constant: 2),
             goBackButton.trailingAnchor.constraint(equalTo: playButton.leadingAnchor, constant: -24),
-            goBackButton.widthAnchor.constraint(equalToConstant: 24),
-            goBackButton.heightAnchor.constraint(equalToConstant: 24),
+            goBackButton.widthAnchor.constraint(equalToConstant: 34),
+            goBackButton.heightAnchor.constraint(equalToConstant: 34),
+            goBackButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24),
             
-            goForwardButton.centerYAnchor.constraint(equalTo: playButton.centerYAnchor, constant: 2),
-            goForwardButton.widthAnchor.constraint(equalToConstant: 24),
-            goForwardButton.heightAnchor.constraint(equalToConstant: 24),
+            goForwardButton.widthAnchor.constraint(equalToConstant: 34),
+            goForwardButton.heightAnchor.constraint(equalToConstant: 34),
             goForwardButton.leadingAnchor.constraint(equalTo: playButton.trailingAnchor, constant: 24),
+            goForwardButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24),
 
-            deleteButton.centerYAnchor.constraint(equalTo: playButton.centerYAnchor),
-            deleteButton.widthAnchor.constraint(equalToConstant: 30),
-            deleteButton.heightAnchor.constraint(equalToConstant: 30),
-            deleteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            deleteButton.widthAnchor.constraint(equalToConstant: 34),
+            deleteButton.heightAnchor.constraint(equalToConstant: 34),
+            deleteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
+            deleteButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24),
+            
+            startTimeLabel.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: -24),
+            startTimeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            
+            endTimeLabel.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: -24),
+            endTimeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
+            
+            progressSlider.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            progressSlider.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
+            progressSlider.heightAnchor.constraint(equalToConstant: 1),
+            progressSlider.bottomAnchor.constraint(equalTo: endTimeLabel.topAnchor, constant: -24)
         ])
     }
 }

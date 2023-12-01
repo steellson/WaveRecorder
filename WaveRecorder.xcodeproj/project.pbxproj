@@ -34,6 +34,7 @@
 		3DEAFFE02B174749004CAE97 /* MainCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFDF2B174749004CAE97 /* MainCellView.swift */; };
 		3DEAFFE22B1758A5004CAE97 /* RecordService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFE12B1758A5004CAE97 /* RecordService.swift */; };
 		3DEAFFE62B186CDD004CAE97 /* PathManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFE52B186CDD004CAE97 /* PathManager.swift */; };
+		3DEAFFE82B18874C004CAE97 /* AudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFE72B18874C004CAE97 /* AudioService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +67,7 @@
 		3DEAFFDF2B174749004CAE97 /* MainCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCellView.swift; sourceTree = "<group>"; };
 		3DEAFFE12B1758A5004CAE97 /* RecordService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordService.swift; sourceTree = "<group>"; };
 		3DEAFFE52B186CDD004CAE97 /* PathManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathManager.swift; sourceTree = "<group>"; };
+		3DEAFFE72B18874C004CAE97 /* AudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +135,7 @@
 		3DEAFFA42B0F6679004CAE97 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				3DEAFFE72B18874C004CAE97 /* AudioService.swift */,
 				3DEAFFE12B1758A5004CAE97 /* RecordService.swift */,
 				3DEAFFCC2B14B884004CAE97 /* StorageService.swift */,
 			);
@@ -250,6 +253,8 @@
 			dependencies = (
 			);
 			name = WaveRecorder;
+			packageProductDependencies = (
+			);
 			productName = WaveRecorder;
 			productReference = 3DEAFF8B2B0F65F3004CAE97 /* WaveRecorder.app */;
 			productType = "com.apple.product-type.application";
@@ -278,6 +283,8 @@
 				Base,
 			);
 			mainGroup = 3DEAFF822B0F65F3004CAE97;
+			packageReferences = (
+			);
 			productRefGroup = 3DEAFF8C2B0F65F3004CAE97 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -312,6 +319,7 @@
 				3DEAFFD52B160F0E004CAE97 /* PlayToolbarView.swift in Sources */,
 				3DEAFFE62B186CDD004CAE97 /* PathManager.swift in Sources */,
 				3DEAFFB42B0F7F2A004CAE97 /* UIView+Extension.swift in Sources */,
+				3DEAFFE82B18874C004CAE97 /* AudioService.swift in Sources */,
 				3DEAFFD82B16129D004CAE97 /* PlayToolbarViewModel.swift in Sources */,
 				3DEAFFB62B0F80C8004CAE97 /* MainTableViewCell.swift in Sources */,
 				3DEAFFDE2B162111004CAE97 /* PlayTolbarButton.swift in Sources */,
