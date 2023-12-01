@@ -22,19 +22,12 @@
 		3DEAFFB92B0F80E0004CAE97 /* BaseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFB82B0F80E0004CAE97 /* BaseCell.swift */; };
 		3DEAFFC12B1092C4004CAE97 /* RoundedRecButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC02B1092C4004CAE97 /* RoundedRecButtonView.swift */; };
 		3DEAFFC32B109B6D004CAE97 /* UINavigationController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC22B109B6D004CAE97 /* UINavigationController+Extension.swift */; };
-		3DEAFFC62B10A265004CAE97 /* RecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC52B10A265004CAE97 /* RecordView.swift */; };
+		3DEAFFC62B10A265004CAE97 /* RecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC52B10A265004CAE97 /* RecordingView.swift */; };
 		3DEAFFC82B10D5B9004CAE97 /* RecordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC72B10D5B9004CAE97 /* RecordViewModel.swift */; };
 		3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCA2B14B60D004CAE97 /* Record.swift */; };
 		3DEAFFCD2B14B884004CAE97 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCC2B14B884004CAE97 /* StorageService.swift */; };
 		3DEAFFCF2B14D236004CAE97 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCE2B14D236004CAE97 /* Section.swift */; };
 		3DEAFFD22B15F54D004CAE97 /* Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD12B15F54D004CAE97 /* Formatter.swift */; };
-		3DEAFFD52B160F0E004CAE97 /* PlayToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD42B160F0E004CAE97 /* PlayToolbarView.swift */; };
-		3DEAFFD82B16129D004CAE97 /* PlayToolbarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD72B16129D004CAE97 /* PlayToolbarViewModel.swift */; };
-		3DEAFFDE2B162111004CAE97 /* PlayTolbarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFDD2B162111004CAE97 /* PlayTolbarButton.swift */; };
-		3DEAFFE02B174749004CAE97 /* MainCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFDF2B174749004CAE97 /* MainCellView.swift */; };
-		3DEAFFE22B1758A5004CAE97 /* RecordService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFE12B1758A5004CAE97 /* RecordService.swift */; };
-		3DEAFFE62B186CDD004CAE97 /* PathManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFE52B186CDD004CAE97 /* PathManager.swift */; };
-		3DEAFFE82B18874C004CAE97 /* AudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFE72B18874C004CAE97 /* AudioService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,19 +48,12 @@
 		3DEAFFB82B0F80E0004CAE97 /* BaseCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseCell.swift; sourceTree = "<group>"; };
 		3DEAFFC02B1092C4004CAE97 /* RoundedRecButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedRecButtonView.swift; sourceTree = "<group>"; };
 		3DEAFFC22B109B6D004CAE97 /* UINavigationController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extension.swift"; sourceTree = "<group>"; };
-		3DEAFFC52B10A265004CAE97 /* RecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordView.swift; sourceTree = "<group>"; };
+		3DEAFFC52B10A265004CAE97 /* RecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingView.swift; sourceTree = "<group>"; };
 		3DEAFFC72B10D5B9004CAE97 /* RecordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordViewModel.swift; sourceTree = "<group>"; };
 		3DEAFFCA2B14B60D004CAE97 /* Record.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
 		3DEAFFCC2B14B884004CAE97 /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		3DEAFFCE2B14D236004CAE97 /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		3DEAFFD12B15F54D004CAE97 /* Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatter.swift; sourceTree = "<group>"; };
-		3DEAFFD42B160F0E004CAE97 /* PlayToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayToolbarView.swift; sourceTree = "<group>"; };
-		3DEAFFD72B16129D004CAE97 /* PlayToolbarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayToolbarViewModel.swift; sourceTree = "<group>"; };
-		3DEAFFDD2B162111004CAE97 /* PlayTolbarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayTolbarButton.swift; sourceTree = "<group>"; };
-		3DEAFFDF2B174749004CAE97 /* MainCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCellView.swift; sourceTree = "<group>"; };
-		3DEAFFE12B1758A5004CAE97 /* RecordService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordService.swift; sourceTree = "<group>"; };
-		3DEAFFE52B186CDD004CAE97 /* PathManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathManager.swift; sourceTree = "<group>"; };
-		3DEAFFE72B18874C004CAE97 /* AudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,8 +121,6 @@
 		3DEAFFA42B0F6679004CAE97 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				3DEAFFE72B18874C004CAE97 /* AudioService.swift */,
-				3DEAFFE12B1758A5004CAE97 /* RecordService.swift */,
 				3DEAFFCC2B14B884004CAE97 /* StorageService.swift */,
 			);
 			path = Services;
@@ -166,9 +150,7 @@
 			children = (
 				3DEAFFB02B0F7770004CAE97 /* MainViewModel.swift */,
 				3DEAFFC72B10D5B9004CAE97 /* RecordViewModel.swift */,
-				3DEAFFD72B16129D004CAE97 /* PlayToolbarViewModel.swift */,
 				3DEAFFB72B0F80CD004CAE97 /* Views */,
-				3DEAFFC42B10A244004CAE97 /* Subviews */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -187,7 +169,7 @@
 			children = (
 				3DEAFF922B0F65F3004CAE97 /* MainViewController.swift */,
 				3DEAFFB52B0F80C8004CAE97 /* MainTableViewCell.swift */,
-				3DEAFFDF2B174749004CAE97 /* MainCellView.swift */,
+				3DEAFFC42B10A244004CAE97 /* Subviews */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -195,8 +177,8 @@
 		3DEAFFC42B10A244004CAE97 /* Subviews */ = {
 			isa = PBXGroup;
 			children = (
-				3DEAFFD62B161287004CAE97 /* PlayToolbar */,
-				3DEAFFD92B16134E004CAE97 /* Recording */,
+				3DEAFFC52B10A265004CAE97 /* RecordingView.swift */,
+				3DEAFFC02B1092C4004CAE97 /* RoundedRecButtonView.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
@@ -214,27 +196,8 @@
 			isa = PBXGroup;
 			children = (
 				3DEAFFD12B15F54D004CAE97 /* Formatter.swift */,
-				3DEAFFE52B186CDD004CAE97 /* PathManager.swift */,
 			);
 			path = Helpers;
-			sourceTree = "<group>";
-		};
-		3DEAFFD62B161287004CAE97 /* PlayToolbar */ = {
-			isa = PBXGroup;
-			children = (
-				3DEAFFD42B160F0E004CAE97 /* PlayToolbarView.swift */,
-				3DEAFFDD2B162111004CAE97 /* PlayTolbarButton.swift */,
-			);
-			path = PlayToolbar;
-			sourceTree = "<group>";
-		};
-		3DEAFFD92B16134E004CAE97 /* Recording */ = {
-			isa = PBXGroup;
-			children = (
-				3DEAFFC52B10A265004CAE97 /* RecordView.swift */,
-				3DEAFFC02B1092C4004CAE97 /* RoundedRecButtonView.swift */,
-			);
-			path = Recording;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -253,8 +216,6 @@
 			dependencies = (
 			);
 			name = WaveRecorder;
-			packageProductDependencies = (
-			);
 			productName = WaveRecorder;
 			productReference = 3DEAFF8B2B0F65F3004CAE97 /* WaveRecorder.app */;
 			productType = "com.apple.product-type.application";
@@ -283,8 +244,6 @@
 				Base,
 			);
 			mainGroup = 3DEAFF822B0F65F3004CAE97;
-			packageReferences = (
-			);
 			productRefGroup = 3DEAFF8C2B0F65F3004CAE97 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -316,13 +275,8 @@
 				3DEAFFA92B0F6713004CAE97 /* Resources.swift in Sources */,
 				3DEAFFC32B109B6D004CAE97 /* UINavigationController+Extension.swift in Sources */,
 				3DEAFFAC2B0F7651004CAE97 /* BaseView.swift in Sources */,
-				3DEAFFD52B160F0E004CAE97 /* PlayToolbarView.swift in Sources */,
-				3DEAFFE62B186CDD004CAE97 /* PathManager.swift in Sources */,
 				3DEAFFB42B0F7F2A004CAE97 /* UIView+Extension.swift in Sources */,
-				3DEAFFE82B18874C004CAE97 /* AudioService.swift in Sources */,
-				3DEAFFD82B16129D004CAE97 /* PlayToolbarViewModel.swift in Sources */,
 				3DEAFFB62B0F80C8004CAE97 /* MainTableViewCell.swift in Sources */,
-				3DEAFFDE2B162111004CAE97 /* PlayTolbarButton.swift in Sources */,
 				3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */,
 				3DEAFFAF2B0F766E004CAE97 /* Assembly.swift in Sources */,
 				3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */,
@@ -331,12 +285,10 @@
 				3DEAFFB92B0F80E0004CAE97 /* BaseCell.swift in Sources */,
 				3DEAFFC12B1092C4004CAE97 /* RoundedRecButtonView.swift in Sources */,
 				3DEAFFCD2B14B884004CAE97 /* StorageService.swift in Sources */,
-				3DEAFFC62B10A265004CAE97 /* RecordView.swift in Sources */,
+				3DEAFFC62B10A265004CAE97 /* RecordingView.swift in Sources */,
 				3DEAFFAD2B0F7651004CAE97 /* BaseController.swift in Sources */,
 				3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */,
 				3DEAFFB12B0F7770004CAE97 /* MainViewModel.swift in Sources */,
-				3DEAFFE22B1758A5004CAE97 /* RecordService.swift in Sources */,
-				3DEAFFE02B174749004CAE97 /* MainCellView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -485,7 +437,6 @@
 				INFOPLIST_FILE = WaveRecorder/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WRecorder;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Need access for recording";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";
@@ -519,7 +470,6 @@
 				INFOPLIST_FILE = WaveRecorder/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WRecorder;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Need access for recording";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";

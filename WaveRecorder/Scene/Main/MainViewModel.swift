@@ -7,9 +7,9 @@
 
 import Foundation
 
-//MARK: - Protocols
+//MARK: - Protocol
 
-protocol MainViewModelProtocol: AnyObject {    
+protocol MainViewModelProtocol: AnyObject {
     var records: [Record] { get set }
     
     func getRecords()
@@ -19,13 +19,12 @@ protocol MainViewModelProtocol: AnyObject {
     func searchRecord(withText text: String)
 }
 
-
 //MARK: - Impl
 
 final class MainViewModel: MainViewModelProtocol {
     
     var records: [Record] = []
-    
+
     private let storageService: StorageServiceProtocol
     
     
@@ -35,6 +34,10 @@ final class MainViewModel: MainViewModelProtocol {
         self.storageService = storageService
   
         getRecords()
+        
+//        saveRecord(Record(name: "test", duration: 3599, date: .now))
+//        saveRecord(Record(name: "test1", duration: 3600, date: .now))
+//        saveRecord(Record(name: "test2", duration: 3601, date: .now))
     }
     
 }
@@ -46,7 +49,6 @@ extension MainViewModel {
     
     //MARK: Get all
     func getRecords() {
-        records = []
         storageService.getRecords() { [weak self] result in
             switch result {
             case .success(let records):
@@ -75,7 +77,7 @@ extension MainViewModel {
     
     //MARK: Delete
     func deleteRecord(withID id: String, completion: ((Result<Bool, Error>) -> Void)?) {
-        storageService.deleteRecord(withID: id) { result in
+        storageService.deleteRecord(withID: id) { [weak self] result in
             switch result {
             case .success(let deleted):
                 print("SUCCESS: Record with id \(id) deleted!")
@@ -97,6 +99,5 @@ extension MainViewModel {
     //MARK: Save
     func saveRecord(_ record: Record) {
         storageService.save(record: record)
-        getRecords()
     }
 }

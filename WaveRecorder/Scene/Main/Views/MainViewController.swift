@@ -24,11 +24,11 @@ final class MainViewController: BaseController {
     
     private var dataSource: DataSource!
     
-    private lazy var recordView = Assembly.builder.build(subModule: .record)
-    private var recordViewHeight = UIScreen.main.bounds.height * 0.15
+    private let recordingView = Assembly.builder.build(subModule: .record)
     
     private let viewModel: MainViewModelProtocol
     
+    private var recordingViewHeight = UIScreen.main.bounds.height * 0.15
         
     
     //MARK: Init
@@ -56,7 +56,7 @@ final class MainViewController: BaseController {
     
     private func setupContentView() {
         view.addNewSubview(tableView)
-        view.addNewSubview(recordView)
+        view.addNewSubview(recordingView)
     }
     
     private func setupEditButton() {
@@ -89,12 +89,9 @@ final class MainViewController: BaseController {
     
     private func setupTableView() {
         tableView.backgroundColor = R.Colors.secondaryBackgroundColor
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        tableView.layer.cornerRadius = 26
-        tableView.estimatedRowHeight = 160
         tableView.showsVerticalScrollIndicator = false
-        tableView.alwaysBounceVertical = true
+        tableView.layer.cornerRadius = 26
+        tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(MainTableViewCell.self,
@@ -102,7 +99,7 @@ final class MainViewController: BaseController {
     }
     
     private func setupRecordingViewHeight() {
-        guard let recView = (recordView as? RecordView) else { return }
+        guard let recView = (recordingView as? RecordingView) else { return }
         
         recView.onRecord = { [weak self] isRecording in
             UIView.animate(
@@ -110,7 +107,7 @@ final class MainViewController: BaseController {
                 delay: 0.2,
                 options: .curveEaseIn
             ) {
-                self?.recordView.heightConstraint?.constant = isRecording
+                self?.recordingView.heightConstraint?.constant = isRecording
                 ? UIScreen.main.bounds.height * 0.25
                 : UIScreen.main.bounds.height * 0.15
             }
@@ -156,15 +153,15 @@ extension MainViewController {
         setupRecordingViewHeight()
         
         NSLayoutConstraint.activate([
-            recordView.heightAnchor.constraint(equalToConstant: recordViewHeight),
-            recordView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            recordView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            recordView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            recordingView.heightAnchor.constraint(equalToConstant: recordingViewHeight),
+            recordingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            recordingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            recordingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             tableView.topAnchor.constraint(equalTo: searchController.searchBar.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: recordView.topAnchor)
+            tableView.bottomAnchor.constraint(equalTo: recordingView.topAnchor)
         ])
     }
 }
@@ -186,7 +183,15 @@ extension MainViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        cell.configureCell(withRecord: viewModel.records[indexPath.row])
+        let record = viewModel.records[indexPath.row]
+        let dateString = Formatter.instance.formatDate(record.date)
+        let durationString = Formatter.instance.formatDuration(record.duration)
+        
+        cell.configureCell(
+            name: record.name,
+            date: dateString,
+            duraiton: durationString
+        )
         return cell
     }
 }
@@ -195,13 +200,10 @@ extension MainViewController: UITableViewDataSource {
 //MARK: - TableView Delegate
 
 extension MainViewController: UITableViewDelegate {
-    
-    
+        
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        guard let cell = tableView.cellForRow(at: indexPath) else { return }
-//        cell.isSelected = true
+        tableView.deselectRow(at: indexPath, animated: true)
     }
-
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         UISwipeActionsConfiguration(actions: [ UIContextualAction(
