@@ -102,15 +102,13 @@ final class MainViewController: BaseController {
     }
     
     private func setupRecordingViewHeight() {
-        guard let recView = (recordView as? RecordView) else { return }
-        
-        recView.onRecord = { [weak self] isRecording in
+        if viewModel.isRecordingNow {
             UIView.animate(
                 withDuration: 0.5,
                 delay: 0.2,
                 options: .curveEaseIn
             ) {
-                self?.recordView.heightConstraint?.constant = isRecording
+                self.recordView.heightConstraint?.constant = self.viewModel.isRecordingNow
                 ? UIScreen.main.bounds.height * 0.25
                 : UIScreen.main.bounds.height * 0.15
             }
@@ -185,8 +183,7 @@ extension MainViewController: UITableViewDataSource {
             print("ERROR: Cant dequeue reusable cell")
             return UITableViewCell()
         }
-        
-        cell.configureCell(withRecord: viewModel.records[indexPath.row])
+        cell.configureCell(withViewModel: viewModel.setupChildViewModel(withIndexPath: indexPath))
         return cell
     }
 }
@@ -211,7 +208,7 @@ extension MainViewController: UITableViewDelegate {
                 self.tableView.beginUpdates()
                 
                 let record = self.viewModel.records[indexPath.row]
-                self.viewModel.deleteRecord(withID: record.id) { [weak self] res in
+                self.viewModel.delete(record: record) { [weak self] res in
                     switch res {
                     case .success:
                         self?.viewModel.records.remove(at: indexPath.row)

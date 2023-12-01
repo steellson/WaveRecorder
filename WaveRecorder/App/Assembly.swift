@@ -14,6 +14,7 @@ import UIKit
 protocol AssemblyProtocol: AnyObject {
     func build(module: Assembly.Module) -> UIViewController
     func build(subModule: Assembly.SubModule) -> UIView
+    func buildMainCellViewModel(withRecord record: Record) -> MainCellViewModelProtocol
 }
 
 
@@ -38,7 +39,6 @@ final class Assembly: AssemblyProtocol {
     
     enum SubModule {
         case record
-        case playToolbar
     }
     
     
@@ -57,23 +57,26 @@ final class Assembly: AssemblyProtocol {
     func build(subModule: SubModule) -> UIView {
         
         switch subModule {
+
         case .record:
             let viewModel: RecordViewModelProtocol = RecordViewModel(
-                recordService: services.recordService, 
+                recordService: services.recordService,
                 parentViewModel: mainViewModel
             )
             let view = RecordView(viewModel: viewModel)
             return view
-            
-        case .playToolbar:
-            let viewModel: PlayToolbarViewModelProtocol = PlayToolbarViewModel(
-                audioService: services.audioService,
-                parentViewModel: mainViewModel
-            )
-            let view = PlayToolbarView(viewModel: viewModel)
-            return view
         }
     }
+    
+    func buildMainCellViewModel(withRecord record: Record) -> MainCellViewModelProtocol {
+        let mainCellViewModel: MainCellViewModelProtocol = MainCellViewModel(
+            audioService: services.audioService,
+            parentViewModel: mainViewModel,
+            record: record
+        )
+        return mainCellViewModel
+    }
+
 }
 
 

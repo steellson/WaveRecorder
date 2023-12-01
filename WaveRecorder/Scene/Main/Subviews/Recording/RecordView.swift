@@ -7,15 +7,15 @@
 
 import UIKit
 
+
 //MARK: - Impl
 
 final class RecordView: BaseView {
-    
+        
     private let viewModel: RecordViewModelProtocol
     
     private lazy var recButtonView = RoundedRecButtonView(radius: viewModel.buttonRadius)
-    
-    var onRecord: ((Bool) -> Void)?
+
     
     //MARK: Init
     
@@ -74,10 +74,8 @@ extension RecordView: RoundedRecButtonViewDelegate {
     func recButtonDidTapped() {
         if recButtonView.isRecording {
             viewModel.startRecord()
-            onRecord?(recButtonView.isRecording)
         } else {
             viewModel.stopRecord(completion: nil)
-            onRecord?(false)
         }
     }
 }

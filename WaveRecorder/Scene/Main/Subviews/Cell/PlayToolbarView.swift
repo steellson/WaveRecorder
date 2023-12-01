@@ -8,13 +8,22 @@
 import Foundation
 import UIKit
 
+//MARK: - Protocol
+
+protocol PlayToolbarViewDelegate: AnyObject {
+    func goBack()
+    func playPause()
+    func goForward()
+    func deleteRecord()
+}
+
 
 //MARK: - Impl
 
 final class PlayToolbarView: BaseView {
-        
-    private let viewModel: PlayToolbarViewModelProtocol
     
+    weak var delegate: PlayToolbarViewDelegate?
+            
     //MARK: Variables
     
     private let progressSlider = UISlider()
@@ -26,41 +35,22 @@ final class PlayToolbarView: BaseView {
     private let deleteButton = PlayTolbarButton(type: .delete)
     
     
-    //MARK: Init
-    
-    init(
-        viewModel: PlayToolbarViewModelProtocol
-    ) {
-        self.viewModel = viewModel
-        super.init(frame: .zero)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    
-    func configure(withRecord record: Record) {
-        self.viewModel.record = record
-    }
-    
-    
     //MARK: Setup
     
     private func setupContentView() {
         addNewSubview(progressSlider)
-      addNewSubview(startTimeLabel)
-      addNewSubview(endTimeLabel)
-      addNewSubview(goBackButton)
-      addNewSubview(playButton)
-      addNewSubview(goForwardButton)
-      addNewSubview(deleteButton)
+        addNewSubview(startTimeLabel)
+        addNewSubview(endTimeLabel)
+        addNewSubview(goBackButton)
+        addNewSubview(playButton)
+        addNewSubview(goForwardButton)
+        addNewSubview(deleteButton)
     }
     
     private func setupProgressSlider() {
         progressSlider.backgroundColor = .systemGray
         progressSlider.minimumValue = 0
-        progressSlider.maximumValue = Float(viewModel.record?.duration ?? 0)
+//        progressSlider.maximumValue = Float(viewModel.record?.duration ?? 0)
         progressSlider.thumbTintColor = .gray
     }
     
@@ -93,10 +83,10 @@ final class PlayToolbarView: BaseView {
         
         DispatchQueue.main.async { [unowned self] in
             switch sender.type {
-            case .goBack: self.viewModel.goBack()
-            case .play: self.viewModel.playPause()
-            case .goForward: self.viewModel.goForward()
-            case .delete: self.viewModel.deleteRecord()
+            case .goBack: self.delegate?.goBack()
+            case .play: self.delegate?.playPause()
+            case .goForward: self.delegate?.goForward()
+            case .delete: self.delegate?.deleteRecord()
             }
         }
     }

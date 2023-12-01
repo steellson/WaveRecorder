@@ -11,12 +11,17 @@ import Foundation
 
 protocol MainViewModelProtocol: AnyObject {    
     var records: [Record] { get set }
+    var isRecordingNow: Bool { get set }
     
     func getRecords()
-    func getRecord(withID id: String, completion: @escaping (Result<Record, Error>) -> Void)
-    func deleteRecord(withID id: String, completion: ((Result<Bool, Error>) -> Void)?)
-    func saveRecord(_ record: Record)
+    func get(record: Record, completion: @escaping (Result<Record, Error>) -> Void)
+    func delete(record: Record, completion: ((Result<Bool, Error>) -> Void)?)
     func searchRecord(withText text: String)
+    
+    func didStartRecording(ofRecord record: Record)
+    func didFinishRecording(ofRecord record: Record)
+        
+    func setupChildViewModel(withIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol
 }
 
 
@@ -25,6 +30,8 @@ protocol MainViewModelProtocol: AnyObject {
 final class MainViewModel: MainViewModelProtocol {
     
     var records: [Record] = []
+    
+    var isRecordingNow: Bool = false
     
     private let storageService: StorageServiceProtocol
     
@@ -60,8 +67,8 @@ extension MainViewModel {
     
     
     //MARK: Get single
-    func getRecord(withID id: String, completion: @escaping (Result<Record, Error>) -> Void) {
-        storageService.getRecord(withID: id) { result in
+    func get(record: Record, completion: @escaping (Result<Record, Error>) -> Void) {
+        storageService.get(record: record) { result in
             switch result {
             case .success(let record):
                 completion(.success(record))
@@ -74,11 +81,11 @@ extension MainViewModel {
     
     
     //MARK: Delete
-    func deleteRecord(withID id: String, completion: ((Result<Bool, Error>) -> Void)?) {
-        storageService.deleteRecord(withID: id) { result in
+    func delete(record: Record, completion: ((Result<Bool, Error>) -> Void)?) {
+        storageService.delete(record: record) { result in
             switch result {
             case .success(let deleted):
-                print("SUCCESS: Record with id \(id) deleted!")
+                print("SUCCESS: Record with id \(record.id) deleted!")
                 completion?(.success(deleted))
             case .failure(let error):
                 print("ERROR: \(error)")
@@ -94,9 +101,20 @@ extension MainViewModel {
     }
     
     
-    //MARK: Save
-    func saveRecord(_ record: Record) {
-        storageService.save(record: record)
-        getRecords()
+    //MARK: Did start rec
+    func didStartRecording(ofRecord record: Record) {
+        isRecordingNow = true
+    }
+    
+    
+    //MARK: Did finish rec
+    func didFinishRecording(ofRecord record: Record) {
+        isRecordingNow = false
+    }
+    
+    
+    //MARK: Seutp child VM
+    func setupChildViewModel(withIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol {
+        Assembly.builder.buildMainCellViewModel(withRecord: records[indexPath.row])
     }
 }

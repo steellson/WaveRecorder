@@ -29,7 +29,7 @@
 		3DEAFFCF2B14D236004CAE97 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCE2B14D236004CAE97 /* Section.swift */; };
 		3DEAFFD22B15F54D004CAE97 /* Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD12B15F54D004CAE97 /* Formatter.swift */; };
 		3DEAFFD52B160F0E004CAE97 /* PlayToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD42B160F0E004CAE97 /* PlayToolbarView.swift */; };
-		3DEAFFD82B16129D004CAE97 /* PlayToolbarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD72B16129D004CAE97 /* PlayToolbarViewModel.swift */; };
+		3DEAFFD82B16129D004CAE97 /* MainCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD72B16129D004CAE97 /* MainCellViewModel.swift */; };
 		3DEAFFDE2B162111004CAE97 /* PlayTolbarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFDD2B162111004CAE97 /* PlayTolbarButton.swift */; };
 		3DEAFFE02B174749004CAE97 /* MainCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFDF2B174749004CAE97 /* MainCellView.swift */; };
 		3DEAFFE22B1758A5004CAE97 /* RecordService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFE12B1758A5004CAE97 /* RecordService.swift */; };
@@ -62,7 +62,7 @@
 		3DEAFFCE2B14D236004CAE97 /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		3DEAFFD12B15F54D004CAE97 /* Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatter.swift; sourceTree = "<group>"; };
 		3DEAFFD42B160F0E004CAE97 /* PlayToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayToolbarView.swift; sourceTree = "<group>"; };
-		3DEAFFD72B16129D004CAE97 /* PlayToolbarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayToolbarViewModel.swift; sourceTree = "<group>"; };
+		3DEAFFD72B16129D004CAE97 /* MainCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCellViewModel.swift; sourceTree = "<group>"; };
 		3DEAFFDD2B162111004CAE97 /* PlayTolbarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayTolbarButton.swift; sourceTree = "<group>"; };
 		3DEAFFDF2B174749004CAE97 /* MainCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCellView.swift; sourceTree = "<group>"; };
 		3DEAFFE12B1758A5004CAE97 /* RecordService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordService.swift; sourceTree = "<group>"; };
@@ -165,8 +165,8 @@
 			isa = PBXGroup;
 			children = (
 				3DEAFFB02B0F7770004CAE97 /* MainViewModel.swift */,
+				3DEAFFD72B16129D004CAE97 /* MainCellViewModel.swift */,
 				3DEAFFC72B10D5B9004CAE97 /* RecordViewModel.swift */,
-				3DEAFFD72B16129D004CAE97 /* PlayToolbarViewModel.swift */,
 				3DEAFFB72B0F80CD004CAE97 /* Views */,
 				3DEAFFC42B10A244004CAE97 /* Subviews */,
 			);
@@ -187,7 +187,6 @@
 			children = (
 				3DEAFF922B0F65F3004CAE97 /* MainViewController.swift */,
 				3DEAFFB52B0F80C8004CAE97 /* MainTableViewCell.swift */,
-				3DEAFFDF2B174749004CAE97 /* MainCellView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -195,7 +194,7 @@
 		3DEAFFC42B10A244004CAE97 /* Subviews */ = {
 			isa = PBXGroup;
 			children = (
-				3DEAFFD62B161287004CAE97 /* PlayToolbar */,
+				3DEAFFD62B161287004CAE97 /* Cell */,
 				3DEAFFD92B16134E004CAE97 /* Recording */,
 			);
 			path = Subviews;
@@ -219,13 +218,14 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
-		3DEAFFD62B161287004CAE97 /* PlayToolbar */ = {
+		3DEAFFD62B161287004CAE97 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
+				3DEAFFDF2B174749004CAE97 /* MainCellView.swift */,
 				3DEAFFD42B160F0E004CAE97 /* PlayToolbarView.swift */,
 				3DEAFFDD2B162111004CAE97 /* PlayTolbarButton.swift */,
 			);
-			path = PlayToolbar;
+			path = Cell;
 			sourceTree = "<group>";
 		};
 		3DEAFFD92B16134E004CAE97 /* Recording */ = {
@@ -320,7 +320,7 @@
 				3DEAFFE62B186CDD004CAE97 /* PathManager.swift in Sources */,
 				3DEAFFB42B0F7F2A004CAE97 /* UIView+Extension.swift in Sources */,
 				3DEAFFE82B18874C004CAE97 /* AudioService.swift in Sources */,
-				3DEAFFD82B16129D004CAE97 /* PlayToolbarViewModel.swift in Sources */,
+				3DEAFFD82B16129D004CAE97 /* MainCellViewModel.swift in Sources */,
 				3DEAFFB62B0F80C8004CAE97 /* MainTableViewCell.swift in Sources */,
 				3DEAFFDE2B162111004CAE97 /* PlayTolbarButton.swift in Sources */,
 				3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */,

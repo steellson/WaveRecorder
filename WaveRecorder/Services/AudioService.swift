@@ -14,8 +14,18 @@ import AVFoundation
 protocol AudioServiceProtocol: AnyObject {
     var isPlaying: Bool { get }
     
-    func playAudio(withName name: String)
-    func pauseAudio()
+    func play(audioRecord record: Record, completion: @escaping (AudioServiceError?) -> Void)
+    func pause(audioRecord record: Record, completion: @escaping (AudioServiceError?) -> Void)
+}
+
+
+//MARK: - Error
+
+enum AudioServiceError: Error {
+    case cantSetupAudioPlayer
+    case cantPlayAudio
+    case cantPauseAudio
+    case audioFileWithNameDoesntExist
 }
 
 
@@ -62,37 +72,47 @@ final class AudioService: AudioServiceProtocol {
 
 extension AudioService {
    
-    func playAudio(withName name: String) {
-        let audioPathURL = PathManager.instance
-            .getWRRecordsDirectory()
-            .appendingPathComponent(name)
-            .appendingPathExtension(writedFormat)
-
-        guard FileManager.default.fileExists(atPath: audioPathURL.path()) else {
-            print("ERROR: File with name \(name) doesn't exist!")
+    func play(audioRecord record: Record, completion: @escaping (AudioServiceError?) -> Void) {
+        guard
+            let recordSafeURL = URL(string: record.path),
+              FileManager.default.fileExists(atPath: record.path)
+        else {
+            print("ERROR: File with name \(record.name) doesn't exist!")
+            completion(.audioFileWithNameDoesntExist)
             return
         }
         
         DispatchQueue.main.async { [unowned self] in
             do {
-                
-                self.audioPlayer = try AVAudioPlayer(contentsOf: audioPathURL)
+                self.audioPlayer = try AVAudioPlayer(contentsOf: recordSafeURL)
                 guard let audioPlayer = self.audioPlayer else { return }
                 setupSettings(forPlayer: audioPlayer)
                 
-                print(">> Will start playing audio with path: \(audioPathURL)")
+                print(">> Will start playing audio with path: \(recordSafeURL)")
         
                 self.startPlay(withPlayer: audioPlayer)
                 
+                if isPlaying {
+                    completion(nil)
+                } else {
+                    completion(.cantPlayAudio)
+                }
+                
             } catch {
                 print("ERROR: AudioPlayer could not be instantiated \(error)")
+                completion(.cantSetupAudioPlayer)
             }
         }
     }
     
-    func pauseAudio() {
+    func pause(audioRecord record: Record, completion: @escaping (AudioServiceError?) -> Void) {
         DispatchQueue.main.async { [unowned self] in
             self.pause()
+            if !isPlaying {
+                completion(nil)
+            } else {
+                completion(.cantPauseAudio)
+            }
         }
     }
 }

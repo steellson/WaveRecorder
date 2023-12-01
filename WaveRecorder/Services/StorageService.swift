@@ -12,22 +12,16 @@ import SwiftData
 
 protocol StorageServiceProtocol: AnyObject {
     func getRecords(completion: @escaping (Result<[Record], StorageError>) -> Void)
+    func get(record: Record, completion: @escaping (Result<Record, StorageError>) -> Void)
     
-    func getRecord(withID
-                   id: String,
-                   completion: @escaping (Result<Record, StorageError>) -> Void)
+    func set(newName name: String, toRecord record: Record)
+    func save(record: Record)
+    func delete(record: Record, completion: @escaping (Result<Bool, StorageError>) -> Void)
     
     func searchRecord(withText
                      text: String,
                      completion: @escaping (Result<[Record], StorageError>) -> Void)
 
-    
-    func deleteRecord(withID 
-                      id: String,
-                      completion: @escaping (Result<Bool, StorageError>) -> Void)
-    
-    func save(record: Record)
-    func renameRecord(withID id: String, newName name: String)
 }
 
 //MARK: Storage error
@@ -95,9 +89,7 @@ extension StorageService {
     
     //MARK: Get single
     
-    func getRecord(withID
-                   id: String,
-                   completion: @escaping (Result<Record, StorageError>) -> Void) {
+    func get(record: Record, completion: @escaping (Result<Record, StorageError>) -> Void) {
         
         guard let context else {
             print("ERROR: Cant get storage context")
@@ -105,7 +97,7 @@ extension StorageService {
             return
         }
         
-        let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.id == id })
+        let fetchDescriptor = FetchDescriptor<Record>()
         
         do {
             guard let record = try context.fetch(fetchDescriptor).first else {
@@ -115,7 +107,7 @@ extension StorageService {
             }
             completion(.success(record))
         } catch {
-            print("ERROR: Cant get record with id \(id) from storage: \(error)")
+            print("ERROR: Cant get record with id \(record.id) from storage: \(error)")
             completion(.failure(.cantGetRecordWithIDFormStorage))
         }
     }
@@ -142,17 +134,17 @@ extension StorageService {
     
     //MARK: Rename
     
-    func renameRecord(withID id: String, newName name: String) {
+    func set(newName name: String, toRecord record: Record) {
         guard let context else {
             print("ERROR: Cant get storage context")
             return
         }
         
-        let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.id == id })
+        let fetchDescriptor = FetchDescriptor<Record>()
         
         do {
             guard let oldRecord = try context.fetch(fetchDescriptor).first else {
-                print("ERROR: Cant get record widh id \(id) from storage")
+                print("ERROR: Cant get record widh id \(record.id) from storage")
                 return
             }
             
@@ -172,19 +164,19 @@ extension StorageService {
     
     //MARK: Delete
     
-    func deleteRecord(withID id: String, completion: @escaping (Result<Bool, StorageError>) -> Void) {
+    func delete(record: Record, completion: @escaping (Result<Bool, StorageError>) -> Void) {
         guard let context else {
             print("ERROR: Cant get storage context")
             completion(.failure(.cantGetStorageContext))
             return
         }
         
-        let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.id == id })
+        let fetchDescriptor = FetchDescriptor<Record>()
         
         do {
             // Delete from storage
             guard let record = try context.fetch(fetchDescriptor).first else {
-                print("ERROR: Cant get record widh id \(id) from storage")
+                print("ERROR: Cant get record widh id \(record.id) from storage")
                 completion(.failure(.cantGetRecordWithIDFormStorage))
                 return
             }
@@ -197,7 +189,7 @@ extension StorageService {
             completion(.success(true))
             
         } catch {
-            print("ERROR: Cant delete record with id \(id), error: \(error)")
+            print("ERROR: Cant delete record with id \(record.id), error: \(error)")
             completion(.failure(.cantDeleteRecord))
             return
         }

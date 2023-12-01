@@ -13,10 +13,13 @@ final class MainTableViewCell: BaseCell {
     
     static let mainTableViewCellIdentifier = R.Strings.mainTableViewCellIdentifier.rawValue
     
+    
     //MARK: Variables
+    
+    private var viewModel: MainCellViewModelProtocol?
 
     private let mainCellView = MainCellView()
-    private let playToolbar = Assembly.builder.build(subModule: .playToolbar)
+    private let playToolbar = PlayToolbarView()
     
     override var isSelected: Bool {
         didSet {
@@ -31,18 +34,8 @@ final class MainTableViewCell: BaseCell {
     
     
     
-    func configureCell(withRecord record: Record) {
-        mainCellView.configureView(
-            name: record.name,
-            date: Formatter.instance.formatDate(record.date),
-            duraiton: Formatter.instance.formatDuration(record.duration)
-        )
-        
-        guard let toolbar = playToolbar as? PlayToolbarView else {
-            print("ERROR: Couldnt setup play toolbar")
-            return
-        }
-        toolbar.configure(withRecord: record)
+    func configureCell(withViewModel viewModel: MainCellViewModelProtocol) {
+        self.viewModel = viewModel
     }
 
     

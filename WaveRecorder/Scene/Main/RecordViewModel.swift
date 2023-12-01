@@ -43,18 +43,24 @@ final class RecordViewModel: RecordViewModelProtocol {
 extension RecordViewModel {
     
     func startRecord() {
-        recordService.startRecord(withName: recordWillNamed)
+        recordService.startRecording { [weak self] result in
+            switch result {
+            case .success(let record):
+                self?.parentViewModel?.didStartRecording(ofRecord: record)
+            case .failure(let error):
+                print("Alert with errpr \(error) presented")
+            }
+        }
     }
     
     func stopRecord(completion: ((Bool) -> Void)?) {
-        recordService.stopRecord(withName: recordWillNamed) { [weak self] record in
-            guard let record else {
-                print("ERROR: Record is nil")
-                completion?(false)
-                return
+        recordService.stopRecording { [weak self] result in
+            switch result {
+            case .success(let record):
+                self?.parentViewModel?.didFinishRecording(ofRecord: record)
+            case .failure(let error):
+                print("Alert with errpr \(error) presented")
             }
-            self?.parentViewModel?.saveRecord(record)
-            completion?(true)
         }
     }
 }
