@@ -20,6 +20,8 @@ final class RoundedRecButtonView: BaseView {
     
     weak var delegate: RoundedRecButtonViewDelegate?
     
+    //MARK: Variables
+    
     private let radius: CGFloat
     
     private let button = UIButton()
