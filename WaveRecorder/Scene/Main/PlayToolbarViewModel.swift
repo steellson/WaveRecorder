@@ -40,19 +40,6 @@ final class PlayToolbarViewModel: PlayToolbarViewModelProtocol {
         self.parentViewModel = parentViewModel
         self.record = record
     }
-    
-    private func getNumberOfRecords() -> Int {
-        guard let parentViewModel else { return 0 }
-        let count = parentViewModel.records.count + 1
-        
-        return count
-    }
-    
-    private func setupRecord() {
-        let numberOfRecord = getNumberOfRecords()
-        let nameOfRecord = "Record \(numberOfRecord)"
-        
-    }
 }
 
 
@@ -65,8 +52,6 @@ extension PlayToolbarViewModel {
     }
     
     func playPause() {
-        setupRecord()
-        
         guard let record else {
             print("ERROR: Cant play record / Reason: nil")
             return

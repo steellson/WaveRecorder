@@ -15,21 +15,21 @@ final class MainCellView: BaseView {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        label.font = .systemFont(ofSize: 18, weight: .semibold)
         label.textAlignment = .left
         return label
     }()
     
     private let dateLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .light)
+        label.font = .systemFont(ofSize: 16, weight: .light)
         label.textAlignment = .left
         return label
     }()
     
     private let durationLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .light)
+        label.font = .systemFont(ofSize: 16, weight: .light)
         label.textAlignment = .right
         return label
     }()
@@ -72,15 +72,15 @@ extension MainCellView {
         super.setupLayout()
         
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 18),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
             
             dateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
-            dateLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            dateLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
             
             durationLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
-            durationLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            durationLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
         ])
     }
 }

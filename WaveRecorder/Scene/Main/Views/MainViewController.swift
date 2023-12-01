@@ -92,7 +92,7 @@ final class MainViewController: BaseController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tableView.layer.cornerRadius = 26
-        tableView.estimatedRowHeight = 200
+        tableView.estimatedRowHeight = 160
         tableView.showsVerticalScrollIndicator = false
         tableView.alwaysBounceVertical = true
         tableView.dataSource = self
@@ -195,11 +195,13 @@ extension MainViewController: UITableViewDataSource {
 //MARK: - TableView Delegate
 
 extension MainViewController: UITableViewDelegate {
-        
+    
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        cell.isSelected = true
+//        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+//        cell.isSelected = true
     }
+
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         UISwipeActionsConfiguration(actions: [ UIContextualAction(

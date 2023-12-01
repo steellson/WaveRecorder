@@ -253,6 +253,8 @@
 			dependencies = (
 			);
 			name = WaveRecorder;
+			packageProductDependencies = (
+			);
 			productName = WaveRecorder;
 			productReference = 3DEAFF8B2B0F65F3004CAE97 /* WaveRecorder.app */;
 			productType = "com.apple.product-type.application";
@@ -281,6 +283,8 @@
 				Base,
 			);
 			mainGroup = 3DEAFF822B0F65F3004CAE97;
+			packageReferences = (
+			);
 			productRefGroup = 3DEAFF8C2B0F65F3004CAE97 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
