@@ -12,6 +12,7 @@ class BaseController: UIViewController {
         super.viewDidLoad()
         setupView()
         setupNavBar()
+        setupBindings()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -24,11 +25,13 @@ class BaseController: UIViewController {
 
 @objc extension BaseController {
     
-     func setupView() {
+    func setupView() {
          view.backgroundColor = R.Colors.primaryBackgroundColor
      }
     
-     func setupNavBar() { }
+    func setupNavBar() { }
     
-     func setupLayout() { }
+    func setupLayout() { }
+    
+    func setupBindings() { }
 }

@@ -14,9 +14,9 @@ protocol MainCellViewModelProtocol: AnyObject {
     var isPaused: Bool { get set }
     
     func goBack()
-    func playPause(record: Record, completion: @escaping (Bool) -> Void)
+    func playPause(completion: @escaping (Bool) -> Void)
     func goForward()
-    func delete(record: Record, completion: @escaping (Bool) -> Void)
+    func delete(completion: @escaping (Bool) -> Void)
 }
 
 
@@ -51,7 +51,7 @@ extension MainCellViewModel {
         print("Go back")
     }
     
-    func playPause(record: Record, completion: @escaping (Bool) -> Void) {
+    func playPause(completion: @escaping (Bool) -> Void) {
         if isPaused {
             audioService.play(audioRecord: record) { [weak self] error in
                 guard let error else {
@@ -79,7 +79,7 @@ extension MainCellViewModel {
         print("Go forward")
     }
     
-    func delete(record: Record, completion: @escaping (Bool) -> Void) {
+    func delete(completion: @escaping (Bool) -> Void) {
         guard let parentVM = parentViewModel else {
             print("ERROR: Cant delete record by the reason of parent viewModel unfounded")
             completion(false)

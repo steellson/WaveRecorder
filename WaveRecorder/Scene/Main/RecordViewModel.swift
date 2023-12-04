@@ -23,7 +23,10 @@ final class RecordViewModel: RecordViewModelProtocol {
 
     private(set) var buttonRadius: CGFloat = 30.0
     
-    private let recordWillNamed = "Record"
+    private lazy var recordWillNamed: String =  {
+        "Record \((self.parentViewModel?.records.value.count ?? 0) + 1)"
+    }()
+    
     
     private let recordService: RecordServiceProtocol
     private weak var parentViewModel: MainViewModelProtocol?
@@ -58,11 +61,11 @@ extension RecordViewModel {
 
     func startRecord() {
         let newRecord = createNewRecord()
-        
+
         recordService.startRecording(record: newRecord) { [weak self] result in
             switch result {
-            case .success(let record):
-                self?.parentViewModel?.didStartRecording(ofRecord: record)
+            case .success:
+                self?.parentViewModel?.didStartRecording()
             case .failure(let error):
                 print("Alert with errpr \(error) presented")
             }

@@ -36,6 +36,7 @@ final class MainTableViewCell: BaseCell {
     
     func configureCell(withViewModel viewModel: MainCellViewModelProtocol) {
         self.viewModel = viewModel
+        setupMainCellView()
     }
 
     
@@ -47,6 +48,21 @@ final class MainTableViewCell: BaseCell {
         
         contentView.addNewSubview(mainCellView)
         contentView.addNewSubview(playToolbar)
+    }
+    
+    private func setupMainCellView() {
+        guard 
+            let viewModel,
+            let duration = viewModel.record.duration
+        else {
+            print("ERRRO: Cannot setup Main Cell View")
+            return
+        }
+        mainCellView.configureView(
+            name: viewModel.record.name,
+            date: Formatter.instance.formatDate(viewModel.record.date),
+            duraiton: Formatter.instance.formatDuration(duration)
+        )
     }
     
     
@@ -65,6 +81,7 @@ extension MainTableViewCell {
     override func setupCell() {
         super.setupCell()
         setupContentView()
+        playToolbar.delegate = self
     }
     
     override func setupCellLayout() {
@@ -92,5 +109,30 @@ extension MainTableViewCell {
     override func clearCell() {
         super.clearCell()
         mainCellView.clearView()
+    }
+}
+
+//MARK: - PlayToolBar Delegatez
+
+extension MainTableViewCell: PlayToolbarViewDelegate {
+    
+    func goBack() {
+        viewModel?.goBack()
+    }
+    
+    func playPause() {
+        viewModel?.playPause(completion: { isPlaying in
+            //
+        })
+    }
+    
+    func goForward() {
+        viewModel?.goForward()
+    }
+    
+    func deleteRecord() {
+        viewModel?.delete(completion: { isDeleted in
+            //
+        })
     }
 }

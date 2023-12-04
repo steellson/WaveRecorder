@@ -94,14 +94,14 @@ final class MainViewController: BaseController {
                            forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
     }
     
-    private func setupRecordingViewHeight() {
-        if viewModel.isRecordingNow {
+    private func setupRecordingViewHeight(withRecording isRecording: Bool) {
+        if isRecording {
             UIView.animate(
                 withDuration: 0.5,
                 delay: 0.2,
                 options: .curveEaseIn
             ) {
-                self.recordView.heightConstraint?.constant = self.viewModel.isRecordingNow
+                self.recordView.heightConstraint?.constant = isRecording
                 ? UIScreen.main.bounds.height * 0.25
                 : UIScreen.main.bounds.height * 0.15
             }
@@ -144,7 +144,6 @@ extension MainViewController {
     
     override func setupLayout() {
         super.setupLayout()
-        setupRecordingViewHeight()
         
         NSLayoutConstraint.activate([
             recordView.heightAnchor.constraint(equalToConstant: recordViewHeight),
@@ -158,6 +157,21 @@ extension MainViewController {
             tableView.bottomAnchor.constraint(equalTo: recordView.topAnchor)
         ])
     }
+    
+    override func setupBindings() {
+        super.setupBindings()
+        
+        viewModel.records.bind { [weak self] records in
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+            }
+        }
+        
+        viewModel.isRecordingNow.bind { [weak self] isRecording in
+            print(isRecording)
+            self?.setupRecordingViewHeight(withRecording: isRecording)
+        }
+    }
 }
 
 
@@ -166,7 +180,7 @@ extension MainViewController {
 extension MainViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.records.count
+        viewModel.records.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -199,7 +213,7 @@ extension MainViewController: UITableViewDelegate {
             title: "Delete",
             handler: { action, view, result in
                 self.tableView.beginUpdates()
-                self.viewModel.didDeleted(record: self.viewModel.records[indexPath.row])
+                self.viewModel.didDeleted(record: self.viewModel.records.value[indexPath.row])
                 self.tableView.endUpdates()
             }
         )])

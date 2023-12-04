@@ -10,10 +10,10 @@ import Foundation
 //MARK: - Protocols
 
 protocol MainViewModelProtocol: AnyObject {    
-    var records: [Record] { get set }
-    var isRecordingNow: Bool { get set }
+    var records: Observable<[Record]> { get }
+    var isRecordingNow: Observable<Bool> { get }
  
-    func didStartRecording(ofRecord record: Record)
+    func didStartRecording()
     func didFinishRecording(ofRecord record: Record)
     func didDeleted(record: Record)
         
@@ -25,9 +25,9 @@ protocol MainViewModelProtocol: AnyObject {
 
 final class MainViewModel: MainViewModelProtocol {
     
-    var records: [Record] = []
+    var records = Observable<[Record]>(value: [])
     
-    var isRecordingNow: Bool = false
+    var isRecordingNow = Observable(value: false)
     
     private let storageService: StorageServiceProtocol
     
@@ -48,14 +48,14 @@ private extension MainViewModel {
     
     //MARK: Get all
     func getRecords() {
-        records = []
+        records.value = []
         storageService.getRecords() { [weak self] result in
             switch result {
             case .success(let records):
-                self?.records = records
+                self?.records.value = records
             case .failure(let error):
                 print("ERROR: \(error)")
-                self?.records = []
+                self?.records.value = []
             }
         }
     }
@@ -102,28 +102,32 @@ private extension MainViewModel {
 extension MainViewModel {
     
     //MARK: Did start rec
-    func didStartRecording(ofRecord record: Record) {
+    func didStartRecording() {
         #warning("RECORDING: checkpoint here")
         // need send signal to view for redrawing
-        isRecordingNow = true
+        isRecordingNow.value = true
     }
     
     
     //MARK: Did finish rec
     func didFinishRecording(ofRecord record: Record) {
         // need send signal to view for redrawing
-        isRecordingNow = false
-        storageService.save(record: record)
+        isRecordingNow.value = false
+        storageService.save(record: record) 
+        records.value.append(record)
     }
     
     
     //MARK: Did delete rec
-    
     func didDeleted(record: Record) {
-        storageService.delete(record: record) { result in
+        storageService.delete(record: record) { [weak self] result in
             switch result {
-            case .success:
-                break
+            case .success: break
+//                self?.records.value.enumerated().forEach({ index, value in
+//                    if value.id == record.id {
+//                        self?.records.value.remove(at: index)
+//                    }
+//                })
             case .failure(let error):
                 print("ERROR: Cant delete record with name: \(record.name). \(error)")
             }
@@ -133,6 +137,6 @@ extension MainViewModel {
     
     //MARK: Seutp child VM
     func setupChildViewModel(withIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol {
-        Assembly.builder.buildMainCellViewModel(withRecord: records[indexPath.row])
+        Assembly.builder.buildMainCellViewModel(withRecord: records.value[indexPath.row])
     }
 }
