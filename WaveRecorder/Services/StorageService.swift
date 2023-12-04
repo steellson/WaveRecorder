@@ -151,9 +151,9 @@ extension StorageService {
             context.insert(
                 Record(
                     name: name,
-                    path: oldRecord.path,
+                    date: oldRecord.date,
                     duration: oldRecord.duration,
-                    date: oldRecord.date
+                    path: oldRecord.path
             ))
         } catch {
             print("ERROR: Cant get old record from storage: \(error)")

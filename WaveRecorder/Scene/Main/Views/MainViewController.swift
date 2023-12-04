@@ -7,11 +7,6 @@
 
 import UIKit
 
-//MARK: - Types
-
-typealias DataSource = UITableViewDiffableDataSource<Section, Record>
-typealias DataSourceSnapshot = NSDiffableDataSourceSnapshot<Section, Record>
-
 
 //MARK: - Impl
 
@@ -21,9 +16,7 @@ final class MainViewController: BaseController {
     private let titleLabel = UILabel()
     private let searchController = UISearchController()
     private let tableView = UITableView()
-    
-    private var dataSource: DataSource!
-    
+        
     private lazy var recordView = Assembly.builder.build(subModule: .record)
     private var recordViewHeight = UIScreen.main.bounds.height * 0.15
     
@@ -206,17 +199,7 @@ extension MainViewController: UITableViewDelegate {
             title: "Delete",
             handler: { action, view, result in
                 self.tableView.beginUpdates()
-                
-                let record = self.viewModel.records[indexPath.row]
-                self.viewModel.delete(record: record) { [weak self] res in
-                    switch res {
-                    case .success:
-                        self?.viewModel.records.remove(at: indexPath.row)
-                        self?.tableView.deleteRows(at: [indexPath], with: .automatic)
-                    case .failure(let error):
-                        print(error)
-                    }
-                }
+                self.viewModel.didDeleted(record: self.viewModel.records[indexPath.row])
                 self.tableView.endUpdates()
             }
         )])

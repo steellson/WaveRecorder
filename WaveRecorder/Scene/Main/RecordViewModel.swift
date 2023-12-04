@@ -37,13 +37,29 @@ final class RecordViewModel: RecordViewModelProtocol {
     }
 }
 
+//MARK: - Private
+
+private extension RecordViewModel {
+     
+    func createNewRecord() -> Record {
+        Record(
+            name: recordWillNamed,
+            date: .now,
+            duration: nil,
+            path: nil
+        )
+    }
+}
+
 
 //MARK: - Public
 
 extension RecordViewModel {
-    
+
     func startRecord() {
-        recordService.startRecording { [weak self] result in
+        let newRecord = createNewRecord()
+        
+        recordService.startRecording(record: newRecord) { [weak self] result in
             switch result {
             case .success(let record):
                 self?.parentViewModel?.didStartRecording(ofRecord: record)

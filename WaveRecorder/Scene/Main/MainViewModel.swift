@@ -12,14 +12,10 @@ import Foundation
 protocol MainViewModelProtocol: AnyObject {    
     var records: [Record] { get set }
     var isRecordingNow: Bool { get set }
-    
-    func getRecords()
-    func get(record: Record, completion: @escaping (Result<Record, Error>) -> Void)
-    func delete(record: Record, completion: ((Result<Bool, Error>) -> Void)?)
-    func searchRecord(withText text: String)
-    
+ 
     func didStartRecording(ofRecord record: Record)
     func didFinishRecording(ofRecord record: Record)
+    func didDeleted(record: Record)
         
     func setupChildViewModel(withIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol
 }
@@ -46,10 +42,9 @@ final class MainViewModel: MainViewModelProtocol {
     
 }
 
+//MARK: - Private
 
-//MARK: - Public
-
-extension MainViewModel {
+private extension MainViewModel {
     
     //MARK: Get all
     func getRecords() {
@@ -99,19 +94,42 @@ extension MainViewModel {
     func searchRecord(withText text: String) {
         
     }
-    
+}
+
+
+//MARK: - Public
+
+extension MainViewModel {
     
     //MARK: Did start rec
     func didStartRecording(ofRecord record: Record) {
+        #warning("RECORDING: checkpoint here")
+        // need send signal to view for redrawing
         isRecordingNow = true
     }
     
     
     //MARK: Did finish rec
     func didFinishRecording(ofRecord record: Record) {
+        // need send signal to view for redrawing
         isRecordingNow = false
+        storageService.save(record: record)
     }
     
+    
+    //MARK: Did delete rec
+    
+    func didDeleted(record: Record) {
+        storageService.delete(record: record) { result in
+            switch result {
+            case .success:
+                break
+            case .failure(let error):
+                print("ERROR: Cant delete record with name: \(record.name). \(error)")
+            }
+        }
+    }
+
     
     //MARK: Seutp child VM
     func setupChildViewModel(withIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol {

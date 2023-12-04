@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3D9E57DA2B1DC4740085A3DE /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9E57D92B1DC4740085A3DE /* Observable.swift */; };
 		3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF8E2B0F65F3004CAE97 /* AppDelegate.swift */; };
 		3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF902B0F65F3004CAE97 /* SceneDelegate.swift */; };
 		3DEAFF932B0F65F3004CAE97 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF922B0F65F3004CAE97 /* MainViewController.swift */; };
@@ -26,7 +27,6 @@
 		3DEAFFC82B10D5B9004CAE97 /* RecordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC72B10D5B9004CAE97 /* RecordViewModel.swift */; };
 		3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCA2B14B60D004CAE97 /* Record.swift */; };
 		3DEAFFCD2B14B884004CAE97 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCC2B14B884004CAE97 /* StorageService.swift */; };
-		3DEAFFCF2B14D236004CAE97 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCE2B14D236004CAE97 /* Section.swift */; };
 		3DEAFFD22B15F54D004CAE97 /* Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD12B15F54D004CAE97 /* Formatter.swift */; };
 		3DEAFFD52B160F0E004CAE97 /* PlayToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD42B160F0E004CAE97 /* PlayToolbarView.swift */; };
 		3DEAFFD82B16129D004CAE97 /* MainCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD72B16129D004CAE97 /* MainCellViewModel.swift */; };
@@ -38,6 +38,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3D9E57D92B1DC4740085A3DE /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		3DEAFF8B2B0F65F3004CAE97 /* WaveRecorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WaveRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DEAFF8E2B0F65F3004CAE97 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3DEAFF902B0F65F3004CAE97 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -59,7 +60,6 @@
 		3DEAFFC72B10D5B9004CAE97 /* RecordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordViewModel.swift; sourceTree = "<group>"; };
 		3DEAFFCA2B14B60D004CAE97 /* Record.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
 		3DEAFFCC2B14B884004CAE97 /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
-		3DEAFFCE2B14D236004CAE97 /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		3DEAFFD12B15F54D004CAE97 /* Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatter.swift; sourceTree = "<group>"; };
 		3DEAFFD42B160F0E004CAE97 /* PlayToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayToolbarView.swift; sourceTree = "<group>"; };
 		3DEAFFD72B16129D004CAE97 /* MainCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCellViewModel.swift; sourceTree = "<group>"; };
@@ -204,7 +204,6 @@
 			isa = PBXGroup;
 			children = (
 				3DEAFFCA2B14B60D004CAE97 /* Record.swift */,
-				3DEAFFCE2B14D236004CAE97 /* Section.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -213,6 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				3DEAFFD12B15F54D004CAE97 /* Formatter.swift */,
+				3D9E57D92B1DC4740085A3DE /* Observable.swift */,
 				3DEAFFE52B186CDD004CAE97 /* PathManager.swift */,
 			);
 			path = Helpers;
@@ -311,6 +311,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D9E57DA2B1DC4740085A3DE /* Observable.swift in Sources */,
 				3DEAFF932B0F65F3004CAE97 /* MainViewController.swift in Sources */,
 				3DEAFFD22B15F54D004CAE97 /* Formatter.swift in Sources */,
 				3DEAFFA92B0F6713004CAE97 /* Resources.swift in Sources */,
@@ -326,7 +327,6 @@
 				3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */,
 				3DEAFFAF2B0F766E004CAE97 /* Assembly.swift in Sources */,
 				3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */,
-				3DEAFFCF2B14D236004CAE97 /* Section.swift in Sources */,
 				3DEAFFC82B10D5B9004CAE97 /* RecordViewModel.swift in Sources */,
 				3DEAFFB92B0F80E0004CAE97 /* BaseCell.swift in Sources */,
 				3DEAFFC12B1092C4004CAE97 /* RoundedRecButtonView.swift in Sources */,

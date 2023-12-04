@@ -13,7 +13,7 @@ import AVFoundation
 protocol RecordServiceProtocol: AnyObject {
     var isAudioRecordingAllowed: Bool { get }
 
-    func startRecording(completion: @escaping (Result<Record, RecordServiceError>) -> Void)
+    func startRecording(record: Record, completion: @escaping (Result<Record, RecordServiceError>) -> Void)
     func stopRecording(completion: @escaping (Result<Record, RecordServiceError>) -> Void)
 }
 
@@ -68,50 +68,28 @@ final class RecordService: RecordServiceProtocol {
             print("ERROR: Cant setup audio recorder. \(error)")
         }
     }
+}
+
+//MARK: - Private
+
+private extension RecordService {
     
-    private func prepareFolderForStoreOnDevice(withName name: String) {
+    func prepareFolderForStoreOnDevice(withName name: String) {
         PathManager.instance.createFolder(withDirectoryName: name)
     }
-    
-#warning("need to check")
-    private func setupStoredRecordName() -> String {
-//        [0..<1000].map { num in
-//            
-//            let documentsPath = PathManager.instance.getDocumentsDirectory()
-//            let name = "Record \(num)"
-//            let finallyURL = documentsPath.appendingPathComponent(name).appendingPathExtension(storedInFolderWithName)
-//            
-//            if !FileManager.default.fileExists(atPath: finallyURL.path())   {
-//                return name
-//            }
-//            
-//        }.first ?? "Record"
-        ""
-    }
-    
-    private func createRecord() -> Record {
-        let name = setupStoredRecordName()
-        
-        let record = Record(
-            name: name,
-            path: "",
-            duration: 2,
-            date: .now
-        )
-        self.record = record
-        
-        return record
-    }
-    
-    private func setupFilePathToSave() -> URL {
+
+    func setupFilePathToSave(withDirName dirName: String,
+                                     fileName fName: String,
+                                     formatName format: String) -> URL {
+                                         
         PathManager.instance.createNewFile(
-            withDirectoryName: storedInFolderWithName,
-            fileName: setupStoredRecordName(),
-            formatName: storeWithFormatName
+            withDirectoryName: dirName,
+            fileName: fName,
+            formatName: format
         )
     }
     
-    private func setSettings() -> [String: Int] {
+    func setSettings() -> [String: Int] {
         [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 44100,
@@ -119,7 +97,6 @@ final class RecordService: RecordServiceProtocol {
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]
     }
-
 }
 
 
@@ -127,7 +104,8 @@ final class RecordService: RecordServiceProtocol {
 
 extension RecordService {
    
-    func startRecording(completion: @escaping (Result<Record, RecordServiceError>) -> Void) {
+    func startRecording(record: Record, completion: @escaping (Result<Record, RecordServiceError>) -> Void) {
+        self.record = nil
         // Check permission avalible
         guard
             isAudioRecordingAllowed
@@ -137,12 +115,17 @@ extension RecordService {
             return
         }
         
-        // Create record
-        let record = createRecord()
-        
         // Create path to save file
-        let audioPath = setupFilePathToSave()
-        print("** Record will be saved to: \(audioPath)")
+        let audioPath = setupFilePathToSave(
+            withDirName: storedInFolderWithName,
+            fileName: record.name,
+            formatName: storeWithFormatName
+        )
+        print("** Record will stored into: \(audioPath)")
+        
+        // Store record into variable
+        record.path = audioPath.path()
+        self.record = record
         
         // Setup settings
         let settings = setSettings()
@@ -160,17 +143,20 @@ extension RecordService {
                     print(">>> RECORD STARTED!")
                 } else {
                     completion(.failure(.recordgingIsNotStarted))
+                    self.record = nil
                     print(">>> RECORD IS NOT STARTERD! SOMETHING WRONG")
                 }
                 
             } catch {
-                self.stopRecording { _ in print(error) }
+                self.stopRecording { [unowned self] _ in
+                    self.record = nil
+                    print("ERROR: Cannot activate recorder session. \(error) ")
+                }
             }
         }
     }
     
     func stopRecording(completion: @escaping (Result<Record, RecordServiceError>) -> Void) {
-        
         DispatchQueue.global().async { [unowned self] in
             // Trying to stop
             self.audioRecorder.stop()
@@ -179,10 +165,15 @@ extension RecordService {
             // Check
             if !self.audioRecorder.isRecording,
                let record = self.record {
+                
+                // Finally set duration to record and send it out
+                record.duration = audioRecorder.currentTime
                 completion(.success(record))
                 print(">>> RECORDING STOPPED!")
+                
             } else {
                 completion(.failure(.recordgingIsNotStopped))
+                self.record = nil
                 print(">>> RECORDING IS NOT STOPPED! SOMETHING WRONG")
             }
         }

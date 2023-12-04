@@ -74,8 +74,9 @@ extension AudioService {
    
     func play(audioRecord record: Record, completion: @escaping (AudioServiceError?) -> Void) {
         guard
-            let recordSafeURL = URL(string: record.path),
-              FileManager.default.fileExists(atPath: record.path)
+            let recordPath = record.path,
+            let recordSafeURL = URL(string: recordPath),
+              FileManager.default.fileExists(atPath: recordPath)
         else {
             print("ERROR: File with name \(record.name) doesn't exist!")
             completion(.audioFileWithNameDoesntExist)

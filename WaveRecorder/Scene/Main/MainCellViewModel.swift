@@ -74,26 +74,17 @@ extension MainCellViewModel {
             }
         }
     }
-    
+     
     func goForward() {
         print("Go forward")
     }
     
     func delete(record: Record, completion: @escaping (Bool) -> Void) {
-        
         guard let parentVM = parentViewModel else {
             print("ERROR: Cant delete record by the reason of parent viewModel unfounded")
             completion(false)
             return
         }
-        parentVM.delete(record: record) { result in
-            switch result {
-            case .success(let isDeleted):
-                completion(isDeleted)
-            case .failure(let error):
-                completion(false)
-                print("ERROR: Cant delete record. \(error)")
-            }
-        }
+        parentVM.didDeleted(record: record)
     }
 }

@@ -13,21 +13,21 @@ final class Record {
     
     @Attribute(.unique) var id: String
     var name: String
-    var path: String
-    var duration: TimeInterval
     var date: Date
+    var duration: TimeInterval?
+    var path: String?
     
     init(
         name: String,
-        path: String,
-        duration: TimeInterval,
-        date: Date
+        date: Date,
+        duration: TimeInterval?,
+        path: String?
     ) {
         self.id = UUID().uuidString
         self.name = name
-        self.path = path
-        self.duration = duration
         self.date = date
+        self.duration = duration
+        self.path = path
     }
 
 }
