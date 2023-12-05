@@ -13,49 +13,65 @@ final class MainTableViewCell: BaseCell {
     
     static let mainTableViewCellIdentifier = R.Strings.mainTableViewCellIdentifier.rawValue
     
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .semibold)
-        label.textAlignment = .left
-        return label
-    }()
     
-    private let dateLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .light)
-        label.textAlignment = .left
-        return label
-    }()
+    //MARK: Variables
     
-    private let durationLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .light)
-        label.textAlignment = .right
-        return label
-    }()
+    private var viewModel: MainCellViewModelProtocol?
+
+    private let mainCellView = MainCellView()
+    private let playToolbar = PlayToolbarView()
     
-    
-    func configureCell(name: String, date: String, duraiton: String) {
-        self.titleLabel.text = name
-        self.dateLabel.text = date
-        self.durationLabel.text = duraiton
+    override var isSelected: Bool {
+        didSet {
+            updateAppereance()
+            if isSelected {
+                print("selected")
+            } else {
+                print("deselected")
+            }
+        }
     }
     
+    
+    
+    func configureCell(withViewModel viewModel: MainCellViewModelProtocol) {
+        self.viewModel = viewModel
+        setupMainCellView()
+    }
+
     
     //MARK: Setup
     
     private func setupContentView() {
         selectionStyle = .gray
-        contentView.addNewSubview(titleLabel)
-        contentView.addNewSubview(dateLabel)
-        contentView.addNewSubview(durationLabel)
+        contentView.clipsToBounds = true
+        
+        contentView.addNewSubview(mainCellView)
+        contentView.addNewSubview(playToolbar)
     }
     
-    private func clear() {
-        titleLabel.text = ""
-        dateLabel.text = ""
-        durationLabel.text = ""
-    }  
+    private func setupMainCellView() {
+        guard 
+            let viewModel,
+            let duration = viewModel.record.duration
+        else {
+            print("ERRRO: Cannot setup Main Cell View")
+            return
+        }
+        mainCellView.configureView(
+            name: viewModel.record.name,
+            date: Formatter.instance.formatDate(viewModel.record.date),
+            duraiton: Formatter.instance.formatDuration(duration)
+        )
+    }
+    
+    
+    //MARK: - Methods
+    
+    private func updateAppereance() {
+//        playToolbar.isHidden = !isSelected
+//        playToolbar.heightConstraint?.constant = isSelected ? 80 : 0
+    }
 }
             
 //MARK: - Base
@@ -65,28 +81,58 @@ extension MainTableViewCell {
     override func setupCell() {
         super.setupCell()
         setupContentView()
+        playToolbar.delegate = self
     }
     
     override func setupCellLayout() {
         super.setupCellLayout()
         
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            contentView.topAnchor.constraint(equalTo: topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            contentView.heightAnchor.constraint(equalToConstant: 220),
             
-            dateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
-            dateLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            dateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
+            mainCellView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            mainCellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            mainCellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            mainCellView.bottomAnchor.constraint(equalTo: contentView.centerYAnchor),
             
-            durationLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
-            durationLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
-            durationLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
+            playToolbar.topAnchor.constraint(equalTo: contentView.centerYAnchor),
+            playToolbar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            playToolbar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            playToolbar.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+        
     }
     
     override func clearCell() {
         super.clearCell()
-        clear()
+        mainCellView.clearView()
+    }
+}
+
+//MARK: - PlayToolBar Delegatez
+
+extension MainTableViewCell: PlayToolbarViewDelegate {
+    
+    func goBack() {
+        viewModel?.goBack()
+    }
+    
+    func playPause() {
+        viewModel?.playPause(completion: { isPlaying in
+            //
+        })
+    }
+    
+    func goForward() {
+        viewModel?.goForward()
+    }
+    
+    func deleteRecord() {
+        viewModel?.delete(completion: { isDeleted in
+            //
+        })
     }
 }

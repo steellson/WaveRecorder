@@ -1,5 +1,5 @@
 //
-//  RecordingView.swift
+//  RecordView.swift
 //  WaveRecorder
 //
 //  Created by Andrew Steellson on 24.11.2023.
@@ -7,15 +7,24 @@
 
 import UIKit
 
+//MARK: - Protocol
+
+protocol RecordViewDelegate: AnyObject {
+    func recordStarted()
+    func recordFinished()
+}
+
+
 //MARK: - Impl
 
-final class RecordingView: BaseView {
+final class RecordView: BaseView {
     
+    weak var delegate: RecordViewDelegate?
+        
     private let viewModel: RecordViewModelProtocol
     
     private lazy var recButtonView = RoundedRecButtonView(radius: viewModel.buttonRadius)
-    
-    var onRecord: ((Bool) -> Void)?
+
     
     //MARK: Init
     
@@ -46,7 +55,7 @@ final class RecordingView: BaseView {
 
 //MARK: - Base
 
-extension RecordingView {
+extension RecordView {
     
     override func setupView() {
         super.setupView()
@@ -61,7 +70,7 @@ extension RecordingView {
             recButtonView.centerXAnchor.constraint(equalTo: centerXAnchor),
             recButtonView.heightAnchor.constraint(equalToConstant: viewModel.buttonRadius * 2),
             recButtonView.widthAnchor.constraint(equalToConstant: viewModel.buttonRadius * 2),
-            recButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10)
+            recButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -12)
         ])
     }
 }
@@ -69,9 +78,15 @@ extension RecordingView {
 
 //MARK: - RoundedRecButtonView Delegate
 
-extension RecordingView: RoundedRecButtonViewDelegate {
+extension RecordView: RoundedRecButtonViewDelegate {
     
     func recButtonDidTapped() {
-        onRecord?(recButtonView.isRecording)
+        if recButtonView.isRecording {
+            viewModel.startRecord()
+            delegate?.recordStarted()
+        } else {
+            viewModel.stopRecord(completion: nil)
+            delegate?.recordFinished()
+        }
     }
 }

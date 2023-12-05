@@ -7,11 +7,6 @@
 
 import UIKit
 
-//MARK: - Types
-
-typealias DataSource = UITableViewDiffableDataSource<Section, Record>
-typealias DataSourceSnapshot = NSDiffableDataSourceSnapshot<Section, Record>
-
 
 //MARK: - Impl
 
@@ -21,14 +16,12 @@ final class MainViewController: BaseController {
     private let titleLabel = UILabel()
     private let searchController = UISearchController()
     private let tableView = UITableView()
-    
-    private var dataSource: DataSource!
-    
-    private let recordingView = Assembly.builder.build(subModule: .record)
+        
+    private lazy var recordView = Assembly.builder.build(subModule: .record)
+    private var recordViewHeight = UIScreen.main.bounds.height * 0.15
     
     private let viewModel: MainViewModelProtocol
     
-    private var recordingViewHeight = UIScreen.main.bounds.height * 0.15
         
     
     //MARK: Init
@@ -56,7 +49,14 @@ final class MainViewController: BaseController {
     
     private func setupContentView() {
         view.addNewSubview(tableView)
-        view.addNewSubview(recordingView)
+        view.addNewSubview(recordView)
+    }
+    
+    private func setupDelegates() {
+        guard let recVeiw = recordView as? RecordView else { return }
+        recVeiw.delegate = self
+        tableView.delegate = self
+        searchController.searchBar.delegate = self
     }
     
     private func setupEditButton() {
@@ -84,30 +84,29 @@ final class MainViewController: BaseController {
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchResultsUpdater = self
-        searchController.searchBar.delegate = self
     }
     
     private func setupTableView() {
         tableView.backgroundColor = R.Colors.secondaryBackgroundColor
-        tableView.showsVerticalScrollIndicator = false
-        tableView.layer.cornerRadius = 26
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        tableView.layer.cornerRadius = 26
+        tableView.estimatedRowHeight = 160
+        tableView.showsVerticalScrollIndicator = false
+        tableView.alwaysBounceVertical = true
         tableView.dataSource = self
-        tableView.delegate = self
         tableView.register(MainTableViewCell.self,
                            forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
     }
     
-    private func setupRecordingViewHeight() {
-        guard let recView = (recordingView as? RecordingView) else { return }
-        
-        recView.onRecord = { [weak self] isRecording in
+    private func setupRecordingViewHeight(withRecording isRecording: Bool) {
+        if isRecording {
             UIView.animate(
                 withDuration: 0.5,
                 delay: 0.2,
                 options: .curveEaseIn
             ) {
-                self?.recordingView.heightConstraint?.constant = isRecording
+                self.recordView.heightConstraint?.constant = isRecording
                 ? UIScreen.main.bounds.height * 0.25
                 : UIScreen.main.bounds.height * 0.15
             }
@@ -137,6 +136,7 @@ extension MainViewController {
     override func setupView() {
         super.setupView()
         setupContentView()
+        setupDelegates()
         setupEditButton()
         setupTitleLabel()
         setupSearchController()
@@ -150,18 +150,17 @@ extension MainViewController {
     
     override func setupLayout() {
         super.setupLayout()
-        setupRecordingViewHeight()
         
         NSLayoutConstraint.activate([
-            recordingView.heightAnchor.constraint(equalToConstant: recordingViewHeight),
-            recordingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            recordingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            recordingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            recordView.heightAnchor.constraint(equalToConstant: recordViewHeight),
+            recordView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            recordView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            recordView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             tableView.topAnchor.constraint(equalTo: searchController.searchBar.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: recordingView.topAnchor)
+            tableView.bottomAnchor.constraint(equalTo: recordView.topAnchor)
         ])
     }
 }
@@ -182,16 +181,7 @@ extension MainViewController: UITableViewDataSource {
             print("ERROR: Cant dequeue reusable cell")
             return UITableViewCell()
         }
-        
-        let record = viewModel.records[indexPath.row]
-        let dateString = Formatter.instance.formatDate(record.date)
-        let durationString = Formatter.instance.formatDuration(record.duration)
-        
-        cell.configureCell(
-            name: record.name,
-            date: dateString,
-            duraiton: durationString
-        )
+        cell.configureCell(withViewModel: viewModel.setupChildViewModel(withIndexPath: indexPath))
         return cell
     }
 }
@@ -200,10 +190,13 @@ extension MainViewController: UITableViewDataSource {
 //MARK: - TableView Delegate
 
 extension MainViewController: UITableViewDelegate {
-        
+    
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+//        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+//        cell.isSelected = true
     }
+
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         UISwipeActionsConfiguration(actions: [ UIContextualAction(
@@ -211,20 +204,29 @@ extension MainViewController: UITableViewDelegate {
             title: "Delete",
             handler: { action, view, result in
                 self.tableView.beginUpdates()
-                
-                let record = self.viewModel.records[indexPath.row]
-                self.viewModel.deleteRecord(withID: record.id) { [weak self] res in
-                    switch res {
-                    case .success:
-                        self?.viewModel.records.remove(at: indexPath.row)
-                        self?.tableView.deleteRows(at: [indexPath], with: .automatic)
-                    case .failure(let error):
-                        print(error)
-                    }
-                }
+                self.viewModel.didDeleted(record: self.viewModel.records[indexPath.row])
                 self.tableView.endUpdates()
             }
         )])
+    }
+}
+
+
+//MARK: - RecordView Delegate
+
+extension MainViewController: RecordViewDelegate {
+    
+    func recordStarted() {
+        DispatchQueue.main.async { [weak self] in
+            self?.setupRecordingViewHeight(withRecording: true)
+        }
+    }
+    
+    func recordFinished() {
+        DispatchQueue.main.async { [weak self] in
+            self?.setupRecordingViewHeight(withRecording: false)
+            self?.view.setNeedsLayout()
+        }
     }
 }
 
@@ -245,3 +247,5 @@ extension MainViewController: UISearchResultsUpdating {
         
     }
 }
+
+

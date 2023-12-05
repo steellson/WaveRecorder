@@ -7,24 +7,34 @@
 
 import Foundation
 
-//MARK: - Protocol
+//MARK: - Protocols
 
-protocol MainViewModelProtocol: AnyObject {
-    var records: [Record] { get set }
+protocol MainViewModelProtocol: AnyObject {    
+    var records: [Record] { get }
+    var isRecordingNow: Bool { get }
     
-    func getRecords()
-    func getRecord(withID id: String, completion: @escaping (Result<Record, Error>) -> Void)
-    func deleteRecord(withID id: String, completion: ((Result<Bool, Error>) -> Void)?)
-    func saveRecord(_ record: Record)
-    func searchRecord(withText text: String)
+    var onRecordStart: (() -> Void)? { get set }
+    var onRecordStop: ((Record?) -> Void)? { get set }
+ 
+    func didStartRecording()
+    func didFinishRecording(ofRecord record: Record)
+    func didDeleted(record: Record)
+        
+    func setupChildViewModel(withIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol
 }
+
 
 //MARK: - Impl
 
 final class MainViewModel: MainViewModelProtocol {
     
-    var records: [Record] = []
-
+    var records = [Record]()
+    
+    var isRecordingNow = false
+    
+    var onRecordStart: (() -> Void)?
+    var onRecordStop: ((Record?) -> Void)?
+    
     private let storageService: StorageServiceProtocol
     
     
@@ -34,21 +44,17 @@ final class MainViewModel: MainViewModelProtocol {
         self.storageService = storageService
   
         getRecords()
-        
-//        saveRecord(Record(name: "test", duration: 3599, date: .now))
-//        saveRecord(Record(name: "test1", duration: 3600, date: .now))
-//        saveRecord(Record(name: "test2", duration: 3601, date: .now))
     }
     
 }
 
+//MARK: - Private
 
-//MARK: - Public
-
-extension MainViewModel {
+private extension MainViewModel {
     
     //MARK: Get all
     func getRecords() {
+        records = []
         storageService.getRecords() { [weak self] result in
             switch result {
             case .success(let records):
@@ -62,8 +68,8 @@ extension MainViewModel {
     
     
     //MARK: Get single
-    func getRecord(withID id: String, completion: @escaping (Result<Record, Error>) -> Void) {
-        storageService.getRecord(withID: id) { result in
+    func get(record: Record, completion: @escaping (Result<Record, Error>) -> Void) {
+        storageService.get(record: record) { result in
             switch result {
             case .success(let record):
                 completion(.success(record))
@@ -76,11 +82,11 @@ extension MainViewModel {
     
     
     //MARK: Delete
-    func deleteRecord(withID id: String, completion: ((Result<Bool, Error>) -> Void)?) {
-        storageService.deleteRecord(withID: id) { [weak self] result in
+    func delete(record: Record, completion: ((Result<Bool, Error>) -> Void)?) {
+        storageService.delete(record: record) { result in
             switch result {
             case .success(let deleted):
-                print("SUCCESS: Record with id \(id) deleted!")
+                print("SUCCESS: Record with name \(record.name) deleted!")
                 completion?(.success(deleted))
             case .failure(let error):
                 print("ERROR: \(error)")
@@ -94,10 +100,47 @@ extension MainViewModel {
     func searchRecord(withText text: String) {
         
     }
+}
+
+
+//MARK: - Public
+
+extension MainViewModel {
+    
+    func didStartRecording() {
+        #warning("RECORDING: checkpoint here")
+        isRecordingNow = true
+        onRecordStart?()
+    }
     
     
-    //MARK: Save
-    func saveRecord(_ record: Record) {
-        storageService.save(record: record)
+    func didFinishRecording(ofRecord record: Record) {
+        // need send signal to view for redrawing
+        isRecordingNow = false
+        storageService.save(record: record) 
+        records.append(record)
+        onRecordStop?(record)
+    }
+    
+    
+    func didDeleted(record: Record) {
+        storageService.delete(record: record) { [weak self] result in
+            switch result {
+            case .success: break
+//                self?.records.enumerated().forEach({ index, value in
+//                    if value.name == record.name {
+//                        self?.records.remove(at: index)
+//                    }
+//                })
+            case .failure(let error):
+                print("ERROR: Cant delete record with name: \(record.name). \(error)")
+            }
+        }
+    }
+
+    
+    //MARK: Seutp child VM
+    func setupChildViewModel(withIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol {
+        Assembly.builder.buildMainCellViewModel(withRecord: records[indexPath.row])
     }
 }
