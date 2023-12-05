@@ -14,21 +14,13 @@ final class MainTableViewCell:  UITableViewCell {
     
     static let mainTableViewCellIdentifier = R.Strings.mainTableViewCellIdentifier.rawValue
     
+    private var viewModel: MainCellViewModelProtocol!
+    
     //MARK: Variables
     
     private let mainCellView = MainCellView()
-    private let playToolbar = Assembly.builder.build(subModule: .playToolbar)
+    private let playToolbar = PlayToolbarView()
     
-    override var isSelected: Bool {
-        didSet {
-            updateAppereance()
-            if isSelected {
-                print("selected")
-            } else {
-                print("deselected")
-            }
-        }
-    }
     
     //MARK: Lifecycle
     
@@ -36,7 +28,6 @@ final class MainTableViewCell:  UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupContentView()
         setupConstraints()
-
     }
     
     required init?(coder: NSCoder) {
@@ -51,23 +42,8 @@ final class MainTableViewCell:  UITableViewCell {
     
     //MARK: Methods
     
-    func configureCell(withRecord record: Record) {
-        mainCellView.configureView(
-            name: record.name,
-            date: Formatter.instance.formatDate(record.date),
-            duraiton: Formatter.instance.formatDuration(record.duration)
-        )
-        
-        guard let toolbar = playToolbar as? PlayToolbarView else {
-            print("ERROR: Couldnt setup play toolbar")
-            return
-        }
-        toolbar.configure(withRecord: record)
-    }
-    
-    func updateAppereance() {
-//        playToolbar.isHidden = !isSelected
-//        playToolbar.heightConstraint?.constant = isSelected ? 80 : 0
+    func configureCell() {
+       
     }
 }
 
@@ -79,8 +55,6 @@ private extension MainTableViewCell {
     func setupContentView() {
         selectionStyle = .gray
         contentView.clipsToBounds = true
-        contentView.addNewSubview(mainCellView)
-        contentView.addNewSubview(playToolbar)
     }
     
     

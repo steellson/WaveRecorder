@@ -17,7 +17,7 @@ final class MainViewController: UIViewController {
     private let searchController = UISearchController()
     private let tableView = UITableView()
         
-    private lazy var recordView = Assembly.builder.build(subModule: .record)
+    private var recordView = RecordView()
     private var recordViewHeight = UIScreen.main.bounds.height * 0.15
     
     private let viewModel: MainViewModelProtocol
@@ -44,12 +44,12 @@ final class MainViewController: UIViewController {
         setupTitleLabel()
         setupSearchController()
         setupTableView()
+        setupRecordView()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         seutpNavigationBar()
-        setupRecordingViewHeight()
         setupConstrtaints()
     }
 
@@ -75,8 +75,8 @@ private extension MainViewController {
     
     func seutpNavigationBar() {
         navigationController?.navigationBar.backgroundColor = R.Colors.primaryBackgroundColor
-        navigationItem.rightBarButtonItem = editButton
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
+        navigationItem.rightBarButtonItem = editButton
         navigationItem.searchController = searchController
     }
     
@@ -128,16 +128,19 @@ private extension MainViewController {
                            forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
     }
     
-    func setupRecordingViewHeight() {
-        guard let recView = (recordView as? RecordView) else { return }
-        
-        recView.onRecord = { [weak self] isRecording in
+    func setupRecordView() {
+        let viewModel = RecordViewModel(parentViewModel: viewModel)
+        recordView.viewModel = viewModel
+    }
+    
+    func updateRecordViewHeight(isRecording: Bool) {
+        if isRecording {
             UIView.animate(
                 withDuration: 0.5,
                 delay: 0.2,
                 options: .curveEaseIn
             ) {
-                self?.recordView.heightConstraint?.constant = isRecording
+                self.recordView.heightConstraint?.constant = isRecording
                 ? UIScreen.main.bounds.height * 0.25
                 : UIScreen.main.bounds.height * 0.15
             }
@@ -180,8 +183,8 @@ extension MainViewController: UITableViewDataSource {
             print("ERROR: Cant dequeue reusable cell")
             return UITableViewCell()
         }
+       
         
-        cell.configureCell(withRecord: viewModel.records[indexPath.row])
         return cell
     }
 }
@@ -191,10 +194,8 @@ extension MainViewController: UITableViewDataSource {
 
 extension MainViewController: UITableViewDelegate {
     
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        guard let cell = tableView.cellForRow(at: indexPath) else { return }
-//        cell.isSelected = true
+
     }
 
 
@@ -204,17 +205,9 @@ extension MainViewController: UITableViewDelegate {
             title: "Delete",
             handler: { action, view, result in
                 self.tableView.beginUpdates()
+        
+//                let record = self.viewModel.records[indexPath.row]
                 
-                let record = self.viewModel.records[indexPath.row]
-                self.viewModel.deleteRecord(withID: record.id) { [weak self] res in
-                    switch res {
-                    case .success:
-                        self?.viewModel.records.remove(at: indexPath.row)
-                        self?.tableView.deleteRows(at: [indexPath], with: .automatic)
-                    case .failure(let error):
-                        print(error)
-                    }
-                }
                 self.tableView.endUpdates()
             }
         )])

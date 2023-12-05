@@ -11,23 +11,21 @@ import SwiftData
 @Model
 final class Record {
     
-    @Attribute(.unique) var id: String
-    var name: String
-    var path: String
-    var duration: TimeInterval
+    @Attribute(.unique) var name: String
     var date: Date
+    var path: String?
+    var duration: TimeInterval?
     
     init(
         name: String,
-        path: String,
-        duration: TimeInterval,
-        date: Date
+        date: Date,
+        path: String?,
+        duration: TimeInterval
     ) {
-        self.id = UUID().uuidString
         self.name = name
+        self.date = date
         self.path = path
         self.duration = duration
-        self.date = date
     }
 
 }

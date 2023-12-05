@@ -13,7 +13,6 @@ import UIKit
 
 protocol AssemblyProtocol: AnyObject {
     func build(module: Assembly.Module) -> UIViewController
-    func build(subModule: Assembly.SubModule) -> UIView
 }
 
 
@@ -21,28 +20,17 @@ protocol AssemblyProtocol: AnyObject {
 
 final class Assembly: AssemblyProtocol {
     
-    static let builder = Assembly()
-    
-    private let services = Services()
-    
-    private lazy var mainViewModel: MainViewModelProtocol = {
-        MainViewModel(storageService: services.storageService)
-    }()
-
-    
-    //MARK: Modules
-    
     enum Module {
         case main
     }
     
-    enum SubModule {
-        case record
-        case playToolbar
-    }
+    static let builder = Assembly()
     
-    
-    
+    private lazy var mainViewModel: MainViewModelProtocol = {
+        MainViewModel()
+    }()
+
+
     //MARK: Build
     
     func build(module: Module) -> UIViewController {
@@ -53,35 +41,14 @@ final class Assembly: AssemblyProtocol {
             return viewController
         }
     }
-    
-    func build(subModule: SubModule) -> UIView {
-        
-        switch subModule {
-        case .record:
-            let viewModel: RecordViewModelProtocol = RecordViewModel(
-                recordService: services.recordService,
-                parentViewModel: mainViewModel
-            )
-            let view = RecordView(viewModel: viewModel)
-            return view
-            
-        case .playToolbar:
-            let viewModel: PlayToolbarViewModelProtocol = PlayToolbarViewModel(
-                audioService: services.audioService,
-                parentViewModel: mainViewModel
-            )
-            let view = PlayToolbarView(viewModel: viewModel)
-            return view
-        }
-    }
 }
 
 
 //MARK: - Services
 
-struct Services {
-    let audioService: AudioServiceProtocol = AudioService()
-    let recordService: RecordServiceProtocol = RecordService()
-    let storageService: StorageServiceProtocol = StorageService()
-}
+//struct Services {
+//    let audioService: AudioServiceProtocol = AudioService()
+//    let recordService: RecordServiceProtocol = RecordService()
+//    let storageService: StorageServiceProtocol = StorageService()
+//}
 

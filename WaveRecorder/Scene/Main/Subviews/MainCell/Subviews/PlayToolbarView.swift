@@ -8,13 +8,24 @@
 import Foundation
 import UIKit
 
+//MARK: - Protocol
+
+protocol PlayToolbarViewDelegate: AnyObject {
+    func goBack()
+    func playPause()
+    func goForward()
+    func deleteRecord()
+}
+
 
 //MARK: - Impl
 
 final class PlayToolbarView: UIView {
-        
-    private let viewModel: PlayToolbarViewModelProtocol
     
+    private var record: Record?
+    
+    weak var delegate: PlayToolbarViewDelegate?
+            
     //MARK: Variables
     
     private let progressSlider = UISlider()
@@ -28,10 +39,7 @@ final class PlayToolbarView: UIView {
     
     //MARK: Lifecycle
     
-    init(
-        viewModel: PlayToolbarViewModelProtocol
-    ) {
-        self.viewModel = viewModel
+    init() {
         super.init(frame: .zero)
         
         setupContentView()
@@ -53,10 +61,9 @@ final class PlayToolbarView: UIView {
     
     //MARK: Methods
     
-    func configure(withRecord record: Record) {
-        self.viewModel.record = record
+    func configureView(withRecord record: Record) {
+        self.record = record
     }
-    
     
     //MARK: Actions
     
@@ -70,12 +77,16 @@ final class PlayToolbarView: UIView {
             sender.alpha = 1
         }
         
-        DispatchQueue.main.async { [unowned self] in
+        DispatchQueue.main.async { [weak self] in
+            guard let delegate = self?.delegate else {
+                print("ERROR: PlayToolbarViewDelegate is not setted!")
+                return
+            }
             switch sender.type {
-            case .goBack: self.viewModel.goBack()
-            case .play: self.viewModel.playPause()
-            case .goForward: self.viewModel.goForward()
-            case .delete: self.viewModel.deleteRecord()
+            case .goBack: delegate.goBack()
+            case .play: delegate.playPause()
+            case .goForward: delegate.goForward()
+            case .delete: delegate.deleteRecord()
             }
         }
     }
@@ -99,17 +110,17 @@ private extension PlayToolbarView {
     private func setupProgressSlider() {
         progressSlider.backgroundColor = .systemGray
         progressSlider.minimumValue = 0
-        progressSlider.maximumValue = Float(viewModel.record?.duration ?? 0)
+        progressSlider.maximumValue = Float(record?.duration ?? 0)
         progressSlider.thumbTintColor = .gray
     }
     
     private func setupStartTimeLabel() {
-        startTimeLabel.text = "00:00"
+        startTimeLabel.text = Formatter.instance.formatDuration(record?.duration ?? 0)
         startTimeLabel.font = .systemFont(ofSize: 14, weight: .light)
     }
     
     private func setupEndTimeLabel() {
-        endTimeLabel.text = "03:04"
+        endTimeLabel.text = Formatter.instance.formatDuration(record?.duration ?? 0)
         endTimeLabel.font = .systemFont(ofSize: 14, weight: .light)
     }
     
@@ -125,36 +136,7 @@ private extension PlayToolbarView {
 
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            playButton.widthAnchor.constraint(equalToConstant: 38),
-            playButton.heightAnchor.constraint(equalToConstant: 38),
-            playButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-            playButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24),
             
-            goBackButton.trailingAnchor.constraint(equalTo: playButton.leadingAnchor, constant: -24),
-            goBackButton.widthAnchor.constraint(equalToConstant: 34),
-            goBackButton.heightAnchor.constraint(equalToConstant: 34),
-            goBackButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24),
-            
-            goForwardButton.widthAnchor.constraint(equalToConstant: 34),
-            goForwardButton.heightAnchor.constraint(equalToConstant: 34),
-            goForwardButton.leadingAnchor.constraint(equalTo: playButton.trailingAnchor, constant: 24),
-            goForwardButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24),
-
-            deleteButton.widthAnchor.constraint(equalToConstant: 34),
-            deleteButton.heightAnchor.constraint(equalToConstant: 34),
-            deleteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
-            deleteButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24),
-            
-            startTimeLabel.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: -24),
-            startTimeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-            
-            endTimeLabel.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: -24),
-            endTimeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
-            
-            progressSlider.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-            progressSlider.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
-            progressSlider.heightAnchor.constraint(equalToConstant: 1),
-            progressSlider.bottomAnchor.constraint(equalTo: endTimeLabel.topAnchor, constant: -24)
         ])
     }
 }

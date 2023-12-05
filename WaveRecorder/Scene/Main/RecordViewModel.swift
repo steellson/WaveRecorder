@@ -11,9 +11,6 @@ import Foundation
 
 protocol RecordViewModelProtocol: AnyObject {
     var buttonRadius: CGFloat { get }
-    
-    func startRecord()
-    func stopRecord(completion: ((Bool) -> Void)?)
 }
 
 
@@ -27,14 +24,11 @@ final class RecordViewModel: RecordViewModelProtocol {
         "Record_\((self.parentViewModel?.records.count ?? 0) + 1)"
     }()
     
-    private let recordService: RecordServiceProtocol
     private weak var parentViewModel: MainViewModelProtocol?
     
     init(
-        recordService: RecordServiceProtocol,
         parentViewModel: MainViewModelProtocol
     ) {
-        self.recordService = recordService
         self.parentViewModel = parentViewModel
     }
 }
@@ -44,19 +38,5 @@ final class RecordViewModel: RecordViewModelProtocol {
 
 extension RecordViewModel {
     
-    func startRecord() {
-        recordService.startRecord(withName: recordWillNamed)
-    }
-    
-    func stopRecord(completion: ((Bool) -> Void)?) {
-        recordService.stopRecord(withName: recordWillNamed) { [weak self] record in
-            guard let record else {
-                print("ERROR: Record is nil")
-                completion?(false)
-                return
-            }
-            self?.parentViewModel?.saveRecord(record)
-            completion?(true)
-        }
-    }
+  
 }

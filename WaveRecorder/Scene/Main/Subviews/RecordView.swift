@@ -12,23 +12,17 @@ import UIKit
 
 final class RecordView: UIView {
     
-    private let viewModel: RecordViewModelProtocol
+    var viewModel: RecordViewModelProtocol?
     
-    private lazy var recButtonView = RoundedRecButtonView(radius: viewModel.buttonRadius)
-    
-    var onRecord: ((Bool) -> Void)?
-    
+    private lazy var recButtonView = RoundedRecButtonView(radius: viewModel?.buttonRadius ?? 30)
+        
     
     //MARK: Lifecycle
     
-    init(
-        viewModel: RecordViewModelProtocol
-    ) {
-        self.viewModel = viewModel
+    init() {
         super.init(frame: .zero)
         
         seutupContentView()
-        setupRecButtonView()
     }
     
     required init?(coder: NSCoder) {
@@ -51,14 +45,14 @@ private extension RecordView {
         addNewSubview(recButtonView)
     }
     
-    func setupRecButtonView() {
-        recButtonView.delegate = self
-    }
-    
 
     //MARK: Constraints
     
     func setupConstraints() {
+        guard let viewModel else {
+            print("ERROR: Couldnt setup layout by the reaason of viewModel = nil")
+            return
+        }
         NSLayoutConstraint.activate([
             recButtonView.centerXAnchor.constraint(equalTo: centerXAnchor),
             recButtonView.heightAnchor.constraint(equalToConstant: viewModel.buttonRadius * 2),
@@ -75,11 +69,9 @@ extension RecordView: RoundedRecButtonViewDelegate {
     
     func recButtonDidTapped() {
         if recButtonView.isRecording {
-            viewModel.startRecord()
-            onRecord?(recButtonView.isRecording)
+
         } else {
-            viewModel.stopRecord(completion: nil)
-            onRecord?(false)
+
         }
     }
 }
