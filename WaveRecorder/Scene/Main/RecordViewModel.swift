@@ -24,7 +24,7 @@ final class RecordViewModel: RecordViewModelProtocol {
     private(set) var buttonRadius: CGFloat = 30.0
     
     private lazy var recordWillNamed: String = {
-        "Record \((self.parentViewModel?.records.count ?? 0) + 1)"
+        "Record_\((self.parentViewModel?.records.count ?? 0) + 1)"
     }()
     
     private let recordService: RecordServiceProtocol
