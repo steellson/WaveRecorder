@@ -25,6 +25,10 @@ final class Assembly: AssemblyProtocol {
     
     private let services = Services()
     
+    private lazy var mainViewModel: MainViewModelProtocol = {
+        MainViewModel(storageService: services.storageService)
+    }()
+
     
     //MARK: Modules
     
@@ -34,7 +38,9 @@ final class Assembly: AssemblyProtocol {
     
     enum SubModule {
         case record
+        case playToolbar
     }
+    
     
     
     //MARK: Build
@@ -43,18 +49,28 @@ final class Assembly: AssemblyProtocol {
         switch module {
             
         case .main:
-            let viewModel: MainViewModelProtocol = MainViewModel(storageService: services.storageService)
-            let viewController = MainViewController(viewModel: viewModel)
+            let viewController = MainViewController(viewModel: mainViewModel)
             return viewController
         }
     }
     
     func build(subModule: SubModule) -> UIView {
+        
         switch subModule {
-            
         case .record:
-            let viewModel: RecordViewModelProtocol = RecordViewModel()
-            let view = RecordingView(viewModel: viewModel)
+            let viewModel: RecordViewModelProtocol = RecordViewModel(
+                recordService: services.recordService,
+                parentViewModel: mainViewModel
+            )
+            let view = RecordView(viewModel: viewModel)
+            return view
+            
+        case .playToolbar:
+            let viewModel: PlayToolbarViewModelProtocol = PlayToolbarViewModel(
+                audioService: services.audioService,
+                parentViewModel: mainViewModel
+            )
+            let view = PlayToolbarView(viewModel: viewModel)
             return view
         }
     }
@@ -64,5 +80,8 @@ final class Assembly: AssemblyProtocol {
 //MARK: - Services
 
 struct Services {
+    let audioService: AudioServiceProtocol = AudioService()
+    let recordService: RecordServiceProtocol = RecordService()
     let storageService: StorageServiceProtocol = StorageService()
 }
+

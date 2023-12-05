@@ -14,11 +14,14 @@ protocol RoundedRecButtonViewDelegate: AnyObject {
     func recButtonDidTapped()
 }
 
+
 //MARK: - Impl
 
-final class RoundedRecButtonView: BaseView {
+final class RoundedRecButtonView: UIView {
     
     weak var delegate: RoundedRecButtonViewDelegate?
+    
+    //MARK: Variables
     
     private let radius: CGFloat
     
@@ -28,19 +31,21 @@ final class RoundedRecButtonView: BaseView {
     private(set) var isRecording = false {
         didSet {
             isRecording 
-            ? record(hasStarted: true)
-            : record(hasStarted: false)
+            ? animateButtonWhenRecord(hasStarted: true)
+            : animateButtonWhenRecord(hasStarted: false)
         }
     }
     
     
-    //MARK: - Init
+    //MARK: - Lifecycle
     
     init(
         radius: CGFloat
     ) {
         self.radius = radius
         super.init(frame: .zero)
+        
+        setupContentView()
     }
     
     required init?(coder: NSCoder) {
@@ -49,45 +54,17 @@ final class RoundedRecButtonView: BaseView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        setupButtonAppearence()
+        setupRoundedLayer()
+        setupConstraints()
+    }
         
-    }
     
-    //MARK: Setup
-    
-    private func setupContentView() {
-        backgroundColor = .clear
-        addNewSubview(button)
-    }
-    
-    private func setupButtonAppearence() {
-        button.backgroundColor = .red
-        button.layer.cornerRadius = radius
-        button.clipsToBounds = true
-        button.layer.masksToBounds = true
-        button.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
-    }
-    
-    private func setupRoundedLayer() {
-        let circularPath = UIBezierPath(
-            arcCenter: CGPoint(x: radius, y: radius),
-            radius: radius + 2,
-            startAngle: 0,
-            endAngle: 2 * CGFloat.pi,
-            clockwise: false
-        )
-        
-        roundedLayer.path = circularPath.cgPath
-        roundedLayer.strokeColor = UIColor.gray.cgColor
-        roundedLayer.fillColor = UIColor.clear.cgColor
-        roundedLayer.lineWidth = 2.5
-        
-        layer.addSublayer(roundedLayer)
-    }
     
     
     //MARK: - Methods
     
-    private func record(hasStarted isRecording: Bool) {
+    private func animateButtonWhenRecord(hasStarted isRecording: Bool) {
         // Tap effect
         UIView.animate(withDuration: 0.2) {
             self.button.alpha = 0.5
@@ -109,26 +86,53 @@ final class RoundedRecButtonView: BaseView {
     }
     
     
+    //MARK: Actions
+    
     @objc private func buttonDidTapped() {
         isRecording.toggle()
         delegate?.recButtonDidTapped()
     }
 }
 
-//MARK: - Base
 
-extension RoundedRecButtonView {
+//MARK: - Setup
+
+private extension RoundedRecButtonView {
     
-    override func setupView() {
-        super.setupView()
-        setupContentView()
+    func setupContentView() {
+        backgroundColor = .clear
+        addNewSubview(button)
     }
     
-    override func setupLayout() {
-        super.setupLayout()
-        setupButtonAppearence()
-        setupRoundedLayer()
+    func setupButtonAppearence() {
+        button.backgroundColor = .red
+        button.layer.cornerRadius = radius
+        button.clipsToBounds = true
+        button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
+    }
+    
+    func setupRoundedLayer() {
+        let circularPath = UIBezierPath(
+            arcCenter: CGPoint(x: radius, y: radius),
+            radius: radius + 2,
+            startAngle: 0,
+            endAngle: 2 * CGFloat.pi,
+            clockwise: false
+        )
         
+        roundedLayer.path = circularPath.cgPath
+        roundedLayer.strokeColor = UIColor.gray.cgColor
+        roundedLayer.fillColor = UIColor.clear.cgColor
+        roundedLayer.lineWidth = 2.5
+        
+        layer.addSublayer(roundedLayer)
+    }
+    
+
+    //MARK: Constraints
+    
+    func setupConstraints() {
         NSLayoutConstraint.activate([
             button.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.95),
             button.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.95),

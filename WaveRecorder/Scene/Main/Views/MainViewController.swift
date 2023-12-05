@@ -10,7 +10,7 @@ import UIKit
 
 //MARK: - Impl
 
-final class MainViewController: BaseController {
+final class MainViewController: UIViewController {
     
     private let editButton = UIBarButtonItem()
     private let titleLabel = UILabel()
@@ -19,15 +19,11 @@ final class MainViewController: BaseController {
         
     private lazy var recordView = Assembly.builder.build(subModule: .record)
     private var recordViewHeight = UIScreen.main.bounds.height * 0.15
-        
-    private let recordingView = Assembly.builder.build(subModule: .record)
     
     private let viewModel: MainViewModelProtocol
     
-    private var recordingViewHeight = UIScreen.main.bounds.height * 0.15
         
-    
-    //MARK: Init
+    //MARK: Lifecycle
     
     init(
         viewModel: MainViewModelProtocol
@@ -41,77 +37,24 @@ final class MainViewController: BaseController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-    //MARK: Seutp
-    
-    private func seutpNavigationBar() {
-        navigationItem.rightBarButtonItem = editButton
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
-        navigationItem.searchController = searchController
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupContentView()
+        setupEditButton()
+        setupTitleLabel()
+        setupSearchController()
+        setupTableView()
     }
     
-    private func setupContentView() {
-        view.addNewSubview(tableView)
-        view.addNewSubview(recordingView)
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        seutpNavigationBar()
+        setupRecordingViewHeight()
+        setupConstrtaints()
     }
+
     
-    private func setupEditButton() {
-        editButton.title = R.Strings.editButtonTitle.rawValue
-        editButton.tintColor = .black
-        editButton.target = self
-        editButton.action = #selector(editButtonDidTapped)
-    }
-    
-    private func setupTitleLabel() {
-        titleLabel.text = R.Strings.navigationTitleMain.rawValue
-        titleLabel.textColor = .black
-        titleLabel.font = .systemFont(ofSize: 26, weight: .bold)
-        titleLabel.textAlignment = .left
-    }
-    
-    private func setupSearchController() {
-        searchController.searchBar.placeholder = R.Strings.searchTextFieldPlaceholder.rawValue
-        searchController.searchBar.searchTextField.backgroundColor = R.Colors.secondaryBackgroundColor
-        searchController.searchBar.backgroundColor = R.Colors.primaryBackgroundColor
-        searchController.searchBar.tintColor = .black
-        searchController.searchBar.autocapitalizationType = .none
-        searchController.searchBar.autocorrectionType = .no
-        searchController.searchBar.searchBarStyle = .minimal
-        searchController.hidesNavigationBarDuringPresentation = false
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchResultsUpdater = self
-        searchController.searchBar.delegate = self
-    }
-    
-    private func setupTableView() {
-        tableView.backgroundColor = R.Colors.secondaryBackgroundColor
-        tableView.showsVerticalScrollIndicator = false
-        tableView.layer.cornerRadius = 26
-        tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(MainTableViewCell.self,
-                           forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
-    }
-    
-    private func setupRecordingViewHeight() {
-        guard let recView = (recordingView as? RecordingView) else { return }
-        
-        recView.onRecord = { [weak self] isRecording in
-            UIView.animate(
-                withDuration: 0.5,
-                delay: 0.2,
-                options: .curveEaseIn
-            ) {
-                self?.recordingView.heightConstraint?.constant = isRecording
-                ? UIScreen.main.bounds.height * 0.25
-                : UIScreen.main.bounds.height * 0.15
-            }
-        }
-    }
-    
-    
-    //MARK: Methods
+    //MARK: Actions
     
     @objc
     private func editButtonDidTapped() {
@@ -126,38 +69,97 @@ final class MainViewController: BaseController {
 }
 
 
-//MARK: - Base
+//MARK: - Setup
 
-extension MainViewController {
+private extension MainViewController {
     
-    override func setupView() {
-        super.setupView()
-        setupContentView()
-        setupEditButton()
-        setupTitleLabel()
-        setupSearchController()
-        setupTableView()
+    func seutpNavigationBar() {
+        navigationController?.navigationBar.backgroundColor = R.Colors.primaryBackgroundColor
+        navigationItem.rightBarButtonItem = editButton
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
+        navigationItem.searchController = searchController
     }
     
-    override func setupNavBar() {
-        super.setupNavBar()
-        seutpNavigationBar()
+    func setupContentView() {
+        view.backgroundColor = R.Colors.primaryBackgroundColor
+        view.addNewSubview(recordView)
+        view.addNewSubview(tableView)
     }
     
-    override func setupLayout() {
-        super.setupLayout()
-        setupRecordingViewHeight()
+    func setupEditButton() {
+        editButton.title = R.Strings.editButtonTitle.rawValue
+        editButton.tintColor = .black
+        editButton.target = self
+        editButton.action = #selector(editButtonDidTapped)
+    }
+    
+    func setupTitleLabel() {
+        titleLabel.text = R.Strings.navigationTitleMain.rawValue
+        titleLabel.textColor = .black
+        titleLabel.font = .systemFont(ofSize: 26, weight: .bold)
+        titleLabel.textAlignment = .left
+    }
+    
+    func setupSearchController() {
+        searchController.searchBar.placeholder = R.Strings.searchTextFieldPlaceholder.rawValue
+        searchController.searchBar.searchTextField.backgroundColor = R.Colors.secondaryBackgroundColor
+        searchController.searchBar.backgroundColor = R.Colors.primaryBackgroundColor
+        searchController.searchBar.tintColor = .black
+        searchController.searchBar.autocapitalizationType = .none
+        searchController.searchBar.autocorrectionType = .no
+        searchController.searchBar.searchBarStyle = .minimal
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+    }
+    
+    func setupTableView() {
+        tableView.backgroundColor = R.Colors.secondaryBackgroundColor
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        tableView.layer.cornerRadius = 26
+        tableView.estimatedRowHeight = 160
+        tableView.showsVerticalScrollIndicator = false
+        tableView.alwaysBounceVertical = true
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(MainTableViewCell.self,
+                           forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
+    }
+    
+    func setupRecordingViewHeight() {
+        guard let recView = (recordView as? RecordView) else { return }
+        
+        recView.onRecord = { [weak self] isRecording in
+            UIView.animate(
+                withDuration: 0.5,
+                delay: 0.2,
+                options: .curveEaseIn
+            ) {
+                self?.recordView.heightConstraint?.constant = isRecording
+                ? UIScreen.main.bounds.height * 0.25
+                : UIScreen.main.bounds.height * 0.15
+            }
+        }
+    }
+    
+    
+    //MARK: Constraints
+    
+    func setupConstrtaints() {
+        guard let navBar = self.navigationController?.navigationBar else { return }
         
         NSLayoutConstraint.activate([
-            recordingView.heightAnchor.constraint(equalToConstant: recordingViewHeight),
-            recordingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            recordingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            recordingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            recordView.heightAnchor.constraint(equalToConstant: recordViewHeight),
+            recordView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            recordView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            recordView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            tableView.topAnchor.constraint(equalTo: searchController.searchBar.bottomAnchor),
+            tableView.topAnchor.constraint(equalTo: navBar.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: recordingView.topAnchor)
+            tableView.bottomAnchor.constraint(equalTo: recordView.topAnchor)
         ])
     }
 }
@@ -179,15 +181,7 @@ extension MainViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        let record = viewModel.records[indexPath.row]
-        let dateString = Formatter.instance.formatDate(record.date)
-        let durationString = Formatter.instance.formatDuration(record.duration)
-        
-        cell.configureCell(
-            name: record.name,
-            date: dateString,
-            duraiton: durationString
-        )
+        cell.configureCell(withRecord: viewModel.records[indexPath.row])
         return cell
     }
 }
@@ -196,10 +190,13 @@ extension MainViewController: UITableViewDataSource {
 //MARK: - TableView Delegate
 
 extension MainViewController: UITableViewDelegate {
-        
+    
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+//        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+//        cell.isSelected = true
     }
+
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         UISwipeActionsConfiguration(actions: [ UIContextualAction(

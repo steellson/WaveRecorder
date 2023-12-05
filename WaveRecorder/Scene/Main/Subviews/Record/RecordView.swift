@@ -1,5 +1,5 @@
 //
-//  RecordingView.swift
+//  RecordView.swift
 //  WaveRecorder
 //
 //  Created by Andrew Steellson on 24.11.2023.
@@ -7,9 +7,10 @@
 
 import UIKit
 
+
 //MARK: - Impl
 
-final class RecordingView: BaseView {
+final class RecordView: UIView {
     
     private let viewModel: RecordViewModelProtocol
     
@@ -17,51 +18,52 @@ final class RecordingView: BaseView {
     
     var onRecord: ((Bool) -> Void)?
     
-    //MARK: Init
+    
+    //MARK: Lifecycle
     
     init(
         viewModel: RecordViewModelProtocol
     ) {
         self.viewModel = viewModel
         super.init(frame: .zero)
+        
+        seutupContentView()
+        setupRecButtonView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-    //MARK: Setup
-    
-    private func seutupContentView() {
-        backgroundColor = R.Colors.primaryBackgroundColor
-        addNewSubview(recButtonView)
-    }
-    
-    private func setupRecButtonView() {
-        recButtonView.delegate = self
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setupConstraints()
     }
 }
 
 
-//MARK: - Base
+//MARK: - Setup
 
-extension RecordingView {
+private extension RecordView {
     
-    override func setupView() {
-        super.setupView()
-        seutupContentView()
-        setupRecButtonView()
+    func seutupContentView() {
+        backgroundColor = R.Colors.primaryBackgroundColor
+        addNewSubview(recButtonView)
     }
     
-    override func setupLayout() {
-        super.setupLayout()
-        
+    func setupRecButtonView() {
+        recButtonView.delegate = self
+    }
+    
+
+    //MARK: Constraints
+    
+    func setupConstraints() {
         NSLayoutConstraint.activate([
             recButtonView.centerXAnchor.constraint(equalTo: centerXAnchor),
             recButtonView.heightAnchor.constraint(equalToConstant: viewModel.buttonRadius * 2),
             recButtonView.widthAnchor.constraint(equalToConstant: viewModel.buttonRadius * 2),
-            recButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10)
+            recButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -12)
         ])
     }
 }
@@ -69,9 +71,15 @@ extension RecordingView {
 
 //MARK: - RoundedRecButtonView Delegate
 
-extension RecordingView: RoundedRecButtonViewDelegate {
+extension RecordView: RoundedRecButtonViewDelegate {
     
     func recButtonDidTapped() {
-        onRecord?(recButtonView.isRecording)
+        if recButtonView.isRecording {
+            viewModel.startRecord()
+            onRecord?(recButtonView.isRecording)
+        } else {
+            viewModel.stopRecord(completion: nil)
+            onRecord?(false)
+        }
     }
 }
