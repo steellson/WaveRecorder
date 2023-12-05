@@ -7,11 +7,6 @@
 
 import UIKit
 
-//MARK: - Types
-
-typealias DataSource = UITableViewDiffableDataSource<Section, Record>
-typealias DataSourceSnapshot = NSDiffableDataSourceSnapshot<Section, Record>
-
 
 //MARK: - Impl
 
@@ -21,9 +16,7 @@ final class MainViewController: BaseController {
     private let titleLabel = UILabel()
     private let searchController = UISearchController()
     private let tableView = UITableView()
-    
-    private var dataSource: DataSource!
-    
+        
     private lazy var recordView = Assembly.builder.build(subModule: .record)
     private var recordViewHeight = UIScreen.main.bounds.height * 0.15
     
