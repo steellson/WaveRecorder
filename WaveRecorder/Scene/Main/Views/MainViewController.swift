@@ -52,6 +52,13 @@ final class MainViewController: BaseController {
         view.addNewSubview(recordView)
     }
     
+    private func setupDelegates() {
+        guard let recVeiw = recordView as? RecordView else { return }
+        recVeiw.delegate = self
+        tableView.delegate = self
+        searchController.searchBar.delegate = self
+    }
+    
     private func setupEditButton() {
         editButton.title = R.Strings.editButtonTitle.rawValue
         editButton.tintColor = .black
@@ -77,7 +84,6 @@ final class MainViewController: BaseController {
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchResultsUpdater = self
-        searchController.searchBar.delegate = self
     }
     
     private func setupTableView() {
@@ -89,7 +95,6 @@ final class MainViewController: BaseController {
         tableView.showsVerticalScrollIndicator = false
         tableView.alwaysBounceVertical = true
         tableView.dataSource = self
-        tableView.delegate = self
         tableView.register(MainTableViewCell.self,
                            forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
     }
@@ -131,6 +136,7 @@ extension MainViewController {
     override func setupView() {
         super.setupView()
         setupContentView()
+        setupDelegates()
         setupEditButton()
         setupTitleLabel()
         setupSearchController()
@@ -157,21 +163,6 @@ extension MainViewController {
             tableView.bottomAnchor.constraint(equalTo: recordView.topAnchor)
         ])
     }
-    
-    override func setupBindings() {
-        super.setupBindings()
-        
-        viewModel.records.bind { [weak self] records in
-            DispatchQueue.main.async {
-                self?.tableView.reloadData()
-            }
-        }
-        
-        viewModel.isRecordingNow.bind { [weak self] isRecording in
-            print(isRecording)
-            self?.setupRecordingViewHeight(withRecording: isRecording)
-        }
-    }
 }
 
 
@@ -180,7 +171,7 @@ extension MainViewController {
 extension MainViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.records.value.count
+        viewModel.records.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -213,10 +204,29 @@ extension MainViewController: UITableViewDelegate {
             title: "Delete",
             handler: { action, view, result in
                 self.tableView.beginUpdates()
-                self.viewModel.didDeleted(record: self.viewModel.records.value[indexPath.row])
+                self.viewModel.didDeleted(record: self.viewModel.records[indexPath.row])
                 self.tableView.endUpdates()
             }
         )])
+    }
+}
+
+
+//MARK: - RecordView Delegate
+
+extension MainViewController: RecordViewDelegate {
+    
+    func recordStarted() {
+        DispatchQueue.main.async { [weak self] in
+            self?.setupRecordingViewHeight(withRecording: true)
+        }
+    }
+    
+    func recordFinished() {
+        DispatchQueue.main.async { [weak self] in
+            self?.setupRecordingViewHeight(withRecording: false)
+            self?.view.setNeedsLayout()
+        }
     }
 }
 
@@ -237,3 +247,5 @@ extension MainViewController: UISearchResultsUpdating {
         
     }
 }
+
+

@@ -37,6 +37,8 @@ final class RecordService: RecordServiceProtocol {
     
     private var recordingSession: AVAudioSession = AVAudioSession.sharedInstance()
     private var audioRecorder: AVAudioRecorder = AVAudioRecorder()
+    private let fileManagerInstance = FileManager.default
+
     
     private let storedInFolderWithName = "WRRecords"
     private let storeWithFormatName = "m4a"
@@ -50,7 +52,7 @@ final class RecordService: RecordServiceProtocol {
     
     private func setupAudioRecorder() {
         do {
-            try recordingSession.setCategory(.record, mode: .default)
+            try recordingSession.setCategory(.playAndRecord, mode: .default)
             AVAudioApplication.requestRecordPermission() { allowed in
                 DispatchQueue.main.async { [weak self] in
                     if !allowed {
@@ -75,18 +77,26 @@ final class RecordService: RecordServiceProtocol {
 private extension RecordService {
     
     func prepareFolderForStoreOnDevice(withName name: String) {
-        PathManager.instance.createFolder(withDirectoryName: name)
+        let documentsFolder = fileManagerInstance.urls(for: .documentDirectory,in: .userDomainMask)[0]
+        let storageFolderPath = documentsFolder.appendingPathComponent(name).path()
+        
+        if !fileManagerInstance.fileExists(atPath: storageFolderPath) {
+                do {
+                    try fileManagerInstance.createDirectory(atPath: storageFolderPath,
+                                                    withIntermediateDirectories: false,
+                                                    attributes: nil)
+                } catch {
+                    print("ERROR: Cant create folder in Documents directory: \(error)")
+                }
+            }
     }
 
-    func setupFilePathToSave(withDirName dirName: String,
-                                     fileName fName: String,
-                                     formatName format: String) -> URL {
-                                         
-        PathManager.instance.createNewFile(
-            withDirectoryName: dirName,
-            fileName: fName,
-            formatName: format
-        )
+    func setupFilePathToSave(fileName fName: String) -> URL {
+        fileManagerInstance.urls(for: .documentDirectory,in: .userDomainMask)[0]
+            .appendingPathComponent(storedInFolderWithName)
+            .appendingPathComponent(fName)
+            .appendingPathExtension(storeWithFormatName)
+        
     }
     
     func setSettings() -> [String: Int] {
@@ -116,17 +126,13 @@ extension RecordService {
         }
         
         // Create path to save file
-        let audioPath = setupFilePathToSave(
-            withDirName: storedInFolderWithName,
-            fileName: record.name,
-            formatName: storeWithFormatName
-        )
+        let audioPath = setupFilePathToSave(fileName: record.name)
         print("** Record will stored into: \(audioPath)")
         
         // Store record into variable
-        record.path = audioPath.path()
+        record.format = storeWithFormatName
         self.record = record
-        
+
         // Setup settings
         let settings = setSettings()
         
@@ -139,6 +145,7 @@ extension RecordService {
                 
                 // Check
                 if self.audioRecorder.isRecording {
+                    record.path = self.audioRecorder.url
                     completion(.success(record))
                     print(">>> RECORD STARTED!")
                 } else {
@@ -165,12 +172,12 @@ extension RecordService {
             // Check
             if !self.audioRecorder.isRecording,
                let record = self.record {
-                
+
                 // Finally set duration to record and send it out
                 record.duration = audioRecorder.currentTime
                 completion(.success(record))
                 print(">>> RECORDING STOPPED!")
-                
+
             } else {
                 completion(.failure(.recordgingIsNotStopped))
                 self.record = nil

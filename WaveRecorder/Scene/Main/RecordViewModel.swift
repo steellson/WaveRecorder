@@ -24,7 +24,7 @@ final class RecordViewModel: RecordViewModelProtocol {
     private(set) var buttonRadius: CGFloat = 30.0
     
     private lazy var recordWillNamed: String =  {
-        "Record \((self.parentViewModel?.records.value.count ?? 0) + 1)"
+        "Record_\((self.parentViewModel?.records.count ?? 0) + 1)"
     }()
     
     
@@ -48,6 +48,7 @@ private extension RecordViewModel {
         Record(
             name: recordWillNamed,
             date: .now,
+            format: nil,
             duration: nil,
             path: nil
         )

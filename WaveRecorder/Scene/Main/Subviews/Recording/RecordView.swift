@@ -7,10 +7,19 @@
 
 import UIKit
 
+//MARK: - Protocol
+
+protocol RecordViewDelegate: AnyObject {
+    func recordStarted()
+    func recordFinished()
+}
+
 
 //MARK: - Impl
 
 final class RecordView: BaseView {
+    
+    weak var delegate: RecordViewDelegate?
         
     private let viewModel: RecordViewModelProtocol
     
@@ -74,8 +83,10 @@ extension RecordView: RoundedRecButtonViewDelegate {
     func recButtonDidTapped() {
         if recButtonView.isRecording {
             viewModel.startRecord()
+            delegate?.recordStarted()
         } else {
             viewModel.stopRecord(completion: nil)
+            delegate?.recordFinished()
         }
     }
 }

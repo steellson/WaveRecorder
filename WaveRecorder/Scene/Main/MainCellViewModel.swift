@@ -53,6 +53,7 @@ extension MainCellViewModel {
     
     func playPause(completion: @escaping (Bool) -> Void) {
         if isPaused {
+            print(record.path)
             audioService.play(audioRecord: record) { [weak self] error in
                 guard let error else {
                     self?.isPaused = false
@@ -85,6 +86,7 @@ extension MainCellViewModel {
             completion(false)
             return
         }
+        print(record.path)
         parentVM.didDeleted(record: record)
     }
 }

@@ -30,6 +30,7 @@ enum StorageError: Error {
     case cantGetStorageContext
     case cantGetRecordsFormStorage
     case cantGetRecordWithIDFormStorage
+    case cantReadFilePath
     case cantFetchRecordWithDescriptor
     case cantDeleteRecord
     case fetchedRecordsEmpty
@@ -107,7 +108,7 @@ extension StorageService {
             }
             completion(.success(record))
         } catch {
-            print("ERROR: Cant get record with id \(record.id) from storage: \(error)")
+            print("ERROR: Cant get record with id \(record.name) from storage: \(error)")
             completion(.failure(.cantGetRecordWithIDFormStorage))
         }
     }
@@ -144,7 +145,7 @@ extension StorageService {
         
         do {
             guard let oldRecord = try context.fetch(fetchDescriptor).first else {
-                print("ERROR: Cant get record widh id \(record.id) from storage")
+                print("ERROR: Cant get record \(record.name) from storage")
                 return
             }
             
@@ -152,6 +153,7 @@ extension StorageService {
                 Record(
                     name: name,
                     date: oldRecord.date,
+                    format: oldRecord.format,
                     duration: oldRecord.duration,
                     path: oldRecord.path
             ))
@@ -176,20 +178,24 @@ extension StorageService {
         do {
             // Delete from storage
             guard let record = try context.fetch(fetchDescriptor).first else {
-                print("ERROR: Cant get record widh id \(record.id) from storage")
+                print("ERROR: Cant get record widh name \(record.name) from storage")
                 completion(.failure(.cantGetRecordWithIDFormStorage))
                 return
             }
             context.delete(record)
             
             // Delete from file manager
-            let storedRecordURL = PathManager.instance.getPathOfRecord(witnName: record.name).appendingPathExtension("m4a")
-            print("** File will deleted: \(storedRecordURL)")
-            try FileManager.default.removeItem(at: storedRecordURL)
+            guard let path = record.path else {
+                print("ERROR: Cant read file path!")
+                completion(.failure(.cantReadFilePath))
+                return
+            }
+            print("** File will deleted: \(path)")
+            try FileManager.default.removeItem(at: path)
             completion(.success(true))
             
         } catch {
-            print("ERROR: Cant delete record with id \(record.id), error: \(error)")
+            print("ERROR: Cant delete record with name \(record.name), error: \(error)")
             completion(.failure(.cantDeleteRecord))
             return
         }

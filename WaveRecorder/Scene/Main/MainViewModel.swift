@@ -10,8 +10,11 @@ import Foundation
 //MARK: - Protocols
 
 protocol MainViewModelProtocol: AnyObject {    
-    var records: Observable<[Record]> { get }
-    var isRecordingNow: Observable<Bool> { get }
+    var records: [Record] { get }
+    var isRecordingNow: Bool { get }
+    
+    var onRecordStart: (() -> Void)? { get set }
+    var onRecordStop: ((Record?) -> Void)? { get set }
  
     func didStartRecording()
     func didFinishRecording(ofRecord record: Record)
@@ -25,9 +28,12 @@ protocol MainViewModelProtocol: AnyObject {
 
 final class MainViewModel: MainViewModelProtocol {
     
-    var records = Observable<[Record]>(value: [])
+    var records = [Record]()
     
-    var isRecordingNow = Observable(value: false)
+    var isRecordingNow = false
+    
+    var onRecordStart: (() -> Void)?
+    var onRecordStop: ((Record?) -> Void)?
     
     private let storageService: StorageServiceProtocol
     
@@ -48,14 +54,14 @@ private extension MainViewModel {
     
     //MARK: Get all
     func getRecords() {
-        records.value = []
+        records = []
         storageService.getRecords() { [weak self] result in
             switch result {
             case .success(let records):
-                self?.records.value = records
+                self?.records = records
             case .failure(let error):
                 print("ERROR: \(error)")
-                self?.records.value = []
+                self?.records = []
             }
         }
     }
@@ -80,7 +86,7 @@ private extension MainViewModel {
         storageService.delete(record: record) { result in
             switch result {
             case .success(let deleted):
-                print("SUCCESS: Record with id \(record.id) deleted!")
+                print("SUCCESS: Record with name \(record.name) deleted!")
                 completion?(.success(deleted))
             case .failure(let error):
                 print("ERROR: \(error)")
@@ -101,31 +107,29 @@ private extension MainViewModel {
 
 extension MainViewModel {
     
-    //MARK: Did start rec
     func didStartRecording() {
         #warning("RECORDING: checkpoint here")
-        // need send signal to view for redrawing
-        isRecordingNow.value = true
+        isRecordingNow = true
+        onRecordStart?()
     }
     
     
-    //MARK: Did finish rec
     func didFinishRecording(ofRecord record: Record) {
         // need send signal to view for redrawing
-        isRecordingNow.value = false
+        isRecordingNow = false
         storageService.save(record: record) 
-        records.value.append(record)
+        records.append(record)
+        onRecordStop?(record)
     }
     
     
-    //MARK: Did delete rec
     func didDeleted(record: Record) {
         storageService.delete(record: record) { [weak self] result in
             switch result {
             case .success: break
-//                self?.records.value.enumerated().forEach({ index, value in
-//                    if value.id == record.id {
-//                        self?.records.value.remove(at: index)
+//                self?.records.enumerated().forEach({ index, value in
+//                    if value.name == record.name {
+//                        self?.records.remove(at: index)
 //                    }
 //                })
             case .failure(let error):
@@ -137,6 +141,6 @@ extension MainViewModel {
     
     //MARK: Seutp child VM
     func setupChildViewModel(withIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol {
-        Assembly.builder.buildMainCellViewModel(withRecord: records.value[indexPath.row])
+        Assembly.builder.buildMainCellViewModel(withRecord: records[indexPath.row])
     }
 }

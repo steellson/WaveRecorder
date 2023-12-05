@@ -73,23 +73,23 @@ final class AudioService: AudioServiceProtocol {
 extension AudioService {
    
     func play(audioRecord record: Record, completion: @escaping (AudioServiceError?) -> Void) {
+        print(">>>>>> RECORD: \(record.name), \(record.date), \(record.duration), \(record.path), \(record.format)")
         guard
             let recordPath = record.path,
-            let recordSafeURL = URL(string: recordPath),
-              FileManager.default.fileExists(atPath: recordPath)
+            FileManager.default.fileExists(atPath: recordPath.path(percentEncoded: true))
         else {
             print("ERROR: File with name \(record.name) doesn't exist!")
             completion(.audioFileWithNameDoesntExist)
             return
         }
-        
+
         DispatchQueue.main.async { [unowned self] in
             do {
-                self.audioPlayer = try AVAudioPlayer(contentsOf: recordSafeURL)
+                self.audioPlayer = try AVAudioPlayer(contentsOf: recordPath)
                 guard let audioPlayer = self.audioPlayer else { return }
                 setupSettings(forPlayer: audioPlayer)
                 
-                print(">> Will start playing audio with path: \(recordSafeURL)")
+                print(">> Will start playing audio with path: \(recordPath)")
         
                 self.startPlay(withPlayer: audioPlayer)
                 
