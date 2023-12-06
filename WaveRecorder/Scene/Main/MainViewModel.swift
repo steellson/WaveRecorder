@@ -7,6 +7,7 @@
 
 import Foundation
 
+
 //MARK: - Protocols
 
 protocol MainViewModelProtocol: AnyObject {    
@@ -20,9 +21,12 @@ final class MainViewModel: MainViewModelProtocol {
     
     var records: [Record] = []
     
+    private let storageService: StorageServiceProtocol
     
-    init() {
-        
+    init(
+        storageService: StorageServiceProtocol
+    ) {
+        self.storageService = storageService
     }
 }
 

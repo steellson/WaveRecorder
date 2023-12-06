@@ -26,10 +26,11 @@ final class Assembly: AssemblyProtocol {
     
     static let builder = Assembly()
     
-    private lazy var mainViewModel: MainViewModelProtocol = {
-        MainViewModel()
-    }()
+    private let services = Services()
 
+    private lazy var mainViewModel: MainViewModelProtocol = {
+        MainViewModel(storageService: services.storageService)
+    }()
 
     //MARK: Build
     
@@ -46,9 +47,9 @@ final class Assembly: AssemblyProtocol {
 
 //MARK: - Services
 
-//struct Services {
+struct Services {
 //    let audioService: AudioServiceProtocol = AudioService()
 //    let recordService: RecordServiceProtocol = RecordService()
-//    let storageService: StorageServiceProtocol = StorageService()
-//}
+    let storageService: StorageServiceProtocol = StorageService()
+}
 

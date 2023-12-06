@@ -13,18 +13,18 @@ final class Record {
     
     @Attribute(.unique) var name: String
     var date: Date
-    var path: String?
+    var url: URL?
     var duration: TimeInterval?
     
     init(
         name: String,
         date: Date,
-        path: String?,
-        duration: TimeInterval
+        url: URL?,
+        duration: TimeInterval?
     ) {
         self.name = name
         self.date = date
-        self.path = path
+        self.url = url
         self.duration = duration
     }
 
