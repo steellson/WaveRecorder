@@ -70,10 +70,6 @@ private extension RecordView {
 extension RecordView: RoundedRecButtonViewDelegate {
     
     func recButtonDidTapped() {
-        if recButtonView.isRecording {
-            viewModel?.record(isRecording: false)
-        } else {
-            viewModel?.record(isRecording: true)
-        }
+        viewModel?.record(isRecording: !recButtonView.isRecording)
     }
 }

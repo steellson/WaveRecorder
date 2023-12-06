@@ -16,10 +16,21 @@ final class MainViewController: UIViewController {
     private let titleLabel = UILabel()
     private let searchController = UISearchController()
     private let tableView = UITableView()
-        
-    private var recordView = RecordView()
-    private var recordViewHeight = UIScreen.main.bounds.height * 0.15
     
+    private var recordView = RecordView()
+    private var recViewHeight = UIScreen.main.bounds.height * 0.15
+    private lazy var recViewHeightConstraint: NSLayoutConstraint = {
+        NSLayoutConstraint(
+            item: recordView,
+            attribute: .height,
+            relatedBy: .equal,
+            toItem: nil,
+            attribute: .notAnAttribute,
+            multiplier: 1,
+            constant: recViewHeight
+        )
+    }()
+
     private let viewModel: MainViewModelProtocol
     
         
@@ -47,9 +58,15 @@ final class MainViewController: UIViewController {
         setupRecordView()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        seutpNavigationBar()
+        viewModel.getRecords()
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        seutpNavigationBar()
+        setupRecordViewHeight()
         setupConstrtaints()
     }
 
@@ -133,16 +150,20 @@ private extension MainViewController {
         recordView.viewModel = viewModel
     }
     
-    func updateRecordViewHeight(isRecording: Bool) {
-        if isRecording {
+    func setupRecordViewHeight() {
+        viewModel.isRecordingNow = { [weak self] isRecording in
+            
+            self?.recViewHeightConstraint.constant = isRecording
+            ? UIScreen.main.bounds.height * 0.25
+            : UIScreen.main.bounds.height * 0.15
+     
             UIView.animate(
                 withDuration: 0.5,
-                delay: 0.2,
-                options: .curveEaseIn
+                delay: 0,
+                usingSpringWithDamping: 0.7,
+                initialSpringVelocity: 3
             ) {
-                self.recordView.heightConstraint?.constant = isRecording
-                ? UIScreen.main.bounds.height * 0.25
-                : UIScreen.main.bounds.height * 0.15
+                self?.view.layoutIfNeeded()
             }
         }
     }
@@ -152,9 +173,9 @@ private extension MainViewController {
     
     func setupConstrtaints() {
         guard let navBar = self.navigationController?.navigationBar else { return }
-        
+            
         NSLayoutConstraint.activate([
-            recordView.heightAnchor.constraint(equalToConstant: recordViewHeight),
+            recViewHeightConstraint,
             recordView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             recordView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             recordView.bottomAnchor.constraint(equalTo: view.bottomAnchor),

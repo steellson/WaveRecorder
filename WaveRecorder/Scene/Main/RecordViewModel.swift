@@ -16,6 +16,7 @@ protocol RecordViewModelProtocol: AnyObject {
     var isAudioRecordingAllowed: Bool { get }
 
     func record(isRecording: Bool)
+    func didRecorded()
 }
 
 
@@ -57,8 +58,24 @@ extension RecordViewModel {
     func record(isRecording: Bool) {
         if isRecording {
             stopRecord(completion: nil)
+            didRecorded()
+            parentViewModel?.isRecordingNow?(false)
         } else {
             startRecord()
+            parentViewModel?.isRecordingNow?(true)
+        }
+    }
+    
+    func didRecorded() {
+        guard let record else {
+            print("ERROR: Cant send record to MainViewModel. Reason: Record is nil")
+            return
+        }
+        
+        if let parentVM = parentViewModel {
+            parentVM.importRecord(record)
+        } else {
+            print("ERROR: Cant send record to MainViewModel. Reason: ParentViewModel is nil")
         }
     }
 }
@@ -135,6 +152,7 @@ private extension RecordViewModel {
                 : print(">>> RECORD IS NOT STARTERD! SOMETHING WRONG")
             } catch {
                 self.stopRecord(completion: nil)
+                print("ERROR: Cant initialize audio recorder")
             }
         }
     }
