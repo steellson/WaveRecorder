@@ -30,6 +30,8 @@ final class MainViewController: UIViewController {
             constant: recViewHeight
         )
     }()
+    
+    private var tableViewCellHeight: CGFloat = 220
 
     private let viewModel: MainViewModelProtocol
     
@@ -211,9 +213,10 @@ extension MainViewController: UITableViewDataSource {
             print("ERROR: Cant dequeue reusable cell")
             return UITableViewCell()
         }
-       
-        let viewModel = MainCellViewModel(parentViewModel: self.viewModel)
-        cell.configureCell(withViewModel: viewModel)
+
+        let cellViewModel = viewModel.makeViewModelForCell(atIndex: indexPath.row)
+        cell.configureCell(withViewModel: cellViewModel)
+        
         return cell
     }
 }
@@ -222,6 +225,10 @@ extension MainViewController: UITableViewDataSource {
 //MARK: - TableView Delegate
 
 extension MainViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        tableViewCellHeight
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 

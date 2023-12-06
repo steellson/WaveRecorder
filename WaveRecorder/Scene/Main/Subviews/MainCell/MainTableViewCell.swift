@@ -18,22 +18,25 @@ final class MainTableViewCell:  UITableViewCell {
     
     //MARK: Variables
     
-    private let mainCellView = MainCellView()
-    private let playToolbar = PlayToolbarView()
+    private let mainCellView = MainCellView(frame: .zero)
+    private let playToolbar = PlayToolbarView(frame: .zero)
     
     
     //MARK: Lifecycle
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+                
         setupContentView()
+        seutpPlayToolbar()
         setupConstraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         clear()
@@ -58,33 +61,56 @@ private extension MainTableViewCell {
         selectionStyle = .gray
         contentView.clipsToBounds = true
         contentView.backgroundColor = R.Colors.secondaryBackgroundColor
-//        contentView.addNewSubview(mainCellView)
-//        contentView.addNewSubview(playToolbar)
+        contentView.addNewSubview(mainCellView)
+        contentView.addNewSubview(playToolbar)
     }
     
+    func seutpPlayToolbar() {
+        playToolbar.delegate = self
+    }
+
     
     //MARK: Constriants
 
     func setupConstraints() {
         NSLayoutConstraint.activate([
-//            contentView.topAnchor.constraint(equalTo: topAnchor),
-//            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-//            contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
-//            contentView.heightAnchor.constraint(equalToConstant: 220),
-//            
-//            mainCellView.topAnchor.constraint(equalTo: contentView.topAnchor),
-//            mainCellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-//            mainCellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-//            mainCellView.bottomAnchor.constraint(equalTo: contentView.centerYAnchor),
-//            
-//            playToolbar.topAnchor.constraint(equalTo: contentView.centerYAnchor),
-//            playToolbar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-//            playToolbar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-//            playToolbar.bottomAnchor.constraint(equalTo: bottomAnchor)
+            mainCellView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            mainCellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            mainCellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            mainCellView.bottomAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            playToolbar.topAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -12),
+            playToolbar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            playToolbar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            playToolbar.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
     
     func clear() {
         mainCellView.clearView()
     }
+}
+
+
+//MARK: - PlayToolbar Delegate
+
+extension MainTableViewCell: PlayToolbarViewDelegate {
+    
+    func goBack() {
+        viewModel.goBack()
+    }
+    
+    func playPause() {
+        viewModel.playPause()
+    }
+    
+    func goForward() {
+        viewModel.goForward()
+    }
+    
+    func deleteRecord() {
+        viewModel.deleteRecord()
+    }
+    
+    
 }

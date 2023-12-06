@@ -19,6 +19,8 @@ protocol MainViewModelProtocol: AnyObject {
     func getRecords()
     func importRecord(_ record: Record)
     func delete(record: Record)
+    
+    func makeViewModelForCell(atIndex index: Int) -> MainCellViewModel
 }
 
 
@@ -26,7 +28,11 @@ protocol MainViewModelProtocol: AnyObject {
 
 final class MainViewModel: MainViewModelProtocol {
     
-    var records: [Record] = []
+    var records: [Record] = [] {
+        didSet {
+            records.forEach { print($0.url) }
+        }
+    }
     
     var isRecordingNow: ((Bool) -> Void)?
     var recordDidFinished: (() -> Void)?
@@ -81,6 +87,12 @@ extension MainViewModel {
                 print("ERROR: Cant delete record with name \(record.name). \(error)")
             }
         }
+    }
+    
+    func makeViewModelForCell(atIndex index: Int) -> MainCellViewModel {
+        let viewModel = MainCellViewModel(parentViewModel: self)
+        viewModel.record = records[index]
+        return viewModel
     }
 }
 

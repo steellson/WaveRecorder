@@ -98,7 +98,7 @@ private extension RecordViewModel {
                     } else {
                         print("SUCCESS: Audio permission allowed!")
                         self.isAudioRecordingAllowed = true
-                        self.patherInstance.createFolder(withDirectoryName: self.storedInFolderWithName)
+//                        self.patherInstance.createFolder(withDirectoryName: self.storedInFolderWithName)
                     }
 
                 }
