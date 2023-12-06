@@ -56,12 +56,13 @@ final class MainViewController: UIViewController {
         setupSearchController()
         setupTableView()
         setupRecordView()
+        viewModel.getRecords()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         seutpNavigationBar()
-        viewModel.getRecords()
+        updateTableView()
     }
     
     override func viewDidLayoutSubviews() {
@@ -145,6 +146,12 @@ private extension MainViewController {
                            forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
     }
     
+    func updateTableView() {
+        viewModel.recordDidFinished = { [weak self] in
+            self?.tableView.reloadData()
+        }
+    }
+    
     func setupRecordView() {
         let viewModel = RecordViewModel(parentViewModel: viewModel)
         recordView.viewModel = viewModel
@@ -205,7 +212,8 @@ extension MainViewController: UITableViewDataSource {
             return UITableViewCell()
         }
        
-        
+        let viewModel = MainCellViewModel(parentViewModel: self.viewModel)
+        cell.configureCell(withViewModel: viewModel)
         return cell
     }
 }
@@ -219,15 +227,15 @@ extension MainViewController: UITableViewDelegate {
 
     }
 
-
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         UISwipeActionsConfiguration(actions: [ UIContextualAction(
             style: .destructive, 
             title: "Delete",
             handler: { action, view, result in
                 self.tableView.beginUpdates()
-        
-//                let record = self.viewModel.records[indexPath.row]
+
+                let record = self.viewModel.records[indexPath.row]
+                self.viewModel.delete(record: record)
                 
                 self.tableView.endUpdates()
             }

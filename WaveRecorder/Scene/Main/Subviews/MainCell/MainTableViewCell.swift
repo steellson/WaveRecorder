@@ -42,8 +42,10 @@ final class MainTableViewCell:  UITableViewCell {
     
     //MARK: Methods
     
-    func configureCell() {
-       
+    func configureCell(withViewModel viewModel: MainCellViewModelProtocol) {
+        self.viewModel = viewModel
+        self.mainCellView.configureView(withRecord: viewModel.record)
+        self.playToolbar.configureView(withRecord: viewModel.record)
     }
 }
 
@@ -55,6 +57,9 @@ private extension MainTableViewCell {
     func setupContentView() {
         selectionStyle = .gray
         contentView.clipsToBounds = true
+        contentView.backgroundColor = R.Colors.secondaryBackgroundColor
+//        contentView.addNewSubview(mainCellView)
+//        contentView.addNewSubview(playToolbar)
     }
     
     
@@ -62,20 +67,20 @@ private extension MainTableViewCell {
 
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: topAnchor),
-            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            contentView.heightAnchor.constraint(equalToConstant: 220),
-            
-            mainCellView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            mainCellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            mainCellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            mainCellView.bottomAnchor.constraint(equalTo: contentView.centerYAnchor),
-            
-            playToolbar.topAnchor.constraint(equalTo: contentView.centerYAnchor),
-            playToolbar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            playToolbar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            playToolbar.bottomAnchor.constraint(equalTo: bottomAnchor)
+//            contentView.topAnchor.constraint(equalTo: topAnchor),
+//            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+//            contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
+//            contentView.heightAnchor.constraint(equalToConstant: 220),
+//            
+//            mainCellView.topAnchor.constraint(equalTo: contentView.topAnchor),
+//            mainCellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+//            mainCellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+//            mainCellView.bottomAnchor.constraint(equalTo: contentView.centerYAnchor),
+//            
+//            playToolbar.topAnchor.constraint(equalTo: contentView.centerYAnchor),
+//            playToolbar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+//            playToolbar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+//            playToolbar.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
     

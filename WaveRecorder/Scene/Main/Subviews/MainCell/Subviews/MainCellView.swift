@@ -44,7 +44,7 @@ final class MainCellView: UIView {
     
     //MARK: Methods
     
-    func configureView(withRecord record: Record) {
+    func configureView(withRecord record: Record?) {
         self.record = record
     }
     
@@ -60,9 +60,9 @@ final class MainCellView: UIView {
 private extension MainCellView {
     
     func setupContentView() {
-        addNewSubview(titleLabel)
-        addNewSubview(dateLabel)
-        addNewSubview(durationLabel)
+//        addNewSubview(titleLabel)
+//        addNewSubview(dateLabel)
+//        addNewSubview(durationLabel)
     }
     
     func setupTitleLabel() {
@@ -88,7 +88,15 @@ private extension MainCellView {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            
+//            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 18),
+//            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+//            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
+//            
+//            dateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
+//            dateLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+//            
+//            durationLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
+//            durationLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
         ])
     }
 }
