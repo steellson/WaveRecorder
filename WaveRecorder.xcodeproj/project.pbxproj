@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3D0FC2FD2B204FD100E10440 /* Pather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0FC2FC2B204FD100E10440 /* Pather.swift */; };
 		3D0FC3002B205B8700E10440 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0FC2FF2B205B8700E10440 /* StorageService.swift */; };
 		3D682D9B2B1F297600067DFE /* RecordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D682D982B1F297600067DFE /* RecordViewModel.swift */; };
 		3D682D9C2B1F297600067DFE /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D682D992B1F297600067DFE /* MainViewModel.swift */; };
@@ -32,7 +31,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3D0FC2FC2B204FD100E10440 /* Pather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pather.swift; sourceTree = "<group>"; };
 		3D0FC2FF2B205B8700E10440 /* StorageService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		3D682D982B1F297600067DFE /* RecordViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordViewModel.swift; sourceTree = "<group>"; };
 		3D682D992B1F297600067DFE /* MainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
@@ -214,7 +212,6 @@
 			isa = PBXGroup;
 			children = (
 				3DEAFFD12B15F54D004CAE97 /* Formatter.swift */,
-				3D0FC2FC2B204FD100E10440 /* Pather.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -297,7 +294,6 @@
 				3D0FC3002B205B8700E10440 /* StorageService.swift in Sources */,
 				3D682DA42B1F29B000067DFE /* MainTableViewCell.swift in Sources */,
 				3DEAFFB42B0F7F2A004CAE97 /* UIView+Extension.swift in Sources */,
-				3D0FC2FD2B204FD100E10440 /* Pather.swift in Sources */,
 				3D682DAE2B1F29DA00067DFE /* RecordView.swift in Sources */,
 				3D682DA52B1F29B000067DFE /* MainViewController.swift in Sources */,
 				3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */,

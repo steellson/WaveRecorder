@@ -35,10 +35,6 @@ final class RecordViewModel: RecordViewModelProtocol {
     private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
     private var audioRecorder: AVAudioRecorder!
     
-    private let patherInstance = Pather.instance
-    private let storedInFolderWithName = "WRRecords"
-    private let storeWithFormatName = "m4a"
-    
     private weak var parentViewModel: MainViewModelProtocol?
     
     init(
@@ -98,7 +94,6 @@ private extension RecordViewModel {
                     } else {
                         print("SUCCESS: Audio permission allowed!")
                         self.isAudioRecordingAllowed = true
-                        self.patherInstance.createFolder(withDirectoryName: self.storedInFolderWithName)
                     }
 
                 }
@@ -117,11 +112,10 @@ private extension RecordViewModel {
             return
         }
         
-        let storedURL = patherInstance.createNewFilePath(
-            withDirectoryName: storedInFolderWithName,
-            fileName: recordWillNamed,
-            formatName: storeWithFormatName
-        )
+        let storedURL = FileManager.default
+            .urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent(recordWillNamed)
+            .appendingPathExtension("m4a")
         
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),

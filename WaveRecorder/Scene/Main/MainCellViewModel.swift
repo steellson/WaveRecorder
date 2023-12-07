@@ -102,13 +102,17 @@ private extension MainCellViewModel {
     //MARK: Play
     
     func play(record: Record) {
-        guard
-            let recordURL = record.url,
-            fileManagerInstance.fileExists(atPath: recordURL.path())
-        else {
-            print("ERROR: File with name \(record.name) doesn't exist!")
-            return
-        }
+//        guard
+//            let recordURL = record.url,
+//            fileManagerInstance.fileExists(atPath: recordURL.path())
+//        else {
+//            print("ERROR: File with name \(record.name) doesn't exist!")
+//            return
+//        }
+        
+        let recordURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent(record.name)
+            .appendingPathExtension("m4a")
         
         DispatchQueue.main.async { [unowned self] in
             do {
