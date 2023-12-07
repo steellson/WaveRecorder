@@ -28,11 +28,7 @@ protocol MainViewModelProtocol: AnyObject {
 
 final class MainViewModel: MainViewModelProtocol {
     
-    var records: [Record] = [] {
-        didSet {
-            records.forEach { print($0.url) }
-        }
-    }
+    var records: [Record] = []
     
     var isRecordingNow: ((Bool) -> Void)?
     var recordDidFinished: (() -> Void)?
@@ -81,6 +77,7 @@ extension MainViewModel {
                 }
                 
                 self?.records.remove(at: recordIndex)
+                self?.recordDidFinished?()
                 print("ERROR: Record with name \(record.name) deleted!")
                 
             case .failure(let error):
