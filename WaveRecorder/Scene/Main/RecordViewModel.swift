@@ -36,12 +36,10 @@ final class RecordViewModel: RecordViewModelProtocol {
     var record: Record?
     
     var isAudioRecordingAllowed = false
-    
-    private lazy var recordWillNamed: String = {
-        "Record_\((self.parentViewModel?.records.count ?? 0) + 1)"
-    }()
-    
+        
     private var format: AudioFormat = .m4a
+    
+    private let fileManagerInstance = FileManager.default
     
     private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
     private var audioRecorder: AVAudioRecorder!
@@ -113,6 +111,20 @@ private extension RecordViewModel {
             print("ERROR: Cant setup audio recorder. \(error)")
         }
     }
+    #warning("need to fix")
+    func setupRecordName() -> String {
+        do {
+            let path = fileManagerInstance
+                .urls(for: .documentDirectory, in: .userDomainMask)[0]
+                .path()
+            let numberOfRecords = try fileManagerInstance
+                .contentsOfDirectory(atPath: path)
+                .count
+            return "Record_\(numberOfRecords + 1)"
+        } catch {
+            return "Record_1"
+        }
+    }
     
     
     func startRecord() {
@@ -123,7 +135,9 @@ private extension RecordViewModel {
             return
         }
         
-        let storedURL = FileManager.default
+        let recordWillNamed = setupRecordName()
+        
+        let storedURL = fileManagerInstance
             .urls(for: .documentDirectory, in: .userDomainMask)[0]
             .appendingPathComponent(recordWillNamed)
             .appendingPathExtension(format.rawValue)
