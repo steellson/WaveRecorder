@@ -20,6 +20,15 @@ protocol RecordViewModelProtocol: AnyObject {
 }
 
 
+//MARK: - Format
+
+enum AudioFormat: String {
+    case m4a
+    case mp3
+    case aac
+}
+
+
 //MARK: - Impl
 
 final class RecordViewModel: RecordViewModelProtocol {
@@ -31,6 +40,8 @@ final class RecordViewModel: RecordViewModelProtocol {
     private lazy var recordWillNamed: String = {
         "Record_\((self.parentViewModel?.records.count ?? 0) + 1)"
     }()
+    
+    private var format: AudioFormat = .m4a
     
     private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
     private var audioRecorder: AVAudioRecorder!
@@ -115,7 +126,7 @@ private extension RecordViewModel {
         let storedURL = FileManager.default
             .urls(for: .documentDirectory, in: .userDomainMask)[0]
             .appendingPathComponent(recordWillNamed)
-            .appendingPathExtension("m4a")
+            .appendingPathExtension(format.rawValue)
         
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
@@ -135,7 +146,7 @@ private extension RecordViewModel {
                 let record = Record(
                     name: recordWillNamed,
                     date: .now,
-                    url: storedURL,
+                    format: format.rawValue,
                     duration: nil
                 )
                 self.record = record

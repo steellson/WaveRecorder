@@ -14,19 +14,19 @@ final class Record {
     @Attribute(.unique) let id: String
     var name: String
     var date: Date
-    var url: URL?
+    var format: String
     var duration: TimeInterval?
     
     init(
         name: String,
         date: Date,
-        url: URL?,
+        format: String,
         duration: TimeInterval?
     ) {
         self.id = UUID().uuidString
         self.name = name
         self.date = date
-        self.url = url
+        self.format = format
         self.duration = duration
     }
 

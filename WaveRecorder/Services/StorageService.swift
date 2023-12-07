@@ -123,7 +123,6 @@ extension StorageService {
         do {
             guard 
                 let oldRecord = try context.fetch(fetchDescriptor).first,
-                let oldRecordURL = oldRecord.url,
                 let oldRecordDuration = oldRecord.duration
             else {
                 print("ERROR: Cant get record with name \(record.name) from storage")
@@ -134,7 +133,7 @@ extension StorageService {
                 Record(
                     name: name,
                     date: oldRecord.date,
-                    url: oldRecordURL,
+                    format: oldRecord.format,
                     duration: oldRecordDuration
             ))
         } catch {
@@ -179,7 +178,7 @@ extension StorageService {
             // Delete from file manager
             let recordURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
                 .appendingPathComponent(record.name)
-                .appendingPathExtension("m4a")
+                .appendingPathExtension(record.format)
             
             try fileManagerInstance.removeItem(at: recordURL)
             print("** File will deleted: \(recordURL)")
