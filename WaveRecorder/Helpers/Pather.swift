@@ -42,7 +42,6 @@ final class Pather {
     }
     
     
-    
     //MARK: Set
     
     func createFolder(withDirectoryName name: String) {
@@ -64,7 +63,7 @@ final class Pather {
                            fileName fName: String,
                            formatName format: String) -> URL {
 
-        let url = getFolderInDocumentsDirectory(withName: dirName)
+        let url = getFolderInDocumentsDirectory(withName: dirName) 
             .appendingPathComponent(fName)
             .appendingPathExtension(format)
         
