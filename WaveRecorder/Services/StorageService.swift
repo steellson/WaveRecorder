@@ -177,12 +177,12 @@ extension StorageService {
             context.delete(record)
             
             // Delete from file manager
-            guard let path = record.url else {
-                print("ERROR: Cant get path for delete record")
-                return
-            }
-            try fileManagerInstance.removeItem(at: path)
-            print("** File will deleted: \(path)")
+            let recordURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                .appendingPathComponent(record.name)
+                .appendingPathExtension("m4a")
+            
+            try fileManagerInstance.removeItem(at: recordURL)
+            print("** File will deleted: \(recordURL)")
             
             completion(.success(true))
         } catch {

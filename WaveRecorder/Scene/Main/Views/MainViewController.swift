@@ -149,7 +149,7 @@ private extension MainViewController {
     }
     
     func updateTableView() {
-        viewModel.recordDidFinished = { [weak self] in
+        viewModel.dataSourceUpdated = { [weak self] in
             self?.tableView.reloadData()
         }
     }
@@ -160,7 +160,7 @@ private extension MainViewController {
     }
     
     func setupRecordViewHeight() {
-        viewModel.isRecordingNow = { [weak self] isRecording in
+        viewModel.recordStarted = { [weak self] isRecording in
             
             self?.recViewHeightConstraint.constant = isRecording
             ? UIScreen.main.bounds.height * 0.25
@@ -241,8 +241,13 @@ extension MainViewController: UITableViewDelegate {
             handler: { action, view, result in
                 self.tableView.beginUpdates()
 
-                let record = self.viewModel.records[indexPath.row]
-                self.viewModel.delete(record: record)
+                DispatchQueue.main.async { [weak self] in
+                    guard let record = self?.viewModel.records[indexPath.row] else {
+                        print("ERROR: Cannot delete record with swipe")
+                        return
+                    }
+                    self?.viewModel.delete(record: record)
+                }
                 
                 self.tableView.endUpdates()
             }

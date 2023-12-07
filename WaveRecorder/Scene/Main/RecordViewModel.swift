@@ -55,10 +55,10 @@ extension RecordViewModel {
         if isRecording {
             stopRecord(completion: nil)
             didRecorded()
-            parentViewModel?.isRecordingNow?(false)
+            parentViewModel?.recordStarted?(false)
         } else {
             startRecord()
-            parentViewModel?.isRecordingNow?(true)
+            parentViewModel?.recordStarted?(true)
         }
     }
     

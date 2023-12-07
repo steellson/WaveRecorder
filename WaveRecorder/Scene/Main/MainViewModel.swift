@@ -13,8 +13,8 @@ import Foundation
 protocol MainViewModelProtocol: AnyObject {    
     var records: [Record] { get set }
     
-    var isRecordingNow: ((Bool) -> Void)? { get set }
-    var recordDidFinished: (() -> Void)? { get set }
+    var recordStarted: ((Bool) -> Void)? { get set }
+    var dataSourceUpdated: (() -> Void)? { get set }
     
     func getRecords()
     func importRecord(_ record: Record)
@@ -30,8 +30,8 @@ final class MainViewModel: MainViewModelProtocol {
     
     var records: [Record] = []
     
-    var isRecordingNow: ((Bool) -> Void)?
-    var recordDidFinished: (() -> Void)?
+    var recordStarted: ((Bool) -> Void)?
+    var dataSourceUpdated: (() -> Void)?
     
     private let storageService: StorageServiceProtocol
     
@@ -51,7 +51,7 @@ extension MainViewModel {
     func importRecord(_ record: Record) {
         storageService.save(record: record)
         records.append(record)
-        recordDidFinished?()
+        dataSourceUpdated?()
     }
     
     func getRecords() {
@@ -77,7 +77,7 @@ extension MainViewModel {
                 }
                 
                 self?.records.remove(at: recordIndex)
-                self?.recordDidFinished?()
+                self?.dataSourceUpdated?()
                 print("ERROR: Record with name \(record.name) deleted!")
                 
             case .failure(let error):
