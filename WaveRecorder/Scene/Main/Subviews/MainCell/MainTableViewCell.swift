@@ -20,7 +20,7 @@ final class MainTableViewCell:  UITableViewCell {
     
     private let mainCellView = MainCellView(frame: .zero)
     private let playToolbar = PlayToolbarView(frame: .zero)
-    
+
     
     //MARK: Lifecycle
     
@@ -28,7 +28,7 @@ final class MainTableViewCell:  UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
                 
         setupContentView()
-        seutpPlayToolbar()
+        seutpDelegates()
         setupConstraints()
     }
     
@@ -65,7 +65,8 @@ private extension MainTableViewCell {
         contentView.addNewSubview(playToolbar)
     }
     
-    func seutpPlayToolbar() {
+    func seutpDelegates() {
+        mainCellView.delegate = self
         playToolbar.delegate = self
     }
 
@@ -120,5 +121,9 @@ extension MainTableViewCell: PlayToolbarViewDelegate {
     
     func deleteRecord() {
         viewModel.deleteRecord()
+    }
+    
+    func progressDidChanged(onValue value: Float) {
+        print("Progress slider didChangeValue on: \(value)")
     }
 }

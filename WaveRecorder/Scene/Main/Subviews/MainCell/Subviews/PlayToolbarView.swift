@@ -15,6 +15,7 @@ protocol PlayToolbarViewDelegate: AnyObject {
     func playPause()
     func goForward()
     func deleteRecord()
+    func progressDidChanged(onValue value: Float)
 }
 
 
@@ -90,6 +91,14 @@ final class PlayToolbarView: UIView {
             }
         }
     }
+    
+    @objc private func progressSliderDidSlide(_ sender: UISlider) {
+        if sender == progressSlider {
+            delegate?.progressDidChanged(onValue: progressSlider.value)
+        } else {
+            print("Sender is not a progress slider!")
+        }
+    }
 }
 
 
@@ -109,13 +118,14 @@ private extension PlayToolbarView {
     
     private func setupProgressSlider() {
         progressSlider.backgroundColor = .systemGray
-        progressSlider.minimumValue = 0
-        progressSlider.maximumValue = Float(record?.duration ?? 0)
+        progressSlider.value = 0
         progressSlider.thumbTintColor = .gray
+        progressSlider.isUserInteractionEnabled = true
+        progressSlider.addTarget(self, action: #selector(progressSliderDidSlide), for: .valueChanged)
     }
     
     private func setupStartTimeLabel() {
-        startTimeLabel.text = Formatter.instance.formatDuration(record?.duration ?? 0)
+        startTimeLabel.text = Formatter.instance.formatDuration(0)
         startTimeLabel.font = .systemFont(ofSize: 14, weight: .light)
     }
     

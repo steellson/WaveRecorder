@@ -179,7 +179,12 @@ private extension RecordViewModel {
     
     func stopRecord(completion: ((Record?) -> Void)?) {
         DispatchQueue.global().async { [unowned self] in
- 
+            
+            // Set duration
+            let duration = self.audioRecorder.currentTime
+            self.record?.duration = duration
+            
+            // Stop recording
             self.audioRecorder.stop()
             
             // Check
@@ -187,9 +192,11 @@ private extension RecordViewModel {
             ? print(">>> RECORD FINISHED!")
             : print(">>> RECORD IS NOT STOPPED! SOMETHING WRONG")
             
+            // Remove recorder
             self.audioRecorder = nil
 
-            completion?(record)
+            // Send record
+            completion?(self.record)
         }
     }
 }
