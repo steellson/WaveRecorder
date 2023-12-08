@@ -19,6 +19,8 @@ protocol MainCellViewModelProtocol: AnyObject {
     func playPause()
     func goForward()
     func deleteRecord()
+    
+    func isRecordEditingStarted(_ isStarted: Bool, newName name: String?)
 }
 
 
@@ -76,6 +78,20 @@ extension MainCellViewModel {
         }
         
         parentVM.delete(record: record)
+    }
+    
+    func isRecordEditingStarted(_ isStarted: Bool, newName name: String?) {
+        guard
+            let record,
+            let parentVM = parentViewModel
+        else {
+            print("ERROR: MainCellViewModel is not finally configured")
+            return
+        }
+        
+        if let name {
+            parentVM.renameRecord(record, newName: name)
+        }
     }
 }
 

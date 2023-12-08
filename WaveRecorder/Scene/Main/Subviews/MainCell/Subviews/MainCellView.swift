@@ -7,29 +7,36 @@
 
 import UIKit
 
+//MARK: - Protocol
+
+protocol MainCellViewDelegate: AnyObject {
+    func renameDidTapped(_ isEditing: Bool)
+}
+
 
 //MARK: - Impl
 
 final class MainCellView: UIView {
     
-    private var record: Record?
+    var delegate: MainCellViewDelegate?
     
     //MARK: Variables
     
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
     private let durationLabel = UILabel()
+    private let renameButton = UIButton()
+    
+    private var record: Record?
+    
+    private var isEditing = false
     
     
     //MARK: Lifecycle
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         setupContentView()
-        setupTitleLabel()
-        setupDateLabel()
-        setupDurationLabel()
     }
     
     required init?(coder: NSCoder) {
@@ -38,6 +45,10 @@ final class MainCellView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        setupTitleLabel()
+        setupDateLabel()
+        setupDurationLabel()
+        setupRenameButton()
         setupConstraints()
     }
     
@@ -53,6 +64,29 @@ final class MainCellView: UIView {
         dateLabel.text = ""
         durationLabel.text = ""
     }
+    
+    private func isEditingToggled(_ isEditing: Bool) {
+        UIView.animate(withDuration: 0.2) {
+            self.renameButton.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+            self.renameButton.alpha = 0.2
+        } completion: { _ in
+            self.renameButton.setImage(
+                UIImage(systemName: isEditing ? "xmark.circle.fill" : "pencil.circle"), for: .normal
+            )
+            self.renameButton.transform = .identity
+            self.renameButton.alpha = 1
+        }
+    }
+    
+    
+    //MARK: Action
+    
+    @objc
+    private func renameButtonDidTapped() {
+        isEditing.toggle()
+        isEditingToggled(isEditing)
+        delegate?.renameDidTapped(isEditing)
+    }
 }
             
 //MARK: - Setup
@@ -63,6 +97,7 @@ private extension MainCellView {
         addNewSubview(titleLabel)
         addNewSubview(dateLabel)
         addNewSubview(durationLabel)
+        addNewSubview(renameButton)
     }
     
     func setupTitleLabel() {
@@ -84,14 +119,25 @@ private extension MainCellView {
         durationLabel.isHidden = true
     }
     
+    func setupRenameButton() {
+        renameButton.tintColor = .black
+        renameButton.setImage(UIImage(systemName: "pencil.circle"), for: .normal)
+        renameButton.addTarget(self, action: #selector(renameButtonDidTapped), for: .touchUpInside)
+    }
+    
     
     //MARK: Constraints
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
+            renameButton.topAnchor.constraint(equalTo: topAnchor, constant: 18),
+            renameButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -24),
+            renameButton.heightAnchor.constraint(equalToConstant: 24),
+            renameButton.widthAnchor.constraint(equalToConstant: 24),
+            
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 18),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
+            titleLabel.trailingAnchor.constraint(equalTo: renameButton.trailingAnchor, constant: -12),
             
             dateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
             dateLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),

@@ -18,6 +18,7 @@ protocol MainViewModelProtocol: AnyObject {
     
     func getRecords()
     func importRecord(_ record: Record)
+    func renameRecord(_ record: Record, newName name: String)
     func delete(record: Record)
     
     func makeViewModelForCell(atIndex index: Int) -> MainCellViewModel
@@ -47,12 +48,6 @@ final class MainViewModel: MainViewModelProtocol {
 //MARK: - Public
 
 extension MainViewModel {
- 
-    func importRecord(_ record: Record) {
-        storageService.save(record: record)
-        records.append(record)
-        dataSourceUpdated?()
-    }
     
     func getRecords() {
         storageService.getRecords { [weak self] result in
@@ -63,6 +58,17 @@ extension MainViewModel {
                 print("ERROR: Cant get records from storage! \(error)")
             }
         }
+    }
+    
+    func importRecord(_ record: Record) {
+        storageService.save(record: record)
+        records.append(record)
+        dataSourceUpdated?()
+    }
+    
+    func renameRecord(_ record: Record, newName name: String) {
+        storageService.rename(record: record, newName: name)
+        dataSourceUpdated?()
     }
     
     func delete(record: Record) {

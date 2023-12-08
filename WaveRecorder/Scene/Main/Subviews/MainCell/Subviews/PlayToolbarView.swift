@@ -43,9 +43,6 @@ final class PlayToolbarView: UIView {
         super.init(frame: frame)
         
         setupContentView()
-        setupProgressSlider()
-        setupStartTimeLabel()
-        setupEndTimeLabel()
         setupButtonTargets()
     }
     
@@ -55,6 +52,9 @@ final class PlayToolbarView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        setupProgressSlider()
+        setupStartTimeLabel()
+        setupEndTimeLabel()
         setupConstraints()
     }
     

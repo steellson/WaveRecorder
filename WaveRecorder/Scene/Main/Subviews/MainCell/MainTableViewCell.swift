@@ -91,6 +91,16 @@ private extension MainTableViewCell {
     }
 }
 
+//MARK: - MainCellView Delegate
+
+extension MainTableViewCell: MainCellViewDelegate {
+    
+    func renameDidTapped(_ isEditing: Bool) {
+        print("Rename button did tapped")
+//        viewModel.isRecordEditingStarted(isEditing, newName: "Record-666")
+    }
+}
+
 
 //MARK: - PlayToolbar Delegate
 
@@ -111,6 +121,4 @@ extension MainTableViewCell: PlayToolbarViewDelegate {
     func deleteRecord() {
         viewModel.deleteRecord()
     }
-    
-    
 }
