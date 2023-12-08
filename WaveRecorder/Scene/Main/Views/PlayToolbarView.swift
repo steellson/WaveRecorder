@@ -118,9 +118,8 @@ private extension PlayToolbarView {
     
     private func setupProgressSlider() {
         progressSlider.backgroundColor = .systemGray
-        progressSlider.value = 0
-        progressSlider.thumbTintColor = .gray
-        progressSlider.isUserInteractionEnabled = true
+        progressSlider.setThumbImage(UIImage(systemName: "circle.fill"), for: .normal)
+        progressSlider.tintColor = .darkGray
         progressSlider.addTarget(self, action: #selector(progressSliderDidSlide), for: .valueChanged)
     }
     
@@ -166,8 +165,8 @@ private extension PlayToolbarView {
             deleteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
             deleteButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24),
             
-            startTimeLabel.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: -24),
-            startTimeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            startTimeLabel.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: -18),
+            startTimeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18),
             
             endTimeLabel.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: -24),
             endTimeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
@@ -175,7 +174,7 @@ private extension PlayToolbarView {
             progressSlider.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
             progressSlider.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
             progressSlider.heightAnchor.constraint(equalToConstant: 1),
-            progressSlider.bottomAnchor.constraint(equalTo: endTimeLabel.topAnchor, constant: -24)
+            progressSlider.centerYAnchor.constraint(equalTo: topAnchor, constant: 10)
         ])
     }
 }

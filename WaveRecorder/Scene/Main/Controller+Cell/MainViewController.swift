@@ -135,7 +135,7 @@ private extension MainViewController {
     }
     
     func setupTableView() {
-        tableView.backgroundColor = R.Colors.secondaryBackgroundColor
+        tableView.backgroundColor = .white
         tableView.rowHeight = UITableView.automaticDimension
         tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tableView.layer.cornerRadius = 26
@@ -230,8 +230,12 @@ extension MainViewController: UITableViewDelegate {
         tableViewCellHeight
     }
     
+    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        false
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+//        tableView.deselectRow(at: indexPath, animated: false)
     }
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

@@ -75,42 +75,43 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		3D682D972B1F296900067DFE /* Main */ = {
+		3D0FC3072B234A6300E10440 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
 				3D682D992B1F297600067DFE /* MainViewModel.swift */,
 				3D682D9A2B1F297600067DFE /* MainCellViewModel.swift */,
 				3D682D982B1F297600067DFE /* RecordViewModel.swift */,
-				3D682D9F2B1F298600067DFE /* Views */,
-				3D682D9E2B1F297F00067DFE /* Subviews */,
 			);
-			path = Main;
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		3D682D9E2B1F297F00067DFE /* Subviews */ = {
+		3D0FC3082B234A7900E10440 /* Controller+Cell */ = {
 			isa = PBXGroup;
 			children = (
-				3D682DAC2B1F29DA00067DFE /* RecordView.swift */,
-				3D682DB62B1F2A5D00067DFE /* MainCell */,
+				3D682DA22B1F29B000067DFE /* MainViewController.swift */,
+				3D682DA12B1F29B000067DFE /* MainTableViewCell.swift */,
 			);
-			path = Subviews;
+			path = "Controller+Cell";
+			sourceTree = "<group>";
+		};
+		3D682D972B1F296900067DFE /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				3D0FC3072B234A6300E10440 /* ViewModels */,
+				3D0FC3082B234A7900E10440 /* Controller+Cell */,
+				3D682D9F2B1F298600067DFE /* Views */,
+			);
+			path = Main;
 			sourceTree = "<group>";
 		};
 		3D682D9F2B1F298600067DFE /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				3D682DA22B1F29B000067DFE /* MainViewController.swift */,
+				3D682DA02B1F29B000067DFE /* MainCellView.swift */,
+				3D682DA92B1F29D300067DFE /* PlayToolbarView.swift */,
+				3D682DAC2B1F29DA00067DFE /* RecordView.swift */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		3D682DB62B1F2A5D00067DFE /* MainCell */ = {
-			isa = PBXGroup;
-			children = (
-				3D682DA12B1F29B000067DFE /* MainTableViewCell.swift */,
-				3D9EAFF82B1F757E00D89698 /* Subviews */,
-			);
-			path = MainCell;
 			sourceTree = "<group>";
 		};
 		3D9EAFF72B1F754E00D89698 /* Custom */ = {
@@ -120,15 +121,6 @@
 				3D682DA82B1F29D300067DFE /* PlayTolbarButton.swift */,
 			);
 			path = Custom;
-			sourceTree = "<group>";
-		};
-		3D9EAFF82B1F757E00D89698 /* Subviews */ = {
-			isa = PBXGroup;
-			children = (
-				3D682DA02B1F29B000067DFE /* MainCellView.swift */,
-				3D682DA92B1F29D300067DFE /* PlayToolbarView.swift */,
-			);
-			path = Subviews;
 			sourceTree = "<group>";
 		};
 		3DEAFF822B0F65F3004CAE97 = {
