@@ -111,18 +111,19 @@ private extension RecordViewModel {
             print("ERROR: Cant setup audio recorder. \(error)")
         }
     }
-    #warning("need to fix")
+
     func setupRecordName() -> String {
+        let documentsPath = fileManagerInstance
+            .urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .path()
+        
         do {
-            let path = fileManagerInstance
-                .urls(for: .documentDirectory, in: .userDomainMask)[0]
-                .path()
-            let numberOfRecords = try fileManagerInstance
-                .contentsOfDirectory(atPath: path)
+            let count = try fileManagerInstance
+                .contentsOfDirectory(atPath: documentsPath)
                 .count
-            return "Record_\(numberOfRecords + 1)"
+            return "Record-\(count + 1)"
         } catch {
-            return "Record_1"
+            return "Record-1"
         }
     }
     
@@ -178,15 +179,16 @@ private extension RecordViewModel {
     
     func stopRecord(completion: ((Record?) -> Void)?) {
         DispatchQueue.global().async { [unowned self] in
+ 
             self.audioRecorder.stop()
             
-            do {
-                try self.audioSession.setActive(false)
-                print(">>> RECORD STOPPED!")
-            } catch {
-                print(">>> RECORD IS NOT STOPPED! SOMETHING WRONG. \(error)")
-            }
+            // Check
+            !self.audioRecorder.isRecording
+            ? print(">>> RECORD FINISHED!")
+            : print(">>> RECORD IS NOT STOPPED! SOMETHING WRONG")
             
+            self.audioRecorder = nil
+
             completion?(record)
         }
     }
