@@ -22,9 +22,11 @@ final class Formatter {
     }
     
     func formatDuration(_ duration: TimeInterval) -> String {
-        let hour = Int(duration) / 3600
-        let minute = Int(duration) / 60 % 60
-        let second = Int(duration) % 60
+        let roundedDuration = duration.rounded(.up)
+    
+        let hour = Int(roundedDuration) / 3600
+        let minute = Int(roundedDuration) / 60 % 60
+        let second = Int(roundedDuration) % 60
         
         return duration > 3600
         ? String(format: "%02i:%02i:%02i", hour, minute, second)

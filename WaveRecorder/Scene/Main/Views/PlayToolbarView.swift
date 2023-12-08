@@ -66,6 +66,12 @@ final class PlayToolbarView: UIView {
         self.record = record
     }
     
+    func clearView() {
+        startTimeLabel.text = "00:00"
+        endTimeLabel.text = "00:00"
+        progressSlider.value = 0
+    }
+    
     //MARK: Actions
     
     @objc
@@ -117,9 +123,10 @@ private extension PlayToolbarView {
     }
     
     private func setupProgressSlider() {
+        progressSlider.maximumValue = Float(record?.duration ?? 0)
         progressSlider.backgroundColor = .systemGray
-        progressSlider.setThumbImage(UIImage(systemName: "circle.fill"), for: .normal)
         progressSlider.tintColor = .darkGray
+        progressSlider.setThumbImage(UIImage(systemName: "circle.fill"), for: .normal)
         progressSlider.addTarget(self, action: #selector(progressSliderDidSlide), for: .valueChanged)
     }
     

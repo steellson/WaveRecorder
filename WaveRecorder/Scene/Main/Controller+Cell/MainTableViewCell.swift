@@ -89,6 +89,7 @@ private extension MainTableViewCell {
     
     func clear() {
         mainCellView.clearView()
+        playToolbar.clearView()
     }
 }
 
@@ -124,6 +125,7 @@ extension MainTableViewCell: PlayToolbarViewDelegate {
     }
     
     func progressDidChanged(onValue value: Float) {
+//        viewModel.pla
         print("Progress slider didChangeValue on: \(value)")
     }
 }

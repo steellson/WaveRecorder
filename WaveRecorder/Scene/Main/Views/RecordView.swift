@@ -51,10 +51,6 @@ private extension RecordView {
     //MARK: Constraints
     
     func setupConstraints() {
-        guard let viewModel else {
-            print("ERROR: Couldnt setup layout by the reaason of viewModel = nil")
-            return
-        }
         NSLayoutConstraint.activate([
             recButtonView.centerXAnchor.constraint(equalTo: centerXAnchor),
             recButtonView.heightAnchor.constraint(equalToConstant: buttonRadius * 2),

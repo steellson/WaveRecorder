@@ -62,9 +62,12 @@ extension RecordViewModel {
     
     func record(isRecording: Bool) {
         if isRecording {
-            stopRecord(completion: nil)
-            didRecorded()
-            parentViewModel?.recordStarted?(false)
+            stopRecord { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.didRecorded()
+                    self?.parentViewModel?.recordStarted?(false)
+                }
+            }
         } else {
             startRecord()
             parentViewModel?.recordStarted?(true)
