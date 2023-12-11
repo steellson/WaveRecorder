@@ -78,6 +78,15 @@ private extension RecordService {
             return "Record-1"
         }
     }
+    
+    func setupSettings() -> [String: Any] {
+        [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 44100,
+            AVNumberOfChannelsKey: 2,
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ]
+    }
 }
 
 
@@ -88,6 +97,7 @@ extension RecordService {
     //MARK: Start
     
     func startRecord() {
+        // Check permissions
         guard
             isAudioRecordingAllowed
         else {
@@ -95,20 +105,15 @@ extension RecordService {
             return
         }
         
+        // Prepare
+        let settings = setupSettings()
         let recordWillNamed = setupRecordName()
+        let storedURL = URLBuilder.buildURL(
+            forRecordWithName: recordWillNamed,
+            andFormat: format.rawValue
+        )
         
-        let storedURL = fileManagerInstance
-            .urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent(recordWillNamed)
-            .appendingPathExtension(format.rawValue)
-        
-        let settings = [
-            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVSampleRateKey: 44100,
-            AVNumberOfChannelsKey: 2,
-            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
-        ]
-        
+        // Process
         DispatchQueue.global().async { [unowned self] in
             do {
                 try self.audioSession.setActive(true)
@@ -125,10 +130,11 @@ extension RecordService {
                 )
                 self.record = record
                 
-                // Check
+                // Check result
                 self.audioRecorder.isRecording
                 ? print(">>> RECORD STARTED!")
                 : print(">>> RECORD IS NOT STARTERD! SOMETHING WRONG")
+                
             } catch {
                 self.stopRecord(completion: nil)
                 print("ERROR: Cant initialize audio recorder")

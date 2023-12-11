@@ -176,10 +176,10 @@ extension StorageService {
             context.delete(record)
             
             // Delete from file manager
-            let recordURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-                .appendingPathComponent(record.name)
-                .appendingPathExtension(record.format)
-            
+            let recordURL = URLBuilder.buildURL(
+                forRecordWithName: record.name,
+                andFormat: record.format
+            )
             try fileManagerInstance.removeItem(at: recordURL)
             print("** File will deleted: \(recordURL)")
             

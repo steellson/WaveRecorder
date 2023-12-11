@@ -20,6 +20,7 @@
 		3D682DAF2B1F29DA00067DFE /* RoundedRecButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D682DAD2B1F29DA00067DFE /* RoundedRecButtonView.swift */; };
 		3D7CB1092B26E2ED00F5B91F /* RecordService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7CB1082B26E2ED00F5B91F /* RecordService.swift */; };
 		3D7CB10D2B26E69000F5B91F /* AudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7CB10C2B26E69000F5B91F /* AudioService.swift */; };
+		3D7CB10F2B26F2A500F5B91F /* URLBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7CB10E2B26F2A500F5B91F /* URLBuilder.swift */; };
 		3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF8E2B0F65F3004CAE97 /* AppDelegate.swift */; };
 		3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF902B0F65F3004CAE97 /* SceneDelegate.swift */; };
 		3DEAFF982B0F65F4004CAE97 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3DEAFF972B0F65F4004CAE97 /* Assets.xcassets */; };
@@ -46,6 +47,7 @@
 		3D682DAD2B1F29DA00067DFE /* RoundedRecButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedRecButtonView.swift; sourceTree = "<group>"; };
 		3D7CB1082B26E2ED00F5B91F /* RecordService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordService.swift; sourceTree = "<group>"; };
 		3D7CB10C2B26E69000F5B91F /* AudioService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioService.swift; sourceTree = "<group>"; };
+		3D7CB10E2B26F2A500F5B91F /* URLBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLBuilder.swift; sourceTree = "<group>"; };
 		3DEAFF8B2B0F65F3004CAE97 /* WaveRecorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WaveRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DEAFF8E2B0F65F3004CAE97 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3DEAFF902B0F65F3004CAE97 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				3DEAFFD12B15F54D004CAE97 /* Formatter.swift */,
+				3D7CB10E2B26F2A500F5B91F /* URLBuilder.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -287,6 +290,7 @@
 				3DEAFFD22B15F54D004CAE97 /* Formatter.swift in Sources */,
 				3D682D9D2B1F297600067DFE /* MainCellViewModel.swift in Sources */,
 				3D682DAA2B1F29D300067DFE /* PlayTolbarButton.swift in Sources */,
+				3D7CB10F2B26F2A500F5B91F /* URLBuilder.swift in Sources */,
 				3DEAFFA92B0F6713004CAE97 /* Resources.swift in Sources */,
 				3DEAFFC32B109B6D004CAE97 /* UINavigationController+Extension.swift in Sources */,
 				3D7CB10D2B26E69000F5B91F /* AudioService.swift in Sources */,

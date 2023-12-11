@@ -49,9 +49,10 @@ extension AudioService {
     //MARK: Play
     
     func play(record: Record, completion: @escaping (Bool) -> Void) {
-        let recordURL = fileManagerInstance.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent(record.name)
-            .appendingPathExtension(record.format)
+        let recordURL = URLBuilder.buildURL(
+            forRecordWithName: record.name,
+            andFormat: record.format
+        )
         
         guard
             fileManagerInstance.fileExists(atPath: recordURL.path())
@@ -63,7 +64,7 @@ extension AudioService {
         
         DispatchQueue.main.async { [unowned self] in
             do {
-                
+
                 self.audioPlayer = try AVAudioPlayer(contentsOf: recordURL)
                 self.setupSettings()
                 
