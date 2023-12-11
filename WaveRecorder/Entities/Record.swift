@@ -8,6 +8,7 @@
 import Foundation
 import SwiftData
 
+
 @Model
 final class Record {
     
@@ -29,5 +30,12 @@ final class Record {
         self.format = format
         self.duration = duration
     }
+}
 
+//MARK: - Format
+
+enum AudioFormat: String {
+    case m4a
+    case mp3
+    case aac
 }

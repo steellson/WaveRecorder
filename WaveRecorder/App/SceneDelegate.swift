@@ -7,16 +7,22 @@
 
 import UIKit
 
+// Global module builder
+
+let AssemblyBuilder: AssemblyProtocol = Assembly()
+
+
+//MARK: - Impl
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     
-    private let assemblyBuilder: AssemblyProtocol = Assembly()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
-        let view = assemblyBuilder.build(module: .main)
+        let view = AssemblyBuilder.build(module: .main)
         let navigationController = UINavigationController(rootViewController: view)
         
         window.rootViewController = navigationController

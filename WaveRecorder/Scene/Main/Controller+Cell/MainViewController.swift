@@ -17,7 +17,7 @@ final class MainViewController: UIViewController {
     private let searchController = UISearchController()
     private let tableView = UITableView()
     
-    private var recordView = RecordView()
+    private var recordView = AssemblyBuilder.build(subModule: .record)
     private var recViewHeight = UIScreen.main.bounds.height * 0.15
     private lazy var recViewHeightConstraint: NSLayoutConstraint = {
         NSLayoutConstraint(
@@ -57,7 +57,6 @@ final class MainViewController: UIViewController {
         setupTitleLabel()
         setupSearchController()
         setupTableView()
-        setupRecordView()
         viewModel.getRecords()
     }
     
@@ -152,11 +151,6 @@ private extension MainViewController {
         viewModel.dataSourceUpdated = { [weak self] in
             self?.tableView.reloadData()
         }
-    }
-    
-    func setupRecordView() {
-        let viewModel = RecordViewModel(parentViewModel: viewModel)
-        recordView.viewModel = viewModel
     }
     
     func setupRecordViewHeight() {

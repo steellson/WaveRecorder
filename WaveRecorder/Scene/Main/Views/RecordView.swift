@@ -12,7 +12,7 @@ import UIKit
 
 final class RecordView: UIView {
     
-    var viewModel: RecordViewModelProtocol?
+    private let viewModel: RecordViewModelProtocol
     
     private let buttonRadius: CGFloat = 30
     private lazy var recButtonView: RoundedRecButtonView = RoundedRecButtonView(radius: buttonRadius)
@@ -20,7 +20,10 @@ final class RecordView: UIView {
     
     //MARK: Lifecycle
     
-    init() {
+    init(
+        viewModel: RecordViewModelProtocol
+    ) {
+        self.viewModel = viewModel
         super.init(frame: .zero)
         
         seutupContentView()
@@ -66,6 +69,6 @@ private extension RecordView {
 extension RecordView: RoundedRecButtonViewDelegate {
     
     func recButtonDidTapped() {
-        viewModel?.record(isRecording: !recButtonView.isRecording)
+        viewModel.record(isRecording: !recButtonView.isRecording)
     }
 }
