@@ -18,6 +18,7 @@ protocol StorageServiceProtocol: AnyObject {
     
     func save(record: Record)
     func delete(record: Record,completion: @escaping (Result<Bool, StorageError>) -> Void)
+    func searchRecords(withText text: String, completion: @escaping (Result<[Record], StorageError>) -> Void)
 }
 
 //MARK: Storage error
@@ -121,7 +122,7 @@ extension StorageService {
         let fetchDescriptor = FetchDescriptor<Record>()
         
         do {
-            guard 
+            guard
                 let oldRecord = try context.fetch(fetchDescriptor).first,
                 let oldRecordDuration = oldRecord.duration
             else {
@@ -191,4 +192,31 @@ extension StorageService {
         }
     }
 
+    
+    //MARK: Search
+    
+    func searchRecords(withText text: String, completion: @escaping (Result<[Record], StorageError>) -> Void) {
+        guard let context else {
+            print("ERROR: Cant get storage context")
+            completion(.failure(.cantGetStorageContext))
+            return
+        }
+        
+        let predicate = #Predicate<Record> { $0.name.contains(text) }
+        let fetchDescriptor = FetchDescriptor<Record>(predicate: predicate)
+
+        do {
+            let records = try context.fetch(fetchDescriptor)
+            
+            if !records.isEmpty {
+                completion(.success(records))
+            } else {
+                print("ATTENTION: Fetched records is emtpy!")
+                completion(.failure(.fetchedRecordsEmpty))
+            }
+        } catch {
+            print("ERROR: Cant get records from storage: \(error)")
+            completion(.failure(.cantGetRecordsFormStorage))
+        }
+    }
 }
