@@ -130,7 +130,7 @@ private extension MainViewController {
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchResultsUpdater = self
-        searchController.searchBar.delegate = self
+        searchController.searchBar.setShowsCancelButton(false, animated: true)
     }
     
     func setupTableView() {
@@ -139,6 +139,7 @@ private extension MainViewController {
         tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tableView.layer.cornerRadius = 26
         tableView.estimatedRowHeight = 160
+        tableView.keyboardDismissMode = .onDrag
         tableView.showsVerticalScrollIndicator = false
         tableView.alwaysBounceVertical = true
         tableView.dataSource = self
@@ -250,19 +251,14 @@ extension MainViewController: UITableViewDelegate {
 }
 
 
-//MARK: - SearchBar Delegate
-
-extension MainViewController: UISearchBarDelegate {
-    
-    
-}
-
-
 //MARK: - Search Reslut Updating
 
 extension MainViewController: UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
-        
+        guard let searchText = searchController.searchBar.searchTextField.text else {
+            return
+        }
+        viewModel.search(withText: searchText)
     }
 }

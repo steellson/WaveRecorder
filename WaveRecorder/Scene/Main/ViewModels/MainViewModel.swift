@@ -20,6 +20,7 @@ protocol MainViewModelProtocol: AnyObject {
     func importRecord(_ record: Record)
     func renameRecord(_ record: Record, newName name: String)
     func delete(record: Record)
+    func search(withText text: String)
     
     func makeViewModelForCell(atIndex index: Int) -> MainCellViewModelProtocol
 }
@@ -92,14 +93,23 @@ extension MainViewModel {
         }
     }
     
+    func search(withText text: String) {
+        guard !text.isEmpty else { return }
+        
+        storageService.searchRecords(withText: text) { [weak self] result in
+            switch result {
+            case .success(let records):
+                print(records)
+                self?.records = records
+                self?.dataSourceUpdated?()
+            case .failure(let error):
+                self?.dataSourceUpdated?()
+                print("ERROR: Cant search records with text \(text). \(error)")
+            }
+        }
+    }
+    
     func makeViewModelForCell(atIndex index: Int) -> MainCellViewModelProtocol {
         AssemblyBuilder.buildMainCellViewModel(withRecord: records[index])
     }
-}
-
-
-//MARK: - Private
-
-private extension MainViewModel {
-    
 }
