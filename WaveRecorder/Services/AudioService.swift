@@ -2,9 +2,8 @@
 //  AudioService.swift
 //  WaveRecorder
 //
-//  Created by Andrew Steellson on 30.11.2023.
+//  Created by Andrew Steellson on 11.12.2023.
 //
-
 
 import AVFoundation
 
@@ -12,10 +11,8 @@ import AVFoundation
 //MARK: - Protocol
 
 protocol AudioServiceProtocol: AnyObject {
-    var isPlaying: Bool { get }
-    
-    func playAudio(withName name: String)
-    func pauseAudio()
+    func play(record: Record, completion: @escaping (Bool) -> Void)
+    func pause(completion: @escaping (Bool) -> Void)
 }
 
 
@@ -23,37 +20,24 @@ protocol AudioServiceProtocol: AnyObject {
 
 final class AudioService: AudioServiceProtocol {
     
-    private(set) var isPlaying = false
-        
+    private let fileManagerInstance = FileManager.default
+    
     private var audioPlayer: AVAudioPlayer?
-    
-    private let writedFormat = "m4a"
+}
 
-   
-    private func setupSettings(forPlayer player: AVAudioPlayer) {
-        player.isMeteringEnabled = true
-        player.numberOfLoops = 0
-    }
+
+//MARK: - Private
+
+private extension AudioService {
     
-    private func startPlay(withPlayer player: AVAudioPlayer) {
-        if player.isPlaying {
-            player.stop()
-            self.isPlaying = false
-            
-            player.prepareToPlay()
-            player.play()
-            self.isPlaying = true
-        } else {
-            player.prepareToPlay()
-            player.play()
-            self.isPlaying = true
+    func setupSettings() {
+        guard let audioPlayer = self.audioPlayer else {
+            print("ERROR: AudioPlayer is not setted yet!")
+            return
         }
-    }
-    
-    private func pause() {
-        guard let audioPlayer = self.audioPlayer else { return }
-        audioPlayer.pause()
-        self.isPlaying = false
+        
+        audioPlayer.isMeteringEnabled = true
+        audioPlayer.numberOfLoops = 0
     }
 }
 
@@ -61,38 +45,56 @@ final class AudioService: AudioServiceProtocol {
 //MARK: - Public
 
 extension AudioService {
-   
-    func playAudio(withName name: String) {
-        let audioPathURL = PathManager.instance
-            .getWRRecordsDirectory()
-            .appendingPathComponent(name)
-            .appendingPathExtension(writedFormat)
-
-        guard FileManager.default.fileExists(atPath: audioPathURL.path()) else {
-            print("ERROR: File with name \(name) doesn't exist!")
+    
+    //MARK: Play
+    
+    func play(record: Record, completion: @escaping (Bool) -> Void) {
+        let recordURL = URLBuilder.buildURL(
+            forRecordWithName: record.name,
+            andFormat: record.format
+        )
+        
+        guard
+            fileManagerInstance.fileExists(atPath: recordURL.path())
+        else {
+            print("ERROR: File with name \(record.name) doesn't exist!")
+            completion(false)
             return
         }
         
         DispatchQueue.main.async { [unowned self] in
             do {
+
+                self.audioPlayer = try AVAudioPlayer(contentsOf: recordURL)
+                self.setupSettings()
                 
-                self.audioPlayer = try AVAudioPlayer(contentsOf: audioPathURL)
-                guard let audioPlayer = self.audioPlayer else { return }
-                setupSettings(forPlayer: audioPlayer)
+                print(">> Will start playing audio with URL: \(recordURL)")
                 
-                print(">> Will start playing audio with path: \(audioPathURL)")
-        
-                self.startPlay(withPlayer: audioPlayer)
+                self.audioPlayer?.prepareToPlay()
+                self.audioPlayer?.play()
+                completion(true)
                 
             } catch {
                 print("ERROR: AudioPlayer could not be instantiated \(error)")
+                completion(false)
             }
         }
     }
+
     
-    func pauseAudio() {
-        DispatchQueue.main.async { [unowned self] in
-            self.pause()
+    //MARK: Pause
+    
+    func pause(completion: @escaping (Bool) -> Void) {
+        guard self.audioPlayer != nil else {
+            print("ERROR: AudioPlayer is not setted yet!")
+            completion(false)
+            return
+        }
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.audioPlayer?.pause()
+            completion(true)
         }
     }
 }
+

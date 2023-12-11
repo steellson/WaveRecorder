@@ -12,22 +12,12 @@ import SwiftData
 
 protocol StorageServiceProtocol: AnyObject {
     func getRecords(completion: @escaping (Result<[Record], StorageError>) -> Void)
+    func get(record: Record, completion: @escaping (Result<Record, StorageError>) -> Void)
     
-    func getRecord(withID
-                   id: String,
-                   completion: @escaping (Result<Record, StorageError>) -> Void)
-    
-    func searchRecord(withText
-                     text: String,
-                     completion: @escaping (Result<[Record], StorageError>) -> Void)
-
-    
-    func deleteRecord(withID 
-                      id: String,
-                      completion: @escaping (Result<Bool, StorageError>) -> Void)
+    func rename(record: Record, newName name: String)
     
     func save(record: Record)
-    func renameRecord(withID id: String, newName name: String)
+    func delete(record: Record,completion: @escaping (Result<Bool, StorageError>) -> Void)
 }
 
 //MARK: Storage error
@@ -48,6 +38,8 @@ final class StorageService: StorageServiceProtocol {
         
     private var container: ModelContainer?
     private var context: ModelContext?
+    
+    private let fileManagerInstance = FileManager.default
     
     init() {
         do {
@@ -95,17 +87,14 @@ extension StorageService {
     
     //MARK: Get single
     
-    func getRecord(withID
-                   id: String,
-                   completion: @escaping (Result<Record, StorageError>) -> Void) {
-        
+    func get(record: Record, completion: @escaping (Result<Record, StorageError>) -> Void) {
         guard let context else {
             print("ERROR: Cant get storage context")
             completion(.failure(.cantGetStorageContext))
             return
         }
         
-        let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.id == id })
+        let fetchDescriptor = FetchDescriptor<Record>()
         
         do {
             guard let record = try context.fetch(fetchDescriptor).first else {
@@ -115,17 +104,43 @@ extension StorageService {
             }
             completion(.success(record))
         } catch {
-            print("ERROR: Cant get record with id \(id) from storage: \(error)")
+            print("ERROR: Cant get record with name \(record.name) from storage: \(error)")
             completion(.failure(.cantGetRecordWithIDFormStorage))
         }
     }
     
     
-     //MARK: Search
-     
-     func searchRecord(withText text: String, completion: @escaping (Result<[Record], StorageError>) -> Void) {
-         //
-     }
+    //MARK: Rename
+    
+    func rename(record: Record, newName name: String) {
+        guard let context else {
+            print("ERROR: Cant get storage context")
+            return
+        }
+        
+        let fetchDescriptor = FetchDescriptor<Record>()
+        
+        do {
+            guard 
+                let oldRecord = try context.fetch(fetchDescriptor).first,
+                let oldRecordDuration = oldRecord.duration
+            else {
+                print("ERROR: Cant get record with name \(record.name) from storage")
+                return
+            }
+            
+            context.insert(
+                Record(
+                    name: name,
+                    date: oldRecord.date,
+                    format: oldRecord.format,
+                    duration: oldRecordDuration
+            ))
+        } catch {
+            print("ERROR: Cant get old record from storage: \(error)")
+            return
+        }
+    }
     
     
     //MARK: Save
@@ -140,64 +155,37 @@ extension StorageService {
     }
     
     
-    //MARK: Rename
-    
-    func renameRecord(withID id: String, newName name: String) {
-        guard let context else {
-            print("ERROR: Cant get storage context")
-            return
-        }
-        
-        let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.id == id })
-        
-        do {
-            guard let oldRecord = try context.fetch(fetchDescriptor).first else {
-                print("ERROR: Cant get record widh id \(id) from storage")
-                return
-            }
-            
-            context.insert(
-                Record(
-                    name: name,
-                    path: oldRecord.path,
-                    duration: oldRecord.duration,
-                    date: oldRecord.date
-            ))
-        } catch {
-            print("ERROR: Cant get old record from storage: \(error)")
-            return
-        }
-    }
-    
-    
     //MARK: Delete
     
-    func deleteRecord(withID id: String, completion: @escaping (Result<Bool, StorageError>) -> Void) {
+    func delete(record: Record, completion: @escaping (Result<Bool, StorageError>) -> Void) {
         guard let context else {
             print("ERROR: Cant get storage context")
             completion(.failure(.cantGetStorageContext))
             return
         }
         
-        let fetchDescriptor = FetchDescriptor<Record>(predicate: #Predicate { $0.id == id })
+        let fetchDescriptor = FetchDescriptor<Record>()
         
         do {
             // Delete from storage
             guard let record = try context.fetch(fetchDescriptor).first else {
-                print("ERROR: Cant get record widh id \(id) from storage")
+                print("ERROR: Cant get record with name \(record.name) from storage")
                 completion(.failure(.cantGetRecordWithIDFormStorage))
                 return
             }
             context.delete(record)
             
             // Delete from file manager
-            let storedRecordURL = PathManager.instance.getPathOfRecord(witnName: record.name).appendingPathExtension("m4a")
-            print("** File will deleted: \(storedRecordURL)")
-            try FileManager.default.removeItem(at: storedRecordURL)
-            completion(.success(true))
+            let recordURL = URLBuilder.buildURL(
+                forRecordWithName: record.name,
+                andFormat: record.format
+            )
+            try fileManagerInstance.removeItem(at: recordURL)
+            print("** File will deleted: \(recordURL)")
             
+            completion(.success(true))
         } catch {
-            print("ERROR: Cant delete record with id \(id), error: \(error)")
+            print("ERROR: Cant delete record with name \(record.name), error: \(error)")
             completion(.failure(.cantDeleteRecord))
             return
         }

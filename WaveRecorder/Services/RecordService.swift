@@ -2,20 +2,18 @@
 //  RecordService.swift
 //  WaveRecorder
 //
-//  Created by Andrew Steellson on 29.11.2023.
+//  Created by Andrew Steellson on 11.12.2023.
 //
 
+import Foundation
 import AVFoundation
 
 
 //MARK: - Protocol
 
 protocol RecordServiceProtocol: AnyObject {
-    var delegate: AVAudioRecorderDelegate? { get set }
-    var isAudioRecordingAllowed: Bool { get }
-
-    func startRecord(withName name: String)
-    func stopRecord(withName name: String, completion: ((Record?) -> Void)?)
+    func startRecord()
+    func stopRecord(completion: ((Record?) -> Void)?)
 }
 
 
@@ -23,39 +21,42 @@ protocol RecordServiceProtocol: AnyObject {
 
 final class RecordService: RecordServiceProtocol {
     
-    weak var delegate: AVAudioRecorderDelegate?
-    
     var isAudioRecordingAllowed = false
-        
-    private var recordingSession: AVAudioSession = AVAudioSession.sharedInstance()
-    private var audioRecorder: AVAudioRecorder = AVAudioRecorder()
     
-    private let storedInFolderWithName = "WRRecords"
-    private let storeWithFormatName = "m4a"
-
+    private var record: Record?
+        
+    private var format: AudioFormat = .m4a
+    
+    private let fileManagerInstance = FileManager.default
+    
+    private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
+    private var audioRecorder: AVAudioRecorder!
     
     
     init() {
         setupAudioRecorder()
-        prepareFolderForStoreOnDevice(withName: storedInFolderWithName)
     }
-   
-    private func setupAudioRecorder() {
+}
+
+
+//MARK: - Private
+
+private extension RecordService {
+    
+    func setupAudioRecorder() {
         do {
-            try recordingSession.setCategory(.record, mode: .default)
+            try audioSession.setCategory(.playAndRecord, mode: .default)
             AVAudioApplication.requestRecordPermission() { allowed in
-                DispatchQueue.main.async { [weak self] in
+                DispatchQueue.main.async { [unowned self] in
+                    
                     if !allowed {
                         print("ERROR: Audio permission is not allowed!")
-                        self?.isAudioRecordingAllowed = false
+                        self.isAudioRecordingAllowed = false
                     } else {
                         print("SUCCESS: Audio permission allowed!")
-                        self?.isAudioRecordingAllowed = true
-                        self?.audioRecorder.isMeteringEnabled = true
-                        self?.audioRecorder.prepareToRecord()
-                        guard let delegate = self?.delegate else { return }
-                        self?.audioRecorder.delegate = delegate
+                        self.isAudioRecordingAllowed = true
                     }
+
                 }
             }
         } catch {
@@ -63,8 +64,28 @@ final class RecordService: RecordServiceProtocol {
         }
     }
     
-    private func prepareFolderForStoreOnDevice(withName name: String) {
-        PathManager.instance.createFolder(withDirectoryName: name)
+    func setupRecordName() -> String {
+        let documentsPath = fileManagerInstance
+            .urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .path()
+        
+        do {
+            let count = try fileManagerInstance
+                .contentsOfDirectory(atPath: documentsPath)
+                .count
+            return "Record-\(count + 1)"
+        } catch {
+            return "Record-1"
+        }
+    }
+    
+    func setupSettings() -> [String: Any] {
+        [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 44100,
+            AVNumberOfChannelsKey: 2,
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ]
     }
 }
 
@@ -72,63 +93,79 @@ final class RecordService: RecordServiceProtocol {
 //MARK: - Public
 
 extension RecordService {
-   
-    func startRecord(withName name: String) {
-        guard isAudioRecordingAllowed else {
+    
+    //MARK: Start
+    
+    func startRecord() {
+        // Check permissions
+        guard
+            isAudioRecordingAllowed
+        else {
             print("ERROR: Cant start recording because it is not allowed!")
             return
         }
         
-        let audioPath = PathManager.instance.createNewFile(
-            withDirectoryName: storedInFolderWithName,
-            fileName: name,
-            formatName: storeWithFormatName
+        // Prepare
+        let settings = setupSettings()
+        let recordWillNamed = setupRecordName()
+        let storedURL = URLBuilder.buildURL(
+            forRecordWithName: recordWillNamed,
+            andFormat: format.rawValue
         )
-        print("** Record will be saved to: \(audioPath)")
         
-        let settings = [
-            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVSampleRateKey: 44100,
-            AVNumberOfChannelsKey: 2,
-            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
-        ]
-        
+        // Process
         DispatchQueue.global().async { [unowned self] in
             do {
-                try self.recordingSession.setActive(true)
-                self.audioRecorder = try AVAudioRecorder(url: audioPath, settings: settings)
+                try self.audioSession.setActive(true)
+                self.audioRecorder = try AVAudioRecorder(url: storedURL, settings: settings)
+                self.audioRecorder.isMeteringEnabled = true
+                self.audioRecorder.prepareToRecord()
                 self.audioRecorder.record()
                 
-                // Check
+                let record = Record(
+                    name: recordWillNamed,
+                    date: .now,
+                    format: format.rawValue,
+                    duration: nil
+                )
+                self.record = record
+                
+                // Check result
                 self.audioRecorder.isRecording
                 ? print(">>> RECORD STARTED!")
                 : print(">>> RECORD IS NOT STARTERD! SOMETHING WRONG")
+                
             } catch {
-                self.stopRecord(withName: name, completion: nil)
+                self.stopRecord(completion: nil)
+                print("ERROR: Cant initialize audio recorder")
             }
         }
     }
     
-    func stopRecord(withName name: String, completion: ((Record?) -> Void)?) {
+    
+    //MARK: Stop
+    
+    func stopRecord(completion: ((Record?) -> Void)?) {
         DispatchQueue.global().async { [unowned self] in
+            
+            // Set duration
+            let duration = self.audioRecorder.currentTime
+            self.record?.duration = duration
+            
+            // Stop recording
             self.audioRecorder.stop()
-            try? self.recordingSession.setActive(false)
-
+            
             // Check
             !self.audioRecorder.isRecording
-            ? print(">>> RECORD STOPPED!")
+            ? print(">>> RECORD FINISHED!")
             : print(">>> RECORD IS NOT STOPPED! SOMETHING WRONG")
-     
-            let outputPath = audioRecorder.url
-            let track = AVPlayerItem(url: outputPath)
             
-            let record = Record(
-                name: name,
-                path: outputPath.path(percentEncoded: true),
-                duration: track.duration.seconds,
-                date: .now
-            )
-            completion?(record)
+            // Remove recorder
+            self.audioRecorder = nil
+
+            // Send record
+            completion?(self.record)
         }
     }
 }
+

@@ -16,7 +16,9 @@ extension UIView {
                 $0.firstAttribute == .height && $0.relation == .equal
             })
         }
-        set { setNeedsLayout() }
+        set {
+            setNeedsLayout()
+        }
     }
     
     //MARK: Convenience preparing for constraints

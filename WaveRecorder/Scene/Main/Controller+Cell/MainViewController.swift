@@ -16,10 +16,23 @@ final class MainViewController: UIViewController {
     private let titleLabel = UILabel()
     private let searchController = UISearchController()
     private let tableView = UITableView()
-        
-    private lazy var recordView = Assembly.builder.build(subModule: .record)
-    private var recordViewHeight = UIScreen.main.bounds.height * 0.15
     
+    private var recordView = AssemblyBuilder.build(subModule: .record)
+    private var recViewHeight = UIScreen.main.bounds.height * 0.15
+    private lazy var recViewHeightConstraint: NSLayoutConstraint = {
+        NSLayoutConstraint(
+            item: recordView,
+            attribute: .height,
+            relatedBy: .equal,
+            toItem: nil,
+            attribute: .notAnAttribute,
+            multiplier: 1,
+            constant: recViewHeight
+        )
+    }()
+    
+    private var tableViewCellHeight: CGFloat = 220
+
     private let viewModel: MainViewModelProtocol
     
         
@@ -44,12 +57,18 @@ final class MainViewController: UIViewController {
         setupTitleLabel()
         setupSearchController()
         setupTableView()
+        viewModel.getRecords()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        seutpNavigationBar()
+        updateTableView()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        seutpNavigationBar()
-        setupRecordingViewHeight()
+        setupRecordViewHeight()
         setupConstrtaints()
     }
 
@@ -75,8 +94,8 @@ private extension MainViewController {
     
     func seutpNavigationBar() {
         navigationController?.navigationBar.backgroundColor = R.Colors.primaryBackgroundColor
-        navigationItem.rightBarButtonItem = editButton
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
+        navigationItem.rightBarButtonItem = editButton
         navigationItem.searchController = searchController
     }
     
@@ -115,7 +134,7 @@ private extension MainViewController {
     }
     
     func setupTableView() {
-        tableView.backgroundColor = R.Colors.secondaryBackgroundColor
+        tableView.backgroundColor = .white
         tableView.rowHeight = UITableView.automaticDimension
         tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tableView.layer.cornerRadius = 26
@@ -128,18 +147,26 @@ private extension MainViewController {
                            forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
     }
     
-    func setupRecordingViewHeight() {
-        guard let recView = (recordView as? RecordView) else { return }
-        
-        recView.onRecord = { [weak self] isRecording in
+    func updateTableView() {
+        viewModel.dataSourceUpdated = { [weak self] in
+            self?.tableView.reloadData()
+        }
+    }
+    
+    func setupRecordViewHeight() {
+        viewModel.recordStarted = { [weak self] isRecording in
+            
+            self?.recViewHeightConstraint.constant = isRecording
+            ? UIScreen.main.bounds.height * 0.25
+            : UIScreen.main.bounds.height * 0.15
+     
             UIView.animate(
                 withDuration: 0.5,
-                delay: 0.2,
-                options: .curveEaseIn
+                delay: 0,
+                usingSpringWithDamping: 0.7,
+                initialSpringVelocity: 3
             ) {
-                self?.recordView.heightConstraint?.constant = isRecording
-                ? UIScreen.main.bounds.height * 0.25
-                : UIScreen.main.bounds.height * 0.15
+                self?.view.layoutIfNeeded()
             }
         }
     }
@@ -149,9 +176,9 @@ private extension MainViewController {
     
     func setupConstrtaints() {
         guard let navBar = self.navigationController?.navigationBar else { return }
-        
+            
         NSLayoutConstraint.activate([
-            recordView.heightAnchor.constraint(equalToConstant: recordViewHeight),
+            recViewHeightConstraint,
             recordView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             recordView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             recordView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -180,8 +207,10 @@ extension MainViewController: UITableViewDataSource {
             print("ERROR: Cant dequeue reusable cell")
             return UITableViewCell()
         }
+
+        let cellViewModel = viewModel.makeViewModelForCell(atIndex: indexPath.row)
+        cell.configureCell(withViewModel: cellViewModel)
         
-        cell.configureCell(withRecord: viewModel.records[indexPath.row])
         return cell
     }
 }
@@ -191,12 +220,13 @@ extension MainViewController: UITableViewDataSource {
 
 extension MainViewController: UITableViewDelegate {
     
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        guard let cell = tableView.cellForRow(at: indexPath) else { return }
-//        cell.isSelected = true
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        tableViewCellHeight
     }
-
+    
+    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        false
+    }
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         UISwipeActionsConfiguration(actions: [ UIContextualAction(
@@ -204,17 +234,15 @@ extension MainViewController: UITableViewDelegate {
             title: "Delete",
             handler: { action, view, result in
                 self.tableView.beginUpdates()
-                
-                let record = self.viewModel.records[indexPath.row]
-                self.viewModel.deleteRecord(withID: record.id) { [weak self] res in
-                    switch res {
-                    case .success:
-                        self?.viewModel.records.remove(at: indexPath.row)
-                        self?.tableView.deleteRows(at: [indexPath], with: .automatic)
-                    case .failure(let error):
-                        print(error)
+
+                DispatchQueue.main.async { [weak self] in
+                    guard let record = self?.viewModel.records[indexPath.row] else {
+                        print("ERROR: Cannot delete record with swipe")
+                        return
                     }
+                    self?.viewModel.delete(record: record)
                 }
+                
                 self.tableView.endUpdates()
             }
         )])

@@ -8,13 +8,23 @@
 import Foundation
 import UIKit
 
+//MARK: - Protocol
+
+protocol PlayToolbarViewDelegate: AnyObject {
+    func goBack()
+    func playPause()
+    func goForward()
+    func deleteRecord()
+    func progressDidChanged(onValue value: Float)
+}
+
 
 //MARK: - Impl
 
 final class PlayToolbarView: UIView {
-        
-    private let viewModel: PlayToolbarViewModelProtocol
     
+    weak var delegate: PlayToolbarViewDelegate?
+            
     //MARK: Variables
     
     private let progressSlider = UISlider()
@@ -25,19 +35,15 @@ final class PlayToolbarView: UIView {
     private let goForwardButton = PlayTolbarButton(type: .goForward)
     private let deleteButton = PlayTolbarButton(type: .delete)
     
+    private var record: Record?
+    
     
     //MARK: Lifecycle
     
-    init(
-        viewModel: PlayToolbarViewModelProtocol
-    ) {
-        self.viewModel = viewModel
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         setupContentView()
-        setupProgressSlider()
-        setupStartTimeLabel()
-        setupEndTimeLabel()
         setupButtonTargets()
     }
     
@@ -47,16 +53,24 @@ final class PlayToolbarView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        setupProgressSlider()
+        setupStartTimeLabel()
+        setupEndTimeLabel()
         setupConstraints()
     }
     
     
     //MARK: Methods
     
-    func configure(withRecord record: Record) {
-        self.viewModel.record = record
+    func configureView(withRecord record: Record?) {
+        self.record = record
     }
     
+    func clearView() {
+        startTimeLabel.text = "00:00"
+        endTimeLabel.text = "00:00"
+        progressSlider.value = 0
+    }
     
     //MARK: Actions
     
@@ -70,13 +84,25 @@ final class PlayToolbarView: UIView {
             sender.alpha = 1
         }
         
-        DispatchQueue.main.async { [unowned self] in
-            switch sender.type {
-            case .goBack: self.viewModel.goBack()
-            case .play: self.viewModel.playPause()
-            case .goForward: self.viewModel.goForward()
-            case .delete: self.viewModel.deleteRecord()
+        DispatchQueue.main.async { [weak self] in
+            guard let delegate = self?.delegate else {
+                print("ERROR: PlayToolbarViewDelegate is not setted!")
+                return
             }
+            switch sender.type {
+            case .goBack: delegate.goBack()
+            case .play: delegate.playPause()
+            case .goForward: delegate.goForward()
+            case .delete: delegate.deleteRecord()
+            }
+        }
+    }
+    
+    @objc private func progressSliderDidSlide(_ sender: UISlider) {
+        if sender == progressSlider {
+            delegate?.progressDidChanged(onValue: progressSlider.value)
+        } else {
+            print("Sender is not a progress slider!")
         }
     }
 }
@@ -97,19 +123,20 @@ private extension PlayToolbarView {
     }
     
     private func setupProgressSlider() {
+        progressSlider.maximumValue = Float(record?.duration ?? 0)
         progressSlider.backgroundColor = .systemGray
-        progressSlider.minimumValue = 0
-        progressSlider.maximumValue = Float(viewModel.record?.duration ?? 0)
-        progressSlider.thumbTintColor = .gray
+        progressSlider.tintColor = .darkGray
+        progressSlider.setThumbImage(UIImage(systemName: "circle.fill"), for: .normal)
+        progressSlider.addTarget(self, action: #selector(progressSliderDidSlide), for: .valueChanged)
     }
     
     private func setupStartTimeLabel() {
-        startTimeLabel.text = "00:00"
+        startTimeLabel.text = Formatter.instance.formatDuration(0)
         startTimeLabel.font = .systemFont(ofSize: 14, weight: .light)
     }
     
     private func setupEndTimeLabel() {
-        endTimeLabel.text = "03:04"
+        endTimeLabel.text = Formatter.instance.formatDuration(record?.duration ?? 0)
         endTimeLabel.font = .systemFont(ofSize: 14, weight: .light)
     }
     
@@ -145,8 +172,8 @@ private extension PlayToolbarView {
             deleteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
             deleteButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24),
             
-            startTimeLabel.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: -24),
-            startTimeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            startTimeLabel.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: -18),
+            startTimeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18),
             
             endTimeLabel.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: -24),
             endTimeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
@@ -154,7 +181,7 @@ private extension PlayToolbarView {
             progressSlider.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
             progressSlider.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
             progressSlider.heightAnchor.constraint(equalToConstant: 1),
-            progressSlider.bottomAnchor.constraint(equalTo: endTimeLabel.topAnchor, constant: -24)
+            progressSlider.centerYAnchor.constraint(equalTo: topAnchor, constant: 10)
         ])
     }
 }

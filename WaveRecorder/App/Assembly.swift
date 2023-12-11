@@ -14,6 +14,7 @@ import UIKit
 protocol AssemblyProtocol: AnyObject {
     func build(module: Assembly.Module) -> UIViewController
     func build(subModule: Assembly.SubModule) -> UIView
+    func buildMainCellViewModel(withRecord record: Record) -> MainCellViewModelProtocol
 }
 
 
@@ -21,58 +22,49 @@ protocol AssemblyProtocol: AnyObject {
 
 final class Assembly: AssemblyProtocol {
     
-    static let builder = Assembly()
-    
-    private let services = Services()
-    
-    private lazy var mainViewModel: MainViewModelProtocol = {
-        MainViewModel(storageService: services.storageService)
-    }()
-
-    
-    //MARK: Modules
-    
     enum Module {
         case main
     }
     
     enum SubModule {
         case record
-        case playToolbar
     }
     
+    static let builder = Assembly()
     
+    private let services = Services()
+
+    private lazy var mainViewModel: MainViewModelProtocol = {
+        MainViewModel(storageService: services.storageService)
+    }()
+
     
     //MARK: Build
     
     func build(module: Module) -> UIViewController {
         switch module {
-            
         case .main:
-            let viewController = MainViewController(viewModel: mainViewModel)
-            return viewController
+            MainViewController(viewModel: mainViewModel)
         }
     }
     
     func build(subModule: SubModule) -> UIView {
-        
         switch subModule {
         case .record:
             let viewModel: RecordViewModelProtocol = RecordViewModel(
-                recordService: services.recordService,
-                parentViewModel: mainViewModel
+                parentViewModel: mainViewModel,
+                recordService: services.recordService
             )
-            let view = RecordView(viewModel: viewModel)
-            return view
-            
-        case .playToolbar:
-            let viewModel: PlayToolbarViewModelProtocol = PlayToolbarViewModel(
-                audioService: services.audioService,
-                parentViewModel: mainViewModel
-            )
-            let view = PlayToolbarView(viewModel: viewModel)
-            return view
+            return RecordView(viewModel: viewModel)
         }
+    }
+    
+    func buildMainCellViewModel(withRecord record: Record) -> MainCellViewModelProtocol {
+        MainCellViewModel(
+            parentViewModel: mainViewModel,
+            audioService: services.audioService,
+            record: record
+        )
     }
 }
 

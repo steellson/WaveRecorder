@@ -14,10 +14,9 @@ final class RecordView: UIView {
     
     private let viewModel: RecordViewModelProtocol
     
-    private lazy var recButtonView = RoundedRecButtonView(radius: viewModel.buttonRadius)
-    
-    var onRecord: ((Bool) -> Void)?
-    
+    private let buttonRadius: CGFloat = 30
+    private lazy var recButtonView: RoundedRecButtonView = RoundedRecButtonView(radius: buttonRadius)
+        
     
     //MARK: Lifecycle
     
@@ -28,7 +27,7 @@ final class RecordView: UIView {
         super.init(frame: .zero)
         
         seutupContentView()
-        setupRecButtonView()
+        recButtonView.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -51,18 +50,14 @@ private extension RecordView {
         addNewSubview(recButtonView)
     }
     
-    func setupRecButtonView() {
-        recButtonView.delegate = self
-    }
-    
 
     //MARK: Constraints
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
             recButtonView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            recButtonView.heightAnchor.constraint(equalToConstant: viewModel.buttonRadius * 2),
-            recButtonView.widthAnchor.constraint(equalToConstant: viewModel.buttonRadius * 2),
+            recButtonView.heightAnchor.constraint(equalToConstant: buttonRadius * 2),
+            recButtonView.widthAnchor.constraint(equalToConstant: buttonRadius * 2),
             recButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -12)
         ])
     }
@@ -74,12 +69,6 @@ private extension RecordView {
 extension RecordView: RoundedRecButtonViewDelegate {
     
     func recButtonDidTapped() {
-        if recButtonView.isRecording {
-            viewModel.startRecord()
-            onRecord?(recButtonView.isRecording)
-        } else {
-            viewModel.stopRecord(completion: nil)
-            onRecord?(false)
-        }
+        viewModel.record(isRecording: !recButtonView.isRecording)
     }
 }

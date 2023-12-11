@@ -8,26 +8,34 @@
 import Foundation
 import SwiftData
 
+
 @Model
 final class Record {
     
-    @Attribute(.unique) var id: String
+    @Attribute(.unique) let id: String
     var name: String
-    var path: String
-    var duration: TimeInterval
     var date: Date
+    var format: String
+    var duration: TimeInterval?
     
     init(
         name: String,
-        path: String,
-        duration: TimeInterval,
-        date: Date
+        date: Date,
+        format: String,
+        duration: TimeInterval?
     ) {
         self.id = UUID().uuidString
         self.name = name
-        self.path = path
-        self.duration = duration
         self.date = date
+        self.format = format
+        self.duration = duration
     }
+}
 
+//MARK: - Format
+
+enum AudioFormat: String {
+    case m4a
+    case mp3
+    case aac
 }
