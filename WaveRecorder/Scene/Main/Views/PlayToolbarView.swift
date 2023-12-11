@@ -44,7 +44,7 @@ final class PlayToolbarView: UIView {
         super.init(frame: frame)
         
         setupContentView()
-        setupButtonTargets()
+        setTargets()
     }
     
     required init?(coder: NSCoder) {
@@ -127,7 +127,6 @@ private extension PlayToolbarView {
         progressSlider.backgroundColor = .systemGray
         progressSlider.tintColor = .darkGray
         progressSlider.setThumbImage(UIImage(systemName: "circle.fill"), for: .normal)
-        progressSlider.addTarget(self, action: #selector(progressSliderDidSlide), for: .valueChanged)
     }
     
     private func setupStartTimeLabel() {
@@ -140,11 +139,12 @@ private extension PlayToolbarView {
         endTimeLabel.font = .systemFont(ofSize: 14, weight: .light)
     }
     
-    private func setupButtonTargets() {
+    private func setTargets() {
         goBackButton.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
         playButton.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
         goForwardButton.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
         deleteButton.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
+        progressSlider.addTarget(self, action: #selector(progressSliderDidSlide), for: .touchDown)
     }
     
     

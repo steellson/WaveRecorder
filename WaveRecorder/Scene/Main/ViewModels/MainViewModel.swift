@@ -69,6 +69,7 @@ extension MainViewModel {
     
     func renameRecord(_ record: Record, newName name: String) {
         storageService.rename(record: record, newName: name)
+        getRecords()
         dataSourceUpdated?()
     }
     

@@ -12,13 +12,11 @@ import SwiftData
 
 protocol StorageServiceProtocol: AnyObject {
     func getRecords(completion: @escaping (Result<[Record], StorageError>) -> Void)
-    func get(record: Record, completion: @escaping (Result<Record, StorageError>) -> Void)
-    
-    func rename(record: Record, newName name: String)
-    
-    func save(record: Record)
     func delete(record: Record,completion: @escaping (Result<Bool, StorageError>) -> Void)
     func searchRecords(withText text: String, completion: @escaping (Result<[Record], StorageError>) -> Void)
+    
+    func save(record: Record)
+    func rename(record: Record, newName name: String)
 }
 
 //MARK: Storage error
@@ -86,76 +84,6 @@ extension StorageService {
     }
     
     
-    //MARK: Get single
-    
-    func get(record: Record, completion: @escaping (Result<Record, StorageError>) -> Void) {
-        guard let context else {
-            print("ERROR: Cant get storage context")
-            completion(.failure(.cantGetStorageContext))
-            return
-        }
-        
-        let fetchDescriptor = FetchDescriptor<Record>()
-        
-        do {
-            guard let record = try context.fetch(fetchDescriptor).first else {
-                print("ERROR: Cant get fetch record with descriptor")
-                completion(.failure(.cantFetchRecordWithDescriptor))
-                return
-            }
-            completion(.success(record))
-        } catch {
-            print("ERROR: Cant get record with name \(record.name) from storage: \(error)")
-            completion(.failure(.cantGetRecordWithIDFormStorage))
-        }
-    }
-    
-    
-    //MARK: Rename
-    
-    func rename(record: Record, newName name: String) {
-        guard let context else {
-            print("ERROR: Cant get storage context")
-            return
-        }
-        
-        let fetchDescriptor = FetchDescriptor<Record>()
-        
-        do {
-            guard
-                let oldRecord = try context.fetch(fetchDescriptor).first,
-                let oldRecordDuration = oldRecord.duration
-            else {
-                print("ERROR: Cant get record with name \(record.name) from storage")
-                return
-            }
-            
-            context.insert(
-                Record(
-                    name: name,
-                    date: oldRecord.date,
-                    format: oldRecord.format,
-                    duration: oldRecordDuration
-            ))
-        } catch {
-            print("ERROR: Cant get old record from storage: \(error)")
-            return
-        }
-    }
-    
-    
-    //MARK: Save
-    
-    func save(record: Record) {
-        guard let context else {
-            print("ERROR: Cant get storage context")
-            return
-        }
-
-        context.insert(record)
-    }
-    
-    
     //MARK: Delete
     
     func delete(record: Record, completion: @escaping (Result<Bool, StorageError>) -> Void) {
@@ -192,7 +120,7 @@ extension StorageService {
         }
     }
 
-    
+ 
     //MARK: Search
     
     func searchRecords(withText text: String, completion: @escaping (Result<[Record], StorageError>) -> Void) {
@@ -217,6 +145,62 @@ extension StorageService {
         } catch {
             print("ERROR: Cant get records from storage: \(error)")
             completion(.failure(.cantGetRecordsFormStorage))
+        }
+    }
+    
+    
+    //MARK: Save
+    
+    func save(record: Record) {
+        guard let context else {
+            print("ERROR: Cant get storage context")
+            return
+        }
+
+        context.insert(record)
+    }
+    
+    
+    //MARK: Rename
+    
+    func rename(record: Record, newName name: String) {
+        guard let context else {
+            print("ERROR: Cant get storage context")
+            return
+        }
+        
+        let fetchDescriptor = FetchDescriptor<Record>()
+        
+        do {
+            let records = try context.fetch(fetchDescriptor)
+            
+            guard
+                let oldRecord = records.first(where: { $0.id == record.id }),
+                let oldRecordDuration = oldRecord.duration,
+                records.filter({ $0.name == name }).isEmpty
+            else {
+                print("ERROR: Cant get record with name \(record.name) from storage")
+                return
+            }
+            
+            // Change file name on device and replace it in storage
+            let originPath = URLBuilder.buildURL(forRecordWithName: record.name, andFormat: record.format)
+            let destinationPath = URLBuilder.buildURL(forRecordWithName: name, andFormat: record.format)
+            try FileManager.default.moveItem(at: originPath, to: destinationPath)
+            
+            context.delete(record)
+            context.insert(
+                Record(
+                    name: name,
+                    date: oldRecord.date,
+                    format: oldRecord.format,
+                    duration: oldRecordDuration
+            ))
+            
+            print("** File \(record.name) renamed on: \(name)")
+        } catch {
+            print("ERROR: Cant get old record from storage: \(error)")
+            return
         }
     }
 }

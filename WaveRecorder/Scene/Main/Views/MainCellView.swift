@@ -10,7 +10,7 @@ import UIKit
 //MARK: - Protocol
 
 protocol MainCellViewDelegate: AnyObject {
-    func renameDidTapped(_ isEditing: Bool)
+    func rename(withNewName name: String)
 }
 
 
@@ -22,14 +22,21 @@ final class MainCellView: UIView {
     
     //MARK: Variables
     
-    private let titleLabel = UILabel()
+    private let titleLabelField = UITextField()
     private let dateLabel = UILabel()
-    private let durationLabel = UILabel()
     private let renameButton = UIButton()
     
     private var record: Record?
     
-    private var isEditing = false
+    private var isEditing = false {
+        didSet {
+            if isEditing {
+                titleLabelField.becomeFirstResponder()
+            } else {
+                titleLabelField.resignFirstResponder()
+            }
+        }
+    }
     
     
     //MARK: Lifecycle
@@ -46,9 +53,8 @@ final class MainCellView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        setupTitleLabel()
+        setupTitleLabelField()
         setupDateLabel()
-        setupDurationLabel()
         setupRenameButton()
         setupConstraints()
     }
@@ -61,9 +67,8 @@ final class MainCellView: UIView {
     }
     
     func clearView() {
-        titleLabel.text = ""
+        titleLabelField.text = ""
         dateLabel.text = ""
-        durationLabel.text = ""
     }
     
     private func isEditingToggled(_ isEditing: Bool) {
@@ -86,7 +91,6 @@ final class MainCellView: UIView {
     private func renameButtonDidTapped() {
         isEditing.toggle()
         isEditingToggled(isEditing)
-        delegate?.renameDidTapped(isEditing)
     }
 }
             
@@ -95,16 +99,16 @@ final class MainCellView: UIView {
 private extension MainCellView {
     
     func setupContentView() {
-        addNewSubview(titleLabel)
+        addNewSubview(titleLabelField)
         addNewSubview(dateLabel)
-        addNewSubview(durationLabel)
         addNewSubview(renameButton)
     }
     
-    func setupTitleLabel() {
-        titleLabel.text = record?.name ?? "NO DATA"
-        titleLabel.font = .systemFont(ofSize: 18, weight: .semibold)
-        titleLabel.textAlignment = .left
+    func setupTitleLabelField() {
+        titleLabelField.text = record?.name ?? "NO DATA"
+        titleLabelField.font = .systemFont(ofSize: 18, weight: .semibold)
+        titleLabelField.textAlignment = .left
+        titleLabelField.delegate = self
     }
     
     func setupDateLabel() {
@@ -112,14 +116,7 @@ private extension MainCellView {
         dateLabel.font = .systemFont(ofSize: 16, weight: .light)
         dateLabel.textAlignment = .left
     }
-    
-    func setupDurationLabel() {
-        durationLabel.text = Formatter.instance.formatDuration(record?.duration ?? 0)
-        durationLabel.font = .systemFont(ofSize: 16, weight: .light)
-        durationLabel.textAlignment = .right
-        durationLabel.isHidden = true
-    }
-    
+
     func setupRenameButton() {
         renameButton.tintColor = .black
         renameButton.setImage(UIImage(systemName: "pencil.circle"), for: .normal)
@@ -136,15 +133,28 @@ private extension MainCellView {
             renameButton.heightAnchor.constraint(equalToConstant: 24),
             renameButton.widthAnchor.constraint(equalToConstant: 24),
             
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 18),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-            titleLabel.trailingAnchor.constraint(equalTo: renameButton.trailingAnchor, constant: -12),
+            titleLabelField.topAnchor.constraint(equalTo: topAnchor, constant: 18),
+            titleLabelField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            titleLabelField.trailingAnchor.constraint(equalTo: renameButton.trailingAnchor, constant: -12),
+            titleLabelField.heightAnchor.constraint(equalToConstant: 18),
             
-            dateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
+            dateLabel.topAnchor.constraint(equalTo: titleLabelField.bottomAnchor, constant: 12),
             dateLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-            
-            durationLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
-            durationLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
         ])
+    }
+}
+
+
+//MARK: - TextField Delegate
+
+extension MainCellView: UITextFieldDelegate {
+    
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        isEditing
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        guard let newName = textField.text else { return }
+        delegate?.rename(withNewName: newName)
     }
 }

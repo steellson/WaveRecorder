@@ -97,9 +97,8 @@ private extension MainTableViewCell {
 
 extension MainTableViewCell: MainCellViewDelegate {
     
-    func renameDidTapped(_ isEditing: Bool) {
-        print("Rename button did tapped")
-//        viewModel.isRecordEditingStarted(isEditing, newName: "Record-666")
+    func rename(withNewName name: String) {
+        viewModel.rename(withNewName: name)
     }
 }
 
@@ -127,6 +126,6 @@ extension MainTableViewCell: PlayToolbarViewDelegate {
     }
     
     func progressDidChanged(onValue value: Float) {
-        print("Progress slider didChangeValue on: \(value)")
+        viewModel.play(onTime: value)
     }
 }

@@ -11,7 +11,7 @@ import AVFoundation
 //MARK: - Protocol
 
 protocol AudioServiceProtocol: AnyObject {
-    func play(record: Record, completion: @escaping (Bool) -> Void)
+    func play(record: Record, onTime time: Float?, completion: @escaping (Bool) -> Void)
     func pause(completion: @escaping (Bool) -> Void)
 }
 
@@ -39,6 +39,20 @@ private extension AudioService {
         audioPlayer.isMeteringEnabled = true
         audioPlayer.numberOfLoops = 0
     }
+    
+    func startPlay(atTime time: Float? = nil, fromURL url: URL) {
+        setupSettings()
+        
+        print(">> Will start playing audio with URL: \(url)")
+        
+        audioPlayer?.prepareToPlay()
+        
+        if let time {
+            audioPlayer?.play(atTime: TimeInterval(time))
+        } else {
+            audioPlayer?.play()
+        }
+    }
 }
 
 
@@ -48,7 +62,7 @@ extension AudioService {
     
     //MARK: Play
     
-    func play(record: Record, completion: @escaping (Bool) -> Void) {
+    func play(record: Record, onTime time: Float?, completion: @escaping (Bool) -> Void) {
         let recordURL = URLBuilder.buildURL(
             forRecordWithName: record.name,
             andFormat: record.format
@@ -64,14 +78,14 @@ extension AudioService {
         
         DispatchQueue.main.async { [unowned self] in
             do {
-
                 self.audioPlayer = try AVAudioPlayer(contentsOf: recordURL)
-                self.setupSettings()
                 
-                print(">> Will start playing audio with URL: \(recordURL)")
+                if let time {
+                    self.startPlay(atTime: time, fromURL: recordURL)
+                } else {
+                    self.startPlay(fromURL: recordURL)
+                }
                 
-                self.audioPlayer?.prepareToPlay()
-                self.audioPlayer?.play()
                 completion(true)
                 
             } catch {

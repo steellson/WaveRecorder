@@ -15,13 +15,14 @@ protocol MainCellViewModelProtocol: AnyObject {
     var record: Record? { get set }
     var isPlaying: Bool { get }
     
-    func isRecordEditingStarted(_ isStarted: Bool, newName name: String?)
     
     func goBack()
     func play()
+    func play(onTime time: Float)
     func pause()
     func goForward()
     func deleteRecord()
+    func rename(withNewName name: String)
 }
 
 
@@ -66,7 +67,20 @@ extension MainCellViewModel {
             return
         }
         
-        audioService.play(record: record) { [weak self] isStarted in
+        audioService.play(record: record, onTime: nil) { [weak self] isStarted in
+            self?.isPlaying = isStarted
+        }
+    }
+    
+    func play(onTime time: Float) {
+        guard
+            let record
+        else {
+            print("ERROR: Cant play audio!")
+            return
+        }
+        
+        audioService.play(record: record, onTime: time) { [weak self] isStarted in
             self?.isPlaying = isStarted
         }
     }
@@ -111,5 +125,14 @@ extension MainCellViewModel {
         }
  
         parentViewModel.renameRecord(record, newName: name)
+    }
+    
+    func rename(withNewName name: String) {
+        guard let record else {
+            print("ERROR: Cant rename audio! Reason: audio is nil")
+            return
+        }
+        
+        parentViewModel?.renameRecord(record, newName: name)
     }
 }
