@@ -85,6 +85,8 @@ private extension RecordService {
 
 extension RecordService {
     
+    //MARK: Start
+    
     func startRecord() {
         guard
             isAudioRecordingAllowed
@@ -133,6 +135,9 @@ extension RecordService {
             }
         }
     }
+    
+    
+    //MARK: Stop
     
     func stopRecord(completion: ((Record?) -> Void)?) {
         DispatchQueue.global().async { [unowned self] in

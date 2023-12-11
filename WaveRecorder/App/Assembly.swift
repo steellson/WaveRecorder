@@ -14,6 +14,7 @@ import UIKit
 protocol AssemblyProtocol: AnyObject {
     func build(module: Assembly.Module) -> UIViewController
     func build(subModule: Assembly.SubModule) -> UIView
+    func buildMainCellViewModel(withRecord record: Record) -> MainCellViewModelProtocol
 }
 
 
@@ -37,6 +38,7 @@ final class Assembly: AssemblyProtocol {
         MainViewModel(storageService: services.storageService)
     }()
 
+    
     //MARK: Build
     
     func build(module: Module) -> UIViewController {
@@ -55,6 +57,14 @@ final class Assembly: AssemblyProtocol {
             )
             return RecordView(viewModel: viewModel)
         }
+    }
+    
+    func buildMainCellViewModel(withRecord record: Record) -> MainCellViewModelProtocol {
+        MainCellViewModel(
+            parentViewModel: mainViewModel,
+            audioService: services.audioService,
+            record: record
+        )
     }
 }
 

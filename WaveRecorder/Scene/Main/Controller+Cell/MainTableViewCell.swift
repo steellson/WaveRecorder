@@ -113,7 +113,9 @@ extension MainTableViewCell: PlayToolbarViewDelegate {
     }
     
     func playPause() {
-        viewModel.playPause()
+        viewModel.isPlaying
+        ? viewModel.pause()
+        : viewModel.play()
     }
     
     func goForward() {
@@ -125,7 +127,6 @@ extension MainTableViewCell: PlayToolbarViewDelegate {
     }
     
     func progressDidChanged(onValue value: Float) {
-//        viewModel.pla
         print("Progress slider didChangeValue on: \(value)")
     }
 }

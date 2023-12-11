@@ -15,12 +15,13 @@ protocol MainCellViewModelProtocol: AnyObject {
     var record: Record? { get set }
     var isPlaying: Bool { get }
     
+    func isRecordEditingStarted(_ isStarted: Bool, newName name: String?)
+    
     func goBack()
-    func playPause()
+    func play()
+    func pause()
     func goForward()
     func deleteRecord()
-    
-    func isRecordEditingStarted(_ isStarted: Bool, newName name: String?)
 }
 
 
@@ -30,19 +31,20 @@ final class MainCellViewModel: MainCellViewModelProtocol {
 
     var record: Record?
     
-    private let fileManagerInstance = FileManager.default
-    
-    private weak var parentViewModel: MainViewModelProtocol?
-    
     private(set) var isPlaying = false
         
-    private var audioPlayer: AVAudioPlayer?
+    private weak var parentViewModel: MainViewModelProtocol?
+    private let audioService: AudioServiceProtocol
     
     
     init(
-        parentViewModel: MainViewModelProtocol
+        parentViewModel: MainViewModelProtocol,
+        audioService: AudioServiceProtocol,
+        record: Record
     ) {
         self.parentViewModel = parentViewModel
+        self.audioService = audioService
+        self.record = record
     }
 }
 
@@ -55,13 +57,31 @@ extension MainCellViewModel {
         print("Go back tapped")
     }
     
-    func playPause() {
-        guard let record else {
-            print("ERROR: Record is not setted!")
+    func play() {
+        guard 
+            let record,
+            !isPlaying
+        else {
+            print("ERROR: Cant play audio!")
             return
         }
         
-        isPlaying ? pause() : play(record: record)
+        audioService.play(record: record) { [weak self] isStarted in
+            self?.isPlaying = isStarted
+        }
+    }
+    
+    func pause() {
+        guard 
+            isPlaying
+        else {
+            print("ERROR: Cant pause audio")
+            return
+        }
+        
+        audioService.pause() { [weak self] isPaused in
+            self?.isPlaying = isPaused
+        }
     }
     
     func goForward() {
@@ -71,89 +91,25 @@ extension MainCellViewModel {
     func deleteRecord() {
         guard 
             let record,
-            let parentVM = parentViewModel 
+            let parentViewModel
         else {
-            print("ERROR: MainCellViewModel is not finally configured")
+            print("ERROR: Cant delete record")
             return
         }
         
-        parentVM.delete(record: record)
+        parentViewModel.delete(record: record)
     }
     
     func isRecordEditingStarted(_ isStarted: Bool, newName name: String?) {
         guard
             let record,
-            let parentVM = parentViewModel
+            let parentViewModel,
+            let name
         else {
-            print("ERROR: MainCellViewModel is not finally configured")
+            print("ERROR: Cant edit audio record!")
             return
         }
-        
-        if let name {
-            parentVM.renameRecord(record, newName: name)
-        }
-    }
-}
-
-//MARK: - Private
-
-private extension MainCellViewModel {
-    
-    func setupSettings() {
-        guard let audioPlayer = self.audioPlayer else {
-            print("ERROR: AudioPlayer is not setted yet!")
-            return
-        }
-        
-        audioPlayer.isMeteringEnabled = true
-        audioPlayer.numberOfLoops = 0
-    }
-    
-    
-    //MARK: Play
-    
-    func play(record: Record) {
-        let recordURL = fileManagerInstance.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent(record.name)
-            .appendingPathExtension(record.format)
-        
-        guard
-            fileManagerInstance.fileExists(atPath: recordURL.path())
-        else {
-            print("ERROR: File with name \(record.name) doesn't exist!")
-            return
-        }
-        
-        DispatchQueue.main.async { [unowned self] in
-            do {
-                
-                self.audioPlayer = try AVAudioPlayer(contentsOf: recordURL)
-                self.setupSettings()
-                
-                print(">> Will start playing audio with URL: \(recordURL)")
-                
-                self.audioPlayer?.prepareToPlay()
-                self.audioPlayer?.play()
-                self.isPlaying = true
-                
-            } catch {
-                print("ERROR: AudioPlayer could not be instantiated \(error)")
-            }
-        }
-    }
-
-    
-    //MARK: Pause
-    
-    func pause() {
-        guard self.audioPlayer != nil else {
-            print("ERROR: AudioPlayer is not setted yet!")
-            return
-        }
-        
-        DispatchQueue.main.async { [weak self] in
-            self?.audioPlayer?.pause()
-            self?.isPlaying = false
-        }
+ 
+        parentViewModel.renameRecord(record, newName: name)
     }
 }

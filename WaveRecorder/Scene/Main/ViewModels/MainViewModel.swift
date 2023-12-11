@@ -21,7 +21,7 @@ protocol MainViewModelProtocol: AnyObject {
     func renameRecord(_ record: Record, newName name: String)
     func delete(record: Record)
     
-    func makeViewModelForCell(atIndex index: Int) -> MainCellViewModel
+    func makeViewModelForCell(atIndex index: Int) -> MainCellViewModelProtocol
 }
 
 
@@ -92,10 +92,8 @@ extension MainViewModel {
         }
     }
     
-    func makeViewModelForCell(atIndex index: Int) -> MainCellViewModel {
-        let viewModel = MainCellViewModel(parentViewModel: self)
-        viewModel.record = records[index]
-        return viewModel
+    func makeViewModelForCell(atIndex index: Int) -> MainCellViewModelProtocol {
+        AssemblyBuilder.buildMainCellViewModel(withRecord: records[index])
     }
 }
 
