@@ -66,13 +66,29 @@ final class PlayToolbarView: UIView {
         self.record = record
     }
     
+    func updatePlayingTime(withValue value: TimeInterval) {
+        DispatchQueue.main.async { [weak self] in
+            self?.progressSlider.value += Float(value)
+        }
+    }
+    
     func clearView() {
         startTimeLabel.text = "00:00"
         endTimeLabel.text = "00:00"
         progressSlider.value = 0
     }
     
+    
     //MARK: Actions
+    
+    @objc
+    private func progressSliderDidSlide(_ sender: UISlider) {
+        if sender == progressSlider {
+            delegate?.progressDidChanged(onValue: progressSlider.value)
+        } else {
+            print("Sender is not a progress slider!")
+        }
+    }
     
     @objc
     private func buttonDidTapped(_ sender: PlayTolbarButton) {
@@ -95,14 +111,6 @@ final class PlayToolbarView: UIView {
             case .goForward: delegate.goForward()
             case .delete: delegate.deleteRecord()
             }
-        }
-    }
-    
-    @objc private func progressSliderDidSlide(_ sender: UISlider) {
-        if sender == progressSlider {
-            delegate?.progressDidChanged(onValue: progressSlider.value)
-        } else {
-            print("Sender is not a progress slider!")
         }
     }
 }

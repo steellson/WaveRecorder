@@ -21,6 +21,7 @@ final class MainTableViewCell:  UITableViewCell {
     private let mainCellView = MainCellView(frame: .zero)
     private let playToolbar = PlayToolbarView(frame: .zero)
 
+    private var timer: Timer?
     
     //MARK: Lifecycle
     
@@ -40,6 +41,11 @@ final class MainTableViewCell:  UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         clear()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updatePlayToolbar()
     }
     
     
@@ -90,6 +96,20 @@ private extension MainTableViewCell {
     func clear() {
         mainCellView.clearView()
         playToolbar.clearView()
+    }
+    
+    func updatePlayToolbar() {
+        viewModel.onPlaying = { [weak self] time in
+            self?.timer = Timer.scheduledTimer(withTimeInterval: time, repeats: true) { _ in
+                self?.playToolbar.updatePlayingTime(withValue: time)
+            }
+        }
+        
+        viewModel.onPause = { [weak self] onPause in
+            if onPause {
+                self?.timer?.invalidate()
+            }
+        }
     }
 }
 

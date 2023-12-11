@@ -13,8 +13,11 @@ import AVFoundation
 
 protocol MainCellViewModelProtocol: AnyObject {
     var record: Record? { get set }
-    var isPlaying: Bool { get }
     
+    var onPlaying: ((TimeInterval) -> Void)? { get set }
+    var onPause: ((Bool) -> Void)? { get set }
+    
+    var isPlaying: Bool { get }
     
     func goBack()
     func play()
@@ -31,6 +34,9 @@ protocol MainCellViewModelProtocol: AnyObject {
 final class MainCellViewModel: MainCellViewModelProtocol {
 
     var record: Record?
+    
+    var onPlaying: ((TimeInterval) -> Void)?
+    var onPause: ((Bool) -> Void)?
     
     private(set) var isPlaying = false
         
@@ -67,8 +73,16 @@ extension MainCellViewModel {
             return
         }
         
-        audioService.play(record: record, onTime: nil) { [weak self] isStarted in
-            self?.isPlaying = isStarted
+        audioService.play(record: record, onTime: nil) { [weak self] time in
+            guard let time else {
+                self?.isPlaying = false
+                return
+            }
+            self?.isPlaying = true
+            
+            DispatchQueue.main.async {
+                self?.onPlaying?(time)
+            }
         }
     }
     
@@ -80,9 +94,19 @@ extension MainCellViewModel {
             return
         }
         
-        audioService.play(record: record, onTime: time) { [weak self] isStarted in
-            self?.isPlaying = isStarted
+        if audioService.playerCurrentTime == nil {
+            play()
+        } else {
+            audioService.play(record: record, onTime: time) { [weak self] time in
+                let onPause = (time != nil)
+                self?.isPlaying = false
+                
+                DispatchQueue.main.async {
+                    self?.onPause?(onPause)
+                }
+            }
         }
+        
     }
     
     func pause() {
@@ -93,8 +117,12 @@ extension MainCellViewModel {
             return
         }
         
-        audioService.pause() { [weak self] isPaused in
-            self?.isPlaying = isPaused
+        audioService.stop() { [weak self] isPaused in
+            self?.isPlaying = !isPaused
+            
+            DispatchQueue.main.async {
+                self?.onPause?(isPaused)
+            }
         }
     }
     
