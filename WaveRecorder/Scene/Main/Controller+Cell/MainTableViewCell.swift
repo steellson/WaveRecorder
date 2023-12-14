@@ -20,8 +20,9 @@ final class MainTableViewCell:  UITableViewCell {
     
     private let mainCellView = MainCellView(frame: .zero)
     private let playToolbar = PlayToolbarView(frame: .zero)
+    
+    private var timer: Timer!
 
-    private var timer: Timer?
     
     //MARK: Lifecycle
     
@@ -95,19 +96,22 @@ private extension MainTableViewCell {
     
     func clear() {
         mainCellView.clearView()
-        playToolbar.clearView()
+        playToolbar.resetPlayingProgress()
     }
     
     func updatePlayToolbar() {
-        viewModel.onPlaying = { [weak self] time in
-            self?.timer = Timer.scheduledTimer(withTimeInterval: time, repeats: true) { _ in
-                self?.playToolbar.updatePlayingTime(withValue: time)
+        viewModel.onPlaying = { [weak self] isPlaying in
+            if isPlaying {
+                self?.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+                    self?.playToolbar.startUpdateProgress()
+                }
             }
         }
         
-        viewModel.onPause = { [weak self] onPause in
-            if onPause {
-                self?.timer?.invalidate()
+        viewModel.onFinish = { [weak self] isFinished in
+            if isFinished {
+                self?.playToolbar.resetPlayingProgress()
+                self?.timer.invalidate()
             }
         }
     }
@@ -133,8 +137,8 @@ extension MainTableViewCell: PlayToolbarViewDelegate {
     
     func playPause() {
         viewModel.isPlaying
-        ? viewModel.pause()
-        : viewModel.play()
+        ? viewModel.stop()
+        : viewModel.play(atTime: nil)
     }
     
     func goForward() {
@@ -146,6 +150,6 @@ extension MainTableViewCell: PlayToolbarViewDelegate {
     }
     
     func progressDidChanged(onValue value: Float) {
-        viewModel.play(onTime: value)
+        viewModel.play(atTime: value)
     }
 }

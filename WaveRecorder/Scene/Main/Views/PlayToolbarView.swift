@@ -65,29 +65,35 @@ final class PlayToolbarView: UIView {
     func configureView(withRecord record: Record?) {
         self.record = record
     }
-    
-    func updatePlayingTime(withValue value: TimeInterval) {
-        DispatchQueue.main.async { [weak self] in
-            self?.progressSlider.value += Float(value)
+
+    func startUpdateProgress() {
+        UIView.animate(withDuration: 0.1) {
+            self.progressSlider.value += 0.1
+            self.progressSlider.layoutIfNeeded()
         }
     }
     
-    func clearView() {
-        startTimeLabel.text = "00:00"
-        endTimeLabel.text = "00:00"
-        progressSlider.value = 0
+    func resetPlayingProgress() {
+        UIView.animate(withDuration: 0.2) {
+            self.startTimeLabel.text = "00:00"
+            self.endTimeLabel.text = Formatter.instance.formatDuration(self.record?.duration ?? 0)
+            self.progressSlider.value = 0
+            self.layoutIfNeeded()
+        }
     }
+
     
+//    func updatePlayigProgress(withTime time: TimeInterval) {
+//        progressSlider.value = Float(time)
+//    }
+    
+
     
     //MARK: Actions
     
     @objc
-    private func progressSliderDidSlide(_ sender: UISlider) {
-        if sender == progressSlider {
-            delegate?.progressDidChanged(onValue: progressSlider.value)
-        } else {
-            print("Sender is not a progress slider!")
-        }
+    private func progressValueChanged() {
+        delegate?.progressDidChanged(onValue: progressSlider.value)
     }
     
     @objc
@@ -152,7 +158,7 @@ private extension PlayToolbarView {
         playButton.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
         goForwardButton.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
         deleteButton.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
-        progressSlider.addTarget(self, action: #selector(progressSliderDidSlide), for: .touchDown)
+        progressSlider.addTarget(self, action: #selector(progressValueChanged), for: .valueChanged)
     }
     
     

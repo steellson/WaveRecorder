@@ -14,15 +14,14 @@ import AVFoundation
 protocol MainCellViewModelProtocol: AnyObject {
     var record: Record? { get set }
     
-    var onPlaying: ((TimeInterval) -> Void)? { get set }
-    var onPause: ((Bool) -> Void)? { get set }
+    var onPlaying: ((Bool) -> Void)? { get set }
+    var onFinish: ((Bool) -> Void)? { get set }
     
     var isPlaying: Bool { get }
     
     func goBack()
-    func play()
-    func play(onTime time: Float)
-    func pause()
+    func play(atTime time: Float?)
+    func stop()
     func goForward()
     func deleteRecord()
     func rename(withNewName name: String)
@@ -35,8 +34,8 @@ final class MainCellViewModel: MainCellViewModelProtocol {
 
     var record: Record?
     
-    var onPlaying: ((TimeInterval) -> Void)?
-    var onPause: ((Bool) -> Void)?
+    var onPlaying: ((Bool) -> Void)?
+    var onFinish: ((Bool) -> Void)?
     
     private(set) var isPlaying = false
         
@@ -64,64 +63,38 @@ extension MainCellViewModel {
         print("Go back tapped")
     }
     
-    func play() {
-        guard 
-            let record,
-            !isPlaying
-        else {
-            print("ERROR: Cant play audio!")
-            return
-        }
-        
-        audioService.play(record: record, onTime: nil) { [weak self] time in
-            guard let time else {
-                self?.isPlaying = false
-                return
-            }
-            self?.isPlaying = true
-            
-            DispatchQueue.main.async {
-                self?.onPlaying?(time)
-            }
-        }
-    }
-    
-    func play(onTime time: Float) {
+    func play(atTime time: Float?) {
         guard
             let record
         else {
             print("ERROR: Cant play audio!")
+            onPlaying?(false)
             return
         }
         
-        if audioService.playerCurrentTime == nil {
-            play()
-        } else {
-            audioService.play(record: record, onTime: time) { [weak self] time in
-                let onPause = (time != nil)
-                self?.isPlaying = false
-                
-                DispatchQueue.main.async {
-                    self?.onPause?(onPause)
-                }
+        audioService.play(record: record, onTime: time) { [weak self] isPlaying in
+            self?.isPlaying = isPlaying
+            
+            DispatchQueue.main.async {
+                self?.onPlaying?(isPlaying)
             }
         }
-        
     }
     
-    func pause() {
+    func stop() {
         guard 
             isPlaying
         else {
-            print("ERROR: Cant pause audio")
+            print("ERROR: Cant stop audio")
+            onFinish?(false)
             return
         }
         
-        audioService.stop() { [weak self] isPaused in
-            self?.isPlaying = !isPaused
+        audioService.stop() { [weak self] isStopped in
+            self?.isPlaying = !isStopped
             
             DispatchQueue.main.async {
-                self?.onPause?(isPaused)
+                self?.onFinish?(isStopped)
             }
         }
     }

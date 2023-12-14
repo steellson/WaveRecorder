@@ -13,7 +13,7 @@ import AVFoundation
 protocol AudioServiceProtocol: AnyObject {
     var playerCurrentTime: TimeInterval? { get }
     
-    func play(record: Record, onTime time: Float?, completion: @escaping (TimeInterval?) -> Void)
+    func play(record: Record, onTime time: Float?, completion: @escaping (Bool) -> Void)
     func stop(completion: @escaping (Bool) -> Void)
 }
 
@@ -69,7 +69,7 @@ extension AudioService {
     
     //MARK: Play
     
-    func play(record: Record, onTime time: Float?, completion: @escaping (TimeInterval?) -> Void) {
+    func play(record: Record, onTime time: Float?, completion: @escaping (Bool) -> Void) {
         let recordURL = URLBuilder.buildURL(
             forRecordWithName: record.name,
             andFormat: record.format
@@ -79,7 +79,7 @@ extension AudioService {
             fileManagerInstance.fileExists(atPath: recordURL.path(percentEncoded: false))
         else {
             print("ERROR: File with name \(record.name) doesn't exist!")
-            completion(nil)
+            completion(false)
             return
         }
         
@@ -93,11 +93,11 @@ extension AudioService {
                     self.startPlay(fromURL: recordURL)
                 }
                 
-                completion(TimeInterval((self.audioPlayer?.duration ?? 0) * 0.1))
+                completion(true)
                 
             } catch {
                 print("ERROR: AudioPlayer could not be instantiated \(error)")
-                completion(nil)
+                completion(false)
             }
         }
     }
