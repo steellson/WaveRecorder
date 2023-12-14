@@ -103,7 +103,7 @@ private extension MainTableViewCell {
         viewModel.onPlaying = { [weak self] isPlaying in
             if isPlaying {
                 self?.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-                    self?.playToolbar.startUpdateProgress()
+                    self?.playToolbar.updateProgress()
                 }
             }
         }
@@ -150,6 +150,8 @@ extension MainTableViewCell: PlayToolbarViewDelegate {
     }
     
     func progressDidChanged(onValue value: Float) {
-        viewModel.play(atTime: value)
+        value > 0
+        ? viewModel.play(atTime: value)
+        : viewModel.stop()
     }
 }

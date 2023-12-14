@@ -15,6 +15,7 @@ protocol PlayToolbarViewDelegate: AnyObject {
     func playPause()
     func goForward()
     func deleteRecord()
+    
     func progressDidChanged(onValue value: Float)
 }
 
@@ -37,6 +38,17 @@ final class PlayToolbarView: UIView {
     
     private var record: Record?
     
+    private var isPlaying = false {
+        didSet {
+            updateButtonImage()
+        }
+    }
+    
+    private lazy var elapsedTimeValue: Double = 0.0
+    private lazy var remainingTimeValue: Double = record?.duration ?? 0
+    
+    private let formatter = Formatter.instance
+    
     
     //MARK: Lifecycle
     
@@ -54,8 +66,7 @@ final class PlayToolbarView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         setupProgressSlider()
-        setupStartTimeLabel()
-        setupEndTimeLabel()
+        setupTimeLabels()
         setupConstraints()
     }
     
@@ -66,43 +77,43 @@ final class PlayToolbarView: UIView {
         self.record = record
     }
 
-    func startUpdateProgress() {
+    func updateProgress() {
         UIView.animate(withDuration: 0.1) {
             self.progressSlider.value += 0.1
-            self.progressSlider.layoutIfNeeded()
+            self.updateTimeValues(isReset: false)
+            self.updateTimeLabels()
+            self.layoutIfNeeded()
         }
     }
     
     func resetPlayingProgress() {
         UIView.animate(withDuration: 0.2) {
-            self.startTimeLabel.text = "00:00"
-            self.endTimeLabel.text = Formatter.instance.formatDuration(self.record?.duration ?? 0)
+            self.isPlaying = false
             self.progressSlider.value = 0
+            self.updateTimeValues(isReset: true)
+            self.updateTimeLabels()
             self.layoutIfNeeded()
         }
     }
-
-    
-//    func updatePlayigProgress(withTime time: TimeInterval) {
-//        progressSlider.value = Float(time)
-//    }
-    
-
+        
     
     //MARK: Actions
     
     @objc
     private func progressValueChanged() {
         delegate?.progressDidChanged(onValue: progressSlider.value)
+        updateProgress()
     }
     
     @objc
     private func buttonDidTapped(_ sender: PlayTolbarButton) {
+        isPlaying.toggle()
+        
         UIView.animate(withDuration: 0.1) {
             sender.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
             sender.alpha = 0.2
         } completion: { _ in
-            sender.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+            sender.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
             sender.alpha = 1
         }
         
@@ -116,6 +127,47 @@ final class PlayToolbarView: UIView {
             case .play: delegate.playPause()
             case .goForward: delegate.goForward()
             case .delete: delegate.deleteRecord()
+            }
+        }
+    }
+}
+
+//MARK: - Update
+
+private extension PlayToolbarView {
+    
+    func updateButtonImage() {
+        UIView.animate(withDuration: 0.1) {
+            self.playButton.setImage(
+                UIImage(systemName: self.isPlaying ? "stop.fill" : "play.fill"),
+                for: .normal
+            )
+        }
+    }
+    
+    func updateTimeLabels() {
+        startTimeLabel.text = formatter.formatDuration(elapsedTimeValue)
+        endTimeLabel.text = formatter.formatDuration(remainingTimeValue)
+    }
+    
+    func updateTimeValues(isReset: Bool) {
+        guard let duration = record?.duration else { return }
+              
+        switch isReset {
+        case true:
+            elapsedTimeValue = 0
+            remainingTimeValue = duration
+        case false:
+            let step = 0.1
+            if elapsedTimeValue < duration {
+                elapsedTimeValue = Double(progressSlider.value)
+                remainingTimeValue = duration - elapsedTimeValue
+                
+                elapsedTimeValue += step
+                remainingTimeValue -= step
+            } else {
+                // Stop and refresh
+                delegate?.progressDidChanged(onValue: 0)
             }
         }
     }
@@ -143,14 +195,11 @@ private extension PlayToolbarView {
         progressSlider.setThumbImage(UIImage(systemName: "circle.fill"), for: .normal)
     }
     
-    private func setupStartTimeLabel() {
-        startTimeLabel.text = Formatter.instance.formatDuration(0)
+    private func setupTimeLabels() {
         startTimeLabel.font = .systemFont(ofSize: 14, weight: .light)
-    }
-    
-    private func setupEndTimeLabel() {
-        endTimeLabel.text = Formatter.instance.formatDuration(record?.duration ?? 0)
         endTimeLabel.font = .systemFont(ofSize: 14, weight: .light)
+        
+        updateTimeLabels()
     }
     
     private func setTargets() {

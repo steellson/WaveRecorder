@@ -83,7 +83,7 @@ extension AudioService {
             return
         }
         
-        DispatchQueue.main.async { [unowned self] in
+        DispatchQueue.global().async { [unowned self] in
             do {
                 self.audioPlayer = try AVAudioPlayer(contentsOf: recordURL)
                 
