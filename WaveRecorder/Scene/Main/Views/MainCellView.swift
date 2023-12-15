@@ -135,11 +135,13 @@ private extension MainCellView {
             
             titleLabelField.topAnchor.constraint(equalTo: topAnchor, constant: 18),
             titleLabelField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-            titleLabelField.trailingAnchor.constraint(equalTo: renameButton.trailingAnchor, constant: -12),
+            titleLabelField.trailingAnchor.constraint(equalTo: renameButton.leadingAnchor, constant: -12),
             titleLabelField.heightAnchor.constraint(equalToConstant: 18),
             
             dateLabel.topAnchor.constraint(equalTo: titleLabelField.bottomAnchor, constant: 12),
             dateLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            dateLabel.trailingAnchor.constraint(equalTo: centerXAnchor),
+            dateLabel.heightAnchor.constraint(equalToConstant: 18)
         ])
     }
 }

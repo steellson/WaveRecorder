@@ -51,6 +51,6 @@ final class PlayTolbarButton: UIButton {
         
         backgroundColor = .clear
         tintColor = .black
-        transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
     }
 }

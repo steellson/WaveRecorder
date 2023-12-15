@@ -85,9 +85,9 @@ private extension MainTableViewCell {
             mainCellView.topAnchor.constraint(equalTo: contentView.topAnchor),
             mainCellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             mainCellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            mainCellView.bottomAnchor.constraint(equalTo: contentView.centerYAnchor),
+            mainCellView.heightAnchor.constraint(equalToConstant: 70),
             
-            playToolbar.topAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -12),
+            playToolbar.topAnchor.constraint(equalTo: mainCellView.bottomAnchor),
             playToolbar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             playToolbar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             playToolbar.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)

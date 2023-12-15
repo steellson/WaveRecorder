@@ -31,7 +31,7 @@ final class MainViewController: UIViewController {
         )
     }()
     
-    private var tableViewCellHeight: CGFloat = 220
+    private var tableViewCellHeight: CGFloat = 200
 
     private let viewModel: MainViewModelProtocol
     
