@@ -83,7 +83,7 @@ final class PlayToolbarView: UIView {
     }
     
     func resetProgress() {
-        UIView.animate(withDuration: 0.2) {
+        UIView.animate(withDuration: 0.2, delay: 0.5) {
             self.isPlaying = false
             self.progressSlider.value = 0
             self.updateTimeValues(isReset: true)
