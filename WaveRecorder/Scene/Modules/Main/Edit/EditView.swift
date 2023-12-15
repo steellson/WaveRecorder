@@ -1,5 +1,5 @@
 //
-//  MainCellView.swift
+//  EditViewView.swift
 //  WaveRecorder
 //
 //  Created by Andrew Steellson on 29.11.2023.
@@ -7,36 +7,20 @@
 
 import UIKit
 
-//MARK: - Protocol
-
-protocol MainCellViewDelegate: AnyObject {
-    func rename(withNewName name: String)
-}
-
 
 //MARK: - Impl
 
-final class MainCellView: UIView {
-    
-    var delegate: MainCellViewDelegate?
-    
+final class EditView: UIView {
+        
     //MARK: Variables
     
     private let titleLabelField = UITextField()
     private let dateLabel = UILabel()
     private let renameButton = UIButton()
     
-    private var record: Record?
+    private var viewModel: EditViewModelProtocol?
     
-    private var isEditing = false {
-        didSet {
-            if isEditing {
-                titleLabelField.becomeFirstResponder()
-            } else {
-                titleLabelField.resignFirstResponder()
-            }
-        }
-    }
+    private var isEditing = false
     
     
     //MARK: Lifecycle
@@ -62,16 +46,29 @@ final class MainCellView: UIView {
     
     //MARK: Methods
     
-    func configureView(withRecord record: Record?) {
-        self.record = record
+    func configureView(withViewModel viewModel: EditViewModelProtocol) {
+        self.viewModel = viewModel
     }
     
     func clearView() {
         titleLabelField.text = ""
         dateLabel.text = ""
+        setNeedsLayout()
     }
     
     private func isEditingToggled(_ isEditing: Bool) {
+        animateRenameButton(isEditingStarts: isEditing)
+        
+        if isEditing {
+            titleLabelField.becomeFirstResponder()
+        } else {
+            titleLabelField.resignFirstResponder()
+        }
+        
+        updateView()
+    }
+    
+    private func animateRenameButton(isEditingStarts isEditing: Bool) {
         UIView.animate(withDuration: 0.2) {
             self.renameButton.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
             self.renameButton.alpha = 0.2
@@ -96,7 +93,7 @@ final class MainCellView: UIView {
             
 //MARK: - Setup
 
-private extension MainCellView {
+private extension EditView {
     
     func setupContentView() {
         addNewSubview(titleLabelField)
@@ -105,14 +102,14 @@ private extension MainCellView {
     }
     
     func setupTitleLabelField() {
-        titleLabelField.text = record?.name ?? "NO DATA"
+        titleLabelField.text = viewModel?.recordName ?? "NO DATA"
         titleLabelField.font = .systemFont(ofSize: 18, weight: .semibold)
         titleLabelField.textAlignment = .left
         titleLabelField.delegate = self
     }
     
     func setupDateLabel() {
-        dateLabel.text = Formatter.instance.formatDate(record?.date ?? .now)
+        dateLabel.text = Formatter.instance.formatDate(viewModel?.recordedAt ?? .now)
         dateLabel.font = .systemFont(ofSize: 16, weight: .light)
         dateLabel.textAlignment = .left
     }
@@ -147,9 +144,21 @@ private extension MainCellView {
 }
 
 
+//MARK: - Update
+
+extension EditView {
+    
+    func updateView() {
+        viewModel?.didUpdated = { [weak self] in
+            self?.setNeedsLayout()
+        }
+    }
+}
+
+
 //MARK: - TextField Delegate
 
-extension MainCellView: UITextFieldDelegate {
+extension EditView: UITextFieldDelegate {
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         isEditing
@@ -157,6 +166,6 @@ extension MainCellView: UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         guard let newName = textField.text else { return }
-        delegate?.rename(withNewName: newName)
+        viewModel?.renameRecord(withNewName: newName)
     }
 }

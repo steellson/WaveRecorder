@@ -11,12 +11,11 @@ import SwiftData
 //MARK: - Protocol
 
 protocol StorageServiceProtocol: AnyObject {
-    func getRecords(completion: @escaping (Result<[Record], StorageError>) -> Void)
-    func delete(record: Record,completion: @escaping (Result<Bool, StorageError>) -> Void)
-    func searchRecords(withText text: String, completion: @escaping (Result<[Record], StorageError>) -> Void)
-    
     func save(record: Record)
-    func rename(record: Record, newName name: String)
+    func getRecords(completion: @escaping (Result<[Record], StorageError>) -> Void)
+    func delete(record: Record, completion: @escaping (Result<Bool, StorageError>) -> Void)
+    func searchRecords(withText text: String, completion: @escaping (Result<[Record], StorageError>) -> Void)
+    func rename(record: Record, newName name: String, completion: @escaping (Result<Bool, StorageError>) -> Void)
 }
 
 //MARK: Storage error
@@ -26,6 +25,7 @@ enum StorageError: Error {
     case cantGetRecordsFormStorage
     case cantGetRecordWithIDFormStorage
     case cantFetchRecordWithDescriptor
+    case cantRenameRecord
     case cantDeleteRecord
     case fetchedRecordsEmpty
 }
@@ -56,6 +56,18 @@ final class StorageService: StorageServiceProtocol {
 //MARK: - Public
 
 extension StorageService {
+    
+    //MARK: Save
+    
+    func save(record: Record) {
+        guard let context else {
+            print("ERROR: Cant get storage context")
+            return
+        }
+
+        context.insert(record)
+    }
+    
     
     //MARK: Get all
     
@@ -149,23 +161,12 @@ extension StorageService {
     }
     
     
-    //MARK: Save
-    
-    func save(record: Record) {
-        guard let context else {
-            print("ERROR: Cant get storage context")
-            return
-        }
-
-        context.insert(record)
-    }
-    
-    
     //MARK: Rename
     
-    func rename(record: Record, newName name: String) {
+    func rename(record: Record, newName name: String, completion: @escaping (Result<Bool, StorageError>) -> Void) {
         guard let context else {
             print("ERROR: Cant get storage context")
+            completion(.failure(.cantGetStorageContext))
             return
         }
         
@@ -180,6 +181,7 @@ extension StorageService {
                 records.filter({ $0.name == name }).isEmpty
             else {
                 print("ERROR: Cant get record with name \(record.name) from storage")
+                completion(.failure(.cantGetRecordWithIDFormStorage))
                 return
             }
             
@@ -197,9 +199,11 @@ extension StorageService {
                     duration: oldRecordDuration
             ))
             
+            completion(.success(true))
             print("** File \(record.name) renamed on: \(name)")
         } catch {
             print("ERROR: Cant get old record from storage: \(error)")
+            completion(.failure(.cantRenameRecord))
             return
         }
     }

@@ -12,15 +12,19 @@ import UIKit
 //MARK: - Protocol
 
 protocol AssemblyProtocol: AnyObject {
-    func build(module: Assembly.Module) -> UIViewController
-    func build(subModule: Assembly.SubModule) -> UIView
-    func buildMainCellViewModel(withRecord record: Record) -> MainCellViewModelProtocol
+    func get(module: Assembly.Module) -> UIViewController
+    func get(subModule: Assembly.SubModule) -> UIView
+    func getMainCellViewModel(withRecord record: Record) -> MainCellViewModelProtocol
+    func getEditViewModel(withParentViewModel parentViewModel: MainCellViewModelProtocol, record: Record) -> EditViewModelProtocol
+    func getPlayViewModel(withParentViewModel parentViewModel: MainCellViewModelProtocol, record: Record) -> PlayViewModelProtocol
 }
 
 
 //MARK: - Impl
 
 final class Assembly: AssemblyProtocol {
+    
+    //MARK: Selection
     
     enum Module {
         case main
@@ -30,16 +34,50 @@ final class Assembly: AssemblyProtocol {
         case record
     }
     
-    static let builder = Assembly()
     
+    //MARK: Properties
+    
+    static let builder = Assembly()
     private let services = Services()
+    
+    
+    //MARK: ViewModels
 
     private lazy var mainViewModel: MainViewModelProtocol = {
         MainViewModel(storageService: services.storageService)
     }()
+}
 
+
+//MARK: - Public
+
+extension Assembly {
     
-    //MARK: Build
+    func get(module: Module) -> UIViewController {
+        build(module: module)
+    }
+    
+    func get(subModule: SubModule) -> UIView {
+        build(subModule: subModule)
+    }
+    
+    func getMainCellViewModel(withRecord record: Record) -> MainCellViewModelProtocol {
+        buildMainCellViewModel(withRecord: record)
+    }
+    
+    func getPlayViewModel(withParentViewModel parentViewModel: MainCellViewModelProtocol, record: Record) -> PlayViewModelProtocol {
+        buildPlayViewModel(withParentViewModel: parentViewModel, record: record)
+    }
+    
+    func getEditViewModel(withParentViewModel parentViewModel: MainCellViewModelProtocol, record: Record) -> EditViewModelProtocol {
+        buildEditViewModel(withParentViewModel: parentViewModel, record: record)
+    }
+}
+
+
+//MARK: - Private
+
+private extension Assembly {
     
     func build(module: Module) -> UIViewController {
         switch module {
@@ -61,7 +99,18 @@ final class Assembly: AssemblyProtocol {
     
     func buildMainCellViewModel(withRecord record: Record) -> MainCellViewModelProtocol {
         MainCellViewModel(
-            parentViewModel: mainViewModel,
+            record: record,
+            parentViewModel: mainViewModel
+        )
+    }
+    
+    func buildEditViewModel(withParentViewModel parentViewModel: MainCellViewModelProtocol, record: Record) -> EditViewModelProtocol {
+        EditViewModel(parentViewModel: parentViewModel, record: record)
+    }
+    
+    func buildPlayViewModel(withParentViewModel parentViewModel: MainCellViewModelProtocol, record: Record) -> PlayViewModelProtocol {
+        PlayViewModel(
+            parentViewModel: parentViewModel,
             audioService: services.audioService,
             record: record
         )

@@ -1,50 +1,51 @@
 //
-//  MainCellViewModel.swift
+//  PlayViewModel.swift
 //  WaveRecorder
 //
-//  Created by Andrew Steellson on 28.11.2023.
+//  Created by Andrew Steellson on 15.12.2023.
 //
 
 import Foundation
-import AVFoundation
 
 
 //MARK: - Protocol
 
-protocol MainCellViewModelProtocol: AnyObject {
-    var record: Record? { get set }
-    
+protocol PlayViewModelProtocol: AnyObject {
     var onPlaying: ((Bool) -> Void)? { get set }
     var onFinish: ((Bool) -> Void)? { get set }
     
+    var recordDuration: Float { get }
     var isPlaying: Bool { get }
-    
+        
     func goBack()
     func play(atTime time: Float?)
     func stop()
     func goForward()
     func deleteRecord()
-    func rename(withNewName name: String)
 }
 
 
 //MARK: - Impl
 
-final class MainCellViewModel: MainCellViewModelProtocol {
-
-    var record: Record?
+final class PlayViewModel: PlayViewModelProtocol {
     
     var onPlaying: ((Bool) -> Void)?
     var onFinish: ((Bool) -> Void)?
     
-    private(set) var isPlaying = false
-        
-    private weak var parentViewModel: MainViewModelProtocol?
-    private let audioService: AudioServiceProtocol
+    var recordDuration: Float {
+        Float(record.duration ?? 0)
+    }
     
+    private(set) var isPlaying = false
+    
+    private let record: Record
+
+    private weak var parentViewModel: MainCellViewModelProtocol?
+    private let audioService: AudioServiceProtocol
+
     
     init(
-        parentViewModel: MainViewModelProtocol,
+        parentViewModel: MainCellViewModelProtocol,
         audioService: AudioServiceProtocol,
         record: Record
     ) {
@@ -57,21 +58,13 @@ final class MainCellViewModel: MainCellViewModelProtocol {
 
 //MARK: - Public
 
-extension MainCellViewModel {
+extension PlayViewModel {
     
     func goBack() {
         print("Go back tapped")
     }
     
     func play(atTime time: Float?) {
-        guard
-            let record
-        else {
-            print("ERROR: Cant play audio!")
-            onPlaying?(false)
-            return
-        }
-        
         audioService.play(record: record, onTime: time) { [weak self] isPlaying in
             self?.isPlaying = isPlaying
             
@@ -82,7 +75,7 @@ extension MainCellViewModel {
     }
     
     func stop() {
-        guard 
+        guard
             isPlaying
         else {
             print("ERROR: Cant stop audio")
@@ -104,36 +97,6 @@ extension MainCellViewModel {
     }
     
     func deleteRecord() {
-        guard 
-            let record,
-            let parentViewModel
-        else {
-            print("ERROR: Cant delete record")
-            return
-        }
-        
-        parentViewModel.delete(record: record)
-    }
-    
-    func isRecordEditingStarted(_ isStarted: Bool, newName name: String?) {
-        guard
-            let record,
-            let parentViewModel,
-            let name
-        else {
-            print("ERROR: Cant edit audio record!")
-            return
-        }
- 
-        parentViewModel.renameRecord(record, newName: name)
-    }
-    
-    func rename(withNewName name: String) {
-        guard let record else {
-            print("ERROR: Cant rename audio! Reason: audio is nil")
-            return
-        }
-        
-        parentViewModel?.renameRecord(record, newName: name)
+        parentViewModel?.deleteRecord() { }
     }
 }

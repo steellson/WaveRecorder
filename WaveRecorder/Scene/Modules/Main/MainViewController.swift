@@ -17,7 +17,7 @@ final class MainViewController: UIViewController {
     private let searchController = UISearchController()
     private let tableView = UITableView()
     
-    private var recordView = AssemblyBuilder.build(subModule: .record)
+    private var recordView = AssemblyBuilder.get(subModule: .record)
     private var recViewHeight = UIScreen.main.bounds.height * 0.15
     private lazy var recViewHeightConstraint: NSLayoutConstraint = {
         NSLayoutConstraint(
@@ -241,10 +241,13 @@ extension MainViewController: UITableViewDelegate {
                         print("ERROR: Cannot delete record with swipe")
                         return
                     }
-                    self?.viewModel.delete(record: record)
+                    
+                    self?.viewModel.delete(record: record, completion: { isDeleted in
+                        if isDeleted {
+                            self?.tableView.endUpdates()
+                        }
+                    })
                 }
-                
-                self.tableView.endUpdates()
             }
         )])
     }

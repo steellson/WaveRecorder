@@ -8,24 +8,10 @@
 import Foundation
 import UIKit
 
-//MARK: - Protocol
-
-protocol PlayToolbarViewDelegate: AnyObject {
-    func goBack()
-    func playPause()
-    func goForward()
-    func deleteRecord()
-    
-    func progressDidChanged(onValue value: Float)
-}
-
-
 //MARK: - Impl
 
 final class PlayToolbarView: UIView {
-    
-    weak var delegate: PlayToolbarViewDelegate?
-            
+                
     //MARK: Variables
     
     private let progressSlider = UISlider()
@@ -36,7 +22,9 @@ final class PlayToolbarView: UIView {
     private let goForwardButton = PlayTolbarButton(type: .goForward)
     private let deleteButton = PlayTolbarButton(type: .delete)
     
-    private var record: Record?
+    private var viewModel: PlayViewModelProtocol?
+        
+    private var timer: Timer!
     
     private var isPlaying = false {
         didSet {
@@ -45,7 +33,7 @@ final class PlayToolbarView: UIView {
     }
     
     private lazy var elapsedTimeValue: Double = 0.0
-    private lazy var remainingTimeValue: Double = record?.duration ?? 0
+    private lazy var remainingTimeValue = Double(viewModel?.recordDuration ?? 0)
     
     private let formatter = Formatter.instance
     
@@ -73,20 +61,28 @@ final class PlayToolbarView: UIView {
     
     //MARK: Methods
     
-    func configureView(withRecord record: Record?) {
-        self.record = record
+    func configureView(withViewModel viewModel: PlayViewModelProtocol) {
+        self.viewModel = viewModel
     }
-
-    func updateProgress() {
-        UIView.animate(withDuration: 0.1) {
-            self.progressSlider.value += 0.1
-            self.updateTimeValues(isReset: false)
-            self.updateTimeLabels()
-            self.layoutIfNeeded()
+    
+    func updatePlayToolbar() {
+        viewModel?.onPlaying = { [weak self] isPlaying in
+            if isPlaying {
+                self?.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+                    self?.updateProgress()
+                }
+            }
+        }
+        
+        viewModel?.onFinish = { [weak self] isFinished in
+            if isFinished {
+                self?.resetProgress()
+                self?.timer.invalidate()
+            }
         }
     }
     
-    func resetPlayingProgress() {
+    func resetProgress() {
         UIView.animate(withDuration: 0.2) {
             self.isPlaying = false
             self.progressSlider.value = 0
@@ -95,13 +91,13 @@ final class PlayToolbarView: UIView {
             self.layoutIfNeeded()
         }
     }
-        
+            
     
     //MARK: Actions
     
     @objc
     private func progressValueChanged() {
-        delegate?.progressDidChanged(onValue: progressSlider.value)
+        viewModel?.play(atTime: self.progressSlider.value)
         updateProgress()
     }
     
@@ -119,16 +115,18 @@ final class PlayToolbarView: UIView {
             sender.alpha = 1
         }
         
-        DispatchQueue.main.async { [weak self] in
-            guard let delegate = self?.delegate else {
-                print("ERROR: PlayToolbarViewDelegate is not setted!")
-                return
-            }
+        DispatchQueue.main.async { [unowned self] in
             switch sender.type {
-            case .goBack: delegate.goBack()
-            case .play: delegate.playPause()
-            case .goForward: delegate.goForward()
-            case .delete: delegate.deleteRecord()
+            case .goBack: 
+                self.viewModel?.goBack()
+            case .play:
+                !self.isPlaying
+                ? self.viewModel?.stop()
+                : self.viewModel?.play(atTime: self.progressSlider.value)
+            case .goForward:
+                self.viewModel?.goForward()
+            case .delete:
+                self.viewModel?.deleteRecord()
             }
         }
     }
@@ -137,6 +135,15 @@ final class PlayToolbarView: UIView {
 //MARK: - Update
 
 private extension PlayToolbarView {
+    
+    func updateProgress() {
+        UIView.animate(withDuration: 0.1) {
+            self.progressSlider.value += 0.1
+            self.updateTimeValues(isReset: false)
+            self.updateTimeLabels()
+            self.layoutIfNeeded()
+        }
+    }
     
     func updateButtonImage() {
         UIView.animate(withDuration: 0.1) {
@@ -153,7 +160,9 @@ private extension PlayToolbarView {
     }
     
     func updateTimeValues(isReset: Bool) {
-        guard let duration = record?.duration else { return }
+        guard let viewModel else { return }
+        
+        let duration = Double(viewModel.recordDuration)
               
         switch isReset {
         case true:
@@ -168,8 +177,7 @@ private extension PlayToolbarView {
                 elapsedTimeValue += step
                 remainingTimeValue -= step
             } else {
-                // Stop and refresh
-                delegate?.progressDidChanged(onValue: 0)
+                viewModel.stop()
             }
         }
     }
@@ -191,7 +199,7 @@ private extension PlayToolbarView {
     }
     
     private func setupProgressSlider() {
-        progressSlider.maximumValue = Float(record?.duration ?? 0)
+        progressSlider.maximumValue = viewModel?.recordDuration ?? 0
         progressSlider.tintColor = .darkGray
         progressSlider.setThumbImage(UIImage(systemName: "circle.fill"), for: .normal)
     }
@@ -244,9 +252,7 @@ private extension PlayToolbarView {
             deleteButton.topAnchor.constraint(equalTo: endTimeLabel.bottomAnchor, constant: 18),
             deleteButton.widthAnchor.constraint(equalToConstant: 34),
             deleteButton.heightAnchor.constraint(equalToConstant: 34),
-            deleteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
-            
-            
+            deleteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24), 
         ])
     }
 }

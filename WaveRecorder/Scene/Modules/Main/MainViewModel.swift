@@ -16,11 +16,13 @@ protocol MainViewModelProtocol: AnyObject {
     var recordStarted: ((Bool) -> Void)? { get set }
     var dataSourceUpdated: (() -> Void)? { get set }
     
-    func getRecords()
     func importRecord(_ record: Record)
-    func renameRecord(_ record: Record, newName name: String)
-    func delete(record: Record)
+    
+    func getRecords()
     func search(withText text: String)
+    
+    func rename(record: Record, newName name: String, completion: @escaping (Bool) -> Void)
+    func delete(record: Record, completion: @escaping (Bool) -> Void)
     
     func makeViewModelForCell(atIndex index: Int) -> MainCellViewModelProtocol
 }
@@ -41,7 +43,10 @@ final class MainViewModel: MainViewModelProtocol {
         storageService: StorageServiceProtocol
     ) {
         self.storageService = storageService
-        
+    }
+    
+    func makeViewModelForCell(atIndex index: Int) -> MainCellViewModelProtocol {
+        AssemblyBuilder.getMainCellViewModel(withRecord: records[index])
     }
 }
 
@@ -67,13 +72,22 @@ extension MainViewModel {
         dataSourceUpdated?()
     }
     
-    func renameRecord(_ record: Record, newName name: String) {
-        storageService.rename(record: record, newName: name)
-        getRecords()
-        dataSourceUpdated?()
+    func rename(record: Record, newName name: String, completion: @escaping (Bool) -> Void) {
+        storageService.rename(record: record, newName: name) { [weak self] isRenamed in
+            switch isRenamed {
+            case .success(let isRenamed):
+                if isRenamed {
+                    self?.dataSourceUpdated?()
+                    completion(true)
+                }
+            case .failure(let error):
+                completion(false)
+                print("ERROR: Cant rename record! \(error)")
+            }
+        }
     }
     
-    func delete(record: Record) {
+    func delete(record: Record, completion: @escaping (Bool) -> Void) {
         storageService.delete(record: record) { [weak self] result in
             switch result {
             case .success:
@@ -81,14 +95,17 @@ extension MainViewModel {
                     let recordIndex = self?.records.firstIndex(where: { $0.name == record.name })
                 else {
                     print("ERROR: Cant delete record with name \(record.name) from array")
+                    completion(false)
                     return
                 }
                 
                 self?.records.remove(at: recordIndex)
                 self?.dataSourceUpdated?()
+                completion(true)
                 print("ERROR: Record with name \(record.name) deleted!")
                 
             case .failure(let error):
+                completion(false)
                 print("ERROR: Cant delete record with name \(record.name). \(error)")
             }
         }
@@ -108,9 +125,5 @@ extension MainViewModel {
                 print("ERROR: Cant search records with text \(text). \(error)")
             }
         }
-    }
-    
-    func makeViewModelForCell(atIndex index: Int) -> MainCellViewModelProtocol {
-        AssemblyBuilder.buildMainCellViewModel(withRecord: records[index])
     }
 }
