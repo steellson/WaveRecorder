@@ -11,11 +11,13 @@ import Foundation
 //MARK: - Protocol
 
 protocol PlayViewModelProtocol: AnyObject {
-    var onPlaying: ((Bool) -> Void)? { get set }
-    var onFinish: ((Bool) -> Void)? { get set }
-    
-    var recordDuration: Float { get }
     var isPlaying: Bool { get }
+    
+    var progress: Float { get }
+    var duration: Float { get }
+    
+    var elapsedTimeFormatted: String { get }
+    var remainingTimeFormatted: String { get }
         
     func goBack()
     func play(atTime time: Float?)
@@ -28,20 +30,26 @@ protocol PlayViewModelProtocol: AnyObject {
 //MARK: - Impl
 
 final class PlayViewModel: PlayViewModelProtocol {
+
+    var isPlaying = false
     
-    var onPlaying: ((Bool) -> Void)?
-    var onFinish: ((Bool) -> Void)?
+    var progress: Float = 0.0
+    var duration: Float { Float(record.duration ?? 0) }
     
-    var recordDuration: Float {
-        Float(record.duration ?? 0)
+    var elapsedTimeFormatted: String {
+        format(withType: .duration(0))
+    }
+    var remainingTimeFormatted: String {
+        format(withType: .duration(record.duration ?? 0))
     }
     
-    private(set) var isPlaying = false
-    
     private let record: Record
-
-    private weak var parentViewModel: MainCellViewModelProtocol?
+    private let parentViewModel: MainCellViewModelProtocol
     private let audioService: AudioServiceProtocol
+
+    private var timer: Timer?
+    
+    private let formatter = Formatter.instance
 
     
     init(
@@ -65,29 +73,15 @@ extension PlayViewModel {
     }
     
     func play(atTime time: Float?) {
-        audioService.play(record: record, onTime: time) { [weak self] isPlaying in
-            self?.isPlaying = isPlaying
-            
-            DispatchQueue.main.async {
-                self?.onPlaying?(isPlaying)
-            }
+        audioService.play(record: record, onTime: time) { [unowned self] isPlaying in
+            self.isPlaying = isPlaying
         }
     }
     
     func stop() {
-        guard
-            isPlaying
-        else {
-            print("ERROR: Cant stop audio")
-            onFinish?(false)
-            return
-        }
-        
-        audioService.stop() { [weak self] isStopped in
-            self?.isPlaying = !isStopped
-            
-            DispatchQueue.main.async {
-                self?.onFinish?(isStopped)
+        if isPlaying {
+            audioService.stop() { [unowned self] isStopped in
+                self.isPlaying = !isStopped
             }
         }
     }
@@ -97,6 +91,24 @@ extension PlayViewModel {
     }
     
     func deleteRecord() {
-        parentViewModel?.deleteRecord() { }
+        parentViewModel.deleteRecord()
+    }
+}
+
+
+//MARK: - Private
+
+private extension PlayViewModel {
+    
+    enum FormatType {
+        case date(Date)
+        case duration(TimeInterval)
+    }
+    
+    func format(withType type: FormatType) -> String {
+        switch type {
+        case .date(let date): formatter.formatDate(date)
+        case .duration(let duration): formatter.formatDuration(duration)
+        }
     }
 }

@@ -14,59 +14,51 @@ final class EditView: UIView {
         
     //MARK: Variables
     
-    private let titleLabelField = UITextField()
-    private let dateLabel = UILabel()
-    private let renameButton = UIButton()
+    private lazy var titleLabelField: UITextField = {
+        let field = UITextField()
+        field.font = .systemFont(ofSize: 18, weight: .semibold)
+        field.textAlignment = .left
+        field.isEnabled = false
+        field.delegate = self
+        return field
+    }()
     
-    private var viewModel: EditViewModelProtocol?
+    private let dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 16, weight: .light)
+        label.textAlignment = .left
+        return label
+    }()
     
-    private var isEditing = false
+    private lazy var renameButton: UIButton = {
+        let button = UIButton()
+        button.tintColor = .black
+        button.setImage(UIImage(systemName: "pencil.circle"), for: .normal)
+        button.addTarget(self, action: #selector(renameButtonDidTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    private let viewModel: EditViewModelProtocol
     
     
     //MARK: Lifecycle
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(
+        viewModel: EditViewModelProtocol
+    ) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
+        
         setupContentView()
+        setupConstraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        setupTitleLabelField()
-        setupDateLabel()
-        setupRenameButton()
-        setupConstraints()
-    }
-    
+
     
     //MARK: Methods
-    
-    func configureView(withViewModel viewModel: EditViewModelProtocol) {
-        self.viewModel = viewModel
-    }
-    
-    func clearView() {
-        titleLabelField.text = ""
-        dateLabel.text = ""
-        setNeedsLayout()
-    }
-    
-    private func isEditingToggled(_ isEditing: Bool) {
-        animateRenameButton(isEditingStarts: isEditing)
-        
-        if isEditing {
-            titleLabelField.becomeFirstResponder()
-        } else {
-            titleLabelField.resignFirstResponder()
-        }
-        
-        updateView()
-    }
     
     private func animateRenameButton(isEditingStarts isEditing: Bool) {
         UIView.animate(withDuration: 0.2) {
@@ -86,8 +78,18 @@ final class EditView: UIView {
     
     @objc
     private func renameButtonDidTapped() {
-        isEditing.toggle()
-        isEditingToggled(isEditing)
+        viewModel.switchEditingMode()
+        
+        let isEditing = viewModel.isEditing
+        titleLabelField.isEnabled = isEditing
+        
+        if isEditing {
+            titleLabelField.becomeFirstResponder()
+        } else {
+            titleLabelField.resignFirstResponder()
+        }
+        
+        animateRenameButton(isEditingStarts: isEditing)
     }
 }
             
@@ -99,25 +101,6 @@ private extension EditView {
         addNewSubview(titleLabelField)
         addNewSubview(dateLabel)
         addNewSubview(renameButton)
-    }
-    
-    func setupTitleLabelField() {
-        titleLabelField.text = viewModel?.recordName ?? "NO DATA"
-        titleLabelField.font = .systemFont(ofSize: 18, weight: .semibold)
-        titleLabelField.textAlignment = .left
-        titleLabelField.delegate = self
-    }
-    
-    func setupDateLabel() {
-        dateLabel.text = Formatter.instance.formatDate(viewModel?.recordedAt ?? .now)
-        dateLabel.font = .systemFont(ofSize: 16, weight: .light)
-        dateLabel.textAlignment = .left
-    }
-
-    func setupRenameButton() {
-        renameButton.tintColor = .black
-        renameButton.setImage(UIImage(systemName: "pencil.circle"), for: .normal)
-        renameButton.addTarget(self, action: #selector(renameButtonDidTapped), for: .touchUpInside)
     }
     
     
@@ -144,14 +127,20 @@ private extension EditView {
 }
 
 
-//MARK: - Update
+//MARK: - Presentation Updatable
 
-extension EditView {
+extension EditView: PresentationUpdatable {
     
     func updateView() {
-        viewModel?.didUpdated = { [weak self] in
-            self?.setNeedsLayout()
-        }
+        titleLabelField.text = viewModel.recordName
+        dateLabel.text = Formatter.instance.formatDate(viewModel.recordedAt)
+        animateRenameButton(isEditingStarts: viewModel.isEditing)
+    }
+    
+    func reset() {
+        titleLabelField.text = ""
+        dateLabel.text = ""
+        animateRenameButton(isEditingStarts: viewModel.isEditing)
     }
 }
 
@@ -159,13 +148,9 @@ extension EditView {
 //MARK: - TextField Delegate
 
 extension EditView: UITextFieldDelegate {
-    
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        isEditing
-    }
-    
+
     func textFieldDidEndEditing(_ textField: UITextField) {
         guard let newName = textField.text else { return }
-        viewModel?.renameRecord(withNewName: newName)
+        viewModel.onEndEditing(withNewName: newName)
     }
 }

@@ -10,21 +10,19 @@ import Foundation
 
 //MARK: - Protocols
 
-protocol MainViewModelProtocol: AnyObject {    
-    var records: [Record] { get set }
-    
+protocol MainViewModelProtocol: AnyObject {
+    var numberOfRecords: Int { get }
     var recordStarted: ((Bool) -> Void)? { get set }
-    var dataSourceUpdated: (() -> Void)? { get set }
     
     func importRecord(_ record: Record)
     
-    func getRecords()
+    func getRecord(forIndexPath indexPath: IndexPath) -> Record
+    func rename(recordForIndexPath indexPath: IndexPath, newName name: String)
     func search(withText text: String)
+    func delete(recordForIndexPath indexPath: IndexPath)
     
-    func rename(record: Record, newName name: String, completion: @escaping (Bool) -> Void)
-    func delete(record: Record, completion: @escaping (Bool) -> Void)
-    
-    func makeViewModelForCell(atIndex index: Int) -> MainCellViewModelProtocol
+    func makeRecordView() -> PresentationUpdatable
+    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol
 }
 
 
@@ -32,21 +30,34 @@ protocol MainViewModelProtocol: AnyObject {
 
 final class MainViewModel: MainViewModelProtocol {
     
-    var records: [Record] = []
+    var numberOfRecords: Int {
+        records.count
+    }
     
     var recordStarted: ((Bool) -> Void)?
-    var dataSourceUpdated: (() -> Void)?
     
+    private var records: [Record] = []
     private let storageService: StorageServiceProtocol
+    
     
     init(
         storageService: StorageServiceProtocol
     ) {
         self.storageService = storageService
+        
+        uploadRecords()
     }
     
-    func makeViewModelForCell(atIndex index: Int) -> MainCellViewModelProtocol {
-        AssemblyBuilder.getMainCellViewModel(withRecord: records[index])
+    
+    func makeRecordView() -> PresentationUpdatable {
+        AssemblyBuilder.get(subModule: .record(parentVM: self))
+    }
+    
+    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol {
+        AssemblyBuilder.getMainCellViewModel(
+            withRecord: records[indexPath.item],
+            indexPath: indexPath
+        )
     }
 }
 
@@ -55,58 +66,27 @@ final class MainViewModel: MainViewModelProtocol {
 
 extension MainViewModel {
     
-    func getRecords() {
-        storageService.getRecords { [weak self] result in
-            switch result {
-            case .success(let records):
-                self?.records = records
-            case .failure(let error):
-                print("ERROR: Cant get records from storage! \(error)")
-            }
-        }
+    func getRecord(forIndexPath indexPath: IndexPath) -> Record {
+        records[indexPath.item]
     }
-    
+        
     func importRecord(_ record: Record) {
-        storageService.save(record: record)
-        records.append(record)
-        dataSourceUpdated?()
-    }
-    
-    func rename(record: Record, newName name: String, completion: @escaping (Bool) -> Void) {
-        storageService.rename(record: record, newName: name) { [weak self] isRenamed in
-            switch isRenamed {
-            case .success(let isRenamed):
-                if isRenamed {
-                    self?.dataSourceUpdated?()
-                    completion(true)
-                }
-            case .failure(let error):
-                completion(false)
-                print("ERROR: Cant rename record! \(error)")
-            }
+        storageService.save(record: record) { [unowned self] _ in
+            self.records.append(record)
         }
     }
     
-    func delete(record: Record, completion: @escaping (Bool) -> Void) {
-        storageService.delete(record: record) { [weak self] result in
-            switch result {
+    func rename(recordForIndexPath indexPath: IndexPath, newName name: String) {
+        storageService.rename(
+            record: records[indexPath.item],
+            newName: name
+        ) { [unowned self] isRenamed in
+            
+            switch isRenamed {
             case .success:
-                guard
-                    let recordIndex = self?.records.firstIndex(where: { $0.name == record.name })
-                else {
-                    print("ERROR: Cant delete record with name \(record.name) from array")
-                    completion(false)
-                    return
-                }
-                
-                self?.records.remove(at: recordIndex)
-                self?.dataSourceUpdated?()
-                completion(true)
-                print("ERROR: Record with name \(record.name) deleted!")
-                
+                self.records[indexPath.item].name = name
             case .failure(let error):
-                completion(false)
-                print("ERROR: Cant delete record with name \(record.name). \(error)")
+                print("ERROR: Cant rename record! \(error)")
             }
         }
     }
@@ -114,15 +94,43 @@ extension MainViewModel {
     func search(withText text: String) {
         guard !text.isEmpty else { return }
         
-        storageService.searchRecords(withText: text) { [weak self] result in
+        storageService.searchRecords(withText: text) { [unowned self] result in
             switch result {
             case .success(let records):
-                print(records)
-                self?.records = records
-                self?.dataSourceUpdated?()
+                self.records = records
             case .failure(let error):
-                self?.dataSourceUpdated?()
                 print("ERROR: Cant search records with text \(text). \(error)")
+            }
+        }
+    }
+    
+    func delete(recordForIndexPath indexPath: IndexPath) {
+        let record = records[indexPath.item]
+        
+        storageService.delete(record: record) { [unowned self] result in
+            switch result {
+            case .success:
+                self.records.remove(at: indexPath.item)
+                print("SUCCESS: Record with name \(record.name) deleted!")
+                
+            case .failure(let error):
+                print("ERROR: Cant delete record with name \(record.name). \(error)")
+            }
+        }
+    }
+}
+
+//MARK: - Private
+
+private extension MainViewModel {
+    
+    func uploadRecords() {
+        storageService.getRecords { [unowned self] result in
+            switch result {
+            case .success(let records):
+                self.records = records
+            case .failure(let error):
+                print("ERROR: Cant get records from storage! \(error)")
             }
         }
     }

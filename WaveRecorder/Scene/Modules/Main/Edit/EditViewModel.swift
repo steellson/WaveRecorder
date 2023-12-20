@@ -10,22 +10,19 @@ import Foundation
 //MARK: - Protocol
 
 protocol EditViewModelProtocol: AnyObject {
-    var didUpdated: (() -> Void)? { get set }
-    
     var recordName: String { get }
     var recordedAt: Date { get }
-        
-    func renameRecord(withNewName name: String)
-    func deleteRecord()
+    var isEditing: Bool { get }
+            
+    func switchEditingMode()
+    func onEndEditing(withNewName newName: String)
 }
 
 
 //MARK: - Impl
 
 final class EditViewModel: EditViewModelProtocol {
-    
-    var didUpdated: (() -> Void)?
-    
+        
     var recordName: String {
         record.name
     }
@@ -34,7 +31,9 @@ final class EditViewModel: EditViewModelProtocol {
         record.date
     }
     
-    private var record: Record
+    var isEditing = false
+    
+    private let record: Record
     
     private let parentViewModel: MainCellViewModelProtocol
     
@@ -51,17 +50,25 @@ final class EditViewModel: EditViewModelProtocol {
 //MARK: - Public
 
 extension EditViewModel {
-    
-    func renameRecord(withNewName name: String) {
-        parentViewModel.renameRecord(withNewName: name) { [weak self] in
-            self?.didUpdated?()
-            self?.record.name = name
-        }
+
+    func switchEditingMode() {
+        isEditing.toggle()
     }
     
-    func deleteRecord() {
-        parentViewModel.deleteRecord() { [weak self] in
-            self?.didUpdated?()
-        }
+    func onEndEditing(withNewName newName: String) {
+        parentViewModel.renameRecord(withNewName: newName)
+    }
+}
+
+
+//MARK: - Private
+
+private extension EditViewModel {
+    
+    func renameRecord(withNewName name: String) {
+        isEditing = true
+        parentViewModel.renameRecord(withNewName: name)
+        record.name = String(unicodeScalarLiteral: name)
+        isEditing = false
     }
 }

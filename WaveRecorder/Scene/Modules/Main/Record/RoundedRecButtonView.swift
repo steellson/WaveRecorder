@@ -12,7 +12,7 @@ import UIKit
 //MARK: - Protocol
 
 protocol RoundedRecButtonViewDelegate: AnyObject {
-    func recButtonDidTapped()
+    func recButtonDidTapped(_ isRecording: Bool)
 }
 
 
@@ -29,11 +29,9 @@ final class RoundedRecButtonView: UIView {
     private let button = UIButton()
     private let roundedLayer = CAShapeLayer()
     
-    private(set) var isRecording = false {
+    private var isRecording = false {
         didSet {
-            isRecording 
-            ? animateButtonWhenRecord(hasStarted: true)
-            : animateButtonWhenRecord(hasStarted: false)
+            animateRecordButton(isRecording)
         }
     }
     
@@ -65,7 +63,7 @@ final class RoundedRecButtonView: UIView {
     
     //MARK: - Methods
     
-    private func animateButtonWhenRecord(hasStarted isRecording: Bool) {
+    private func animateRecordButton(_ isRecording: Bool) {
         // Tap effect
         UIView.animate(withDuration: 0.2) {
             self.button.alpha = 0.5
@@ -90,8 +88,8 @@ final class RoundedRecButtonView: UIView {
     //MARK: Actions
     
     @objc private func buttonDidTapped() {
+        delegate?.recButtonDidTapped(isRecording)
         isRecording.toggle()
-        delegate?.recButtonDidTapped()
     }
 }
 

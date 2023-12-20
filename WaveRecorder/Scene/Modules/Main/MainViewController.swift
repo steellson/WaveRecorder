@@ -17,7 +17,7 @@ final class MainViewController: UIViewController {
     private let searchController = UISearchController()
     private let tableView = UITableView()
     
-    private var recordView = AssemblyBuilder.get(subModule: .record)
+    private lazy var recordView = viewModel.makeRecordView()
     private var recViewHeight = UIScreen.main.bounds.height * 0.15
     private lazy var recViewHeightConstraint: NSLayoutConstraint = {
         NSLayoutConstraint(
@@ -57,13 +57,11 @@ final class MainViewController: UIViewController {
         setupTitleLabel()
         setupSearchController()
         setupTableView()
-        viewModel.getRecords()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         seutpNavigationBar()
-        updateTableView()
     }
     
     override func viewDidLayoutSubviews() {
@@ -147,13 +145,7 @@ private extension MainViewController {
         tableView.register(MainTableViewCell.self,
                            forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
     }
-    
-    func updateTableView() {
-        viewModel.dataSourceUpdated = { [weak self] in
-            self?.tableView.reloadData()
-        }
-    }
-    
+
     func setupRecordViewHeight() {
         viewModel.recordStarted = { [weak self] isRecording in
             
@@ -168,6 +160,10 @@ private extension MainViewController {
                 initialSpringVelocity: 3
             ) {
                 self?.view.layoutIfNeeded()
+            } completion: { _ in
+                DispatchQueue.main.async {
+                    self?.tableView.reloadData()
+                }
             }
         }
     }
@@ -198,7 +194,7 @@ private extension MainViewController {
 extension MainViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.records.count
+        viewModel.numberOfRecords
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -209,7 +205,7 @@ extension MainViewController: UITableViewDataSource {
             return UITableViewCell()
         }
 
-        let cellViewModel = viewModel.makeViewModelForCell(atIndex: indexPath.row)
+        let cellViewModel = viewModel.makeViewModelForCell(forIndexPath: indexPath)
         cell.configureCell(withViewModel: cellViewModel)
         
         return cell
@@ -233,21 +229,9 @@ extension MainViewController: UITableViewDelegate {
         UISwipeActionsConfiguration(actions: [ UIContextualAction(
             style: .destructive, 
             title: "Delete",
-            handler: { action, view, result in
-                self.tableView.beginUpdates()
-
-                DispatchQueue.main.async { [weak self] in
-                    guard let record = self?.viewModel.records[indexPath.row] else {
-                        print("ERROR: Cannot delete record with swipe")
-                        return
-                    }
-                    
-                    self?.viewModel.delete(record: record, completion: { isDeleted in
-                        if isDeleted {
-                            self?.tableView.endUpdates()
-                        }
-                    })
-                }
+            handler: { _, _, _ in
+                self.viewModel.delete(recordForIndexPath: indexPath)
+                self.tableView.reloadData()
             }
         )])
     }
@@ -262,6 +246,6 @@ extension MainViewController: UISearchResultsUpdating {
         guard let searchText = searchController.searchBar.searchTextField.text else {
             return
         }
-        viewModel.search(withText: searchText)
+        viewModel.search(withText: searchText.lowercased().trimmingCharacters(in: .illegalCharacters))
     }
 }

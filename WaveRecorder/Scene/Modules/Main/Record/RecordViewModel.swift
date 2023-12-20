@@ -12,10 +12,7 @@ import AVFoundation
 //MARK: - Protocol
 
 protocol RecordViewModelProtocol: AnyObject {
-    var record: Record? { get }
-
     func record(isRecording: Bool)
-    func didRecorded()
 }
 
 
@@ -23,9 +20,9 @@ protocol RecordViewModelProtocol: AnyObject {
 
 final class RecordViewModel: RecordViewModelProtocol {
     
-    var record: Record?
+    private var record: Record?
     
-    private weak var parentViewModel: MainViewModelProtocol?
+    private let parentViewModel: MainViewModelProtocol
     private let recordService: RecordServiceProtocol
     
     init(
@@ -44,29 +41,17 @@ extension RecordViewModel {
     
     func record(isRecording: Bool) {
         if isRecording {
-            recordService.stopRecord { [weak self] record in
+            recordService.stopRecord { [unowned self] record in
                 DispatchQueue.main.async {
-                    self?.record = record
-                    self?.didRecorded()
-                    self?.parentViewModel?.recordStarted?(false)
+                    guard let record else { return }
+                    self.record = record
+                    self.parentViewModel.recordStarted?(false)
+                    self.parentViewModel.importRecord(record)
                 }
             }
         } else {
             recordService.startRecord()
-            parentViewModel?.recordStarted?(true)
-        }
-    }
-    
-    func didRecorded() {
-        guard let record else {
-            print("ERROR: Cant send record to MainViewModel. Reason: Record is nil")
-            return
-        }
-        
-        if let parentVM = parentViewModel {
-            parentVM.importRecord(record)
-        } else {
-            print("ERROR: Cant send record to MainViewModel. Reason: ParentViewModel is nil")
+            parentViewModel.recordStarted?(true)
         }
     }
 }
