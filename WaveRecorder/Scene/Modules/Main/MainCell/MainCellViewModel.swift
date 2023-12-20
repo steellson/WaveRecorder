@@ -12,24 +12,24 @@ import AVFoundation
 //MARK: - Protocol
 
 protocol MainCellViewModelProtocol: AnyObject {
-    
     func renameRecord(withNewName: String)
     func deleteRecord()
     
-    func make(childModule: MainCellViewModel.ChildModule) -> PresentationUpdatable
+    func makeEditViewModel() -> EditViewModelProtocol
+    func makePlayViewModel() -> PlayViewModelProtocol
 }
 
 
 //MARK: - Impl
 
 final class MainCellViewModel: MainCellViewModelProtocol {
-           
+               
     private let record: Record
     private let indexPath: IndexPath
     private let parentViewModel: MainViewModelProtocol
 
     
-    enum ChildModule {
+    enum ChildViewModelType {
         case editor
         case player
     }
@@ -46,11 +46,12 @@ final class MainCellViewModel: MainCellViewModelProtocol {
     }
     
     
-    func make(childModule: ChildModule) -> PresentationUpdatable {
-        switch childModule {
-        case .editor: AssemblyBuilder.get(subModule: .edit(parentVM: self, record: record))
-        case .player: AssemblyBuilder.get(subModule: .play(parentVM: self, record: record))
-        }
+    func makeEditViewModel() -> EditViewModelProtocol {
+        AssemblyBuilder.getEditViewModel(withRecord: record, parentViewModel: self)
+    }
+    
+    func makePlayViewModel() -> PlayViewModelProtocol {
+        AssemblyBuilder.getPlayViewModel(withRecord: record, parentViewModel: self)
     }
 }
 
@@ -58,7 +59,7 @@ final class MainCellViewModel: MainCellViewModelProtocol {
 //MARK: - Public
 
 extension MainCellViewModel {
-    
+
     func renameRecord(withNewName name: String) {
         parentViewModel.rename(recordForIndexPath: indexPath, newName: name)
     }

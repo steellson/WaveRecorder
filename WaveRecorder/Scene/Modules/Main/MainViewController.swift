@@ -146,7 +146,7 @@ private extension MainViewController {
     }
 
     func setupRecordViewHeight() {
-        viewModel.recordHasStarted = { [weak self] isRecording in
+        viewModel.recordDidStarted = { [weak self] isRecording in
             
             self?.recViewHeightConstraint.constant = isRecording
             ? UIScreen.main.bounds.height * 0.25
@@ -159,7 +159,6 @@ private extension MainViewController {
                 initialSpringVelocity: 3
             ) {
                 self?.view.layoutIfNeeded()
-            } completion: { _ in
                 DispatchQueue.main.async {
                     self?.tableView.reloadData()
                 }

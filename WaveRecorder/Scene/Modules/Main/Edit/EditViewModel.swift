@@ -7,7 +7,7 @@
 
 import Foundation
 
-//MARK: - Protocol
+//MARK: - Protocols
 
 protocol EditViewModelProtocol: AnyObject {
     var recordName: String { get }
@@ -17,6 +17,7 @@ protocol EditViewModelProtocol: AnyObject {
     func switchEditingMode()
     func onEndEditing(withNewName newName: String)
 }
+
 
 
 //MARK: - Impl

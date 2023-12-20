@@ -18,21 +18,26 @@ final class MainTableViewCell:  UITableViewCell {
     
     private var viewModel: MainCellViewModelProtocol!
     
-    private lazy var editView = viewModel.make(childModule: .editor)
-    private lazy var playToolbar = viewModel.make(childModule: .player)
+    private let editView = EditView()
+    private let playToolbar = PlayToolbarView()
     
     
     //MARK: Lifecycle
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupContentView()
         setupConstraints()
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
     override func prepareForReuse() {
         super.prepareForReuse()
-        clear()
+        resetChilds()
     }
     
     
@@ -40,8 +45,8 @@ final class MainTableViewCell:  UITableViewCell {
     
     func configureCell(withViewModel viewModel: MainCellViewModelProtocol) {
         self.viewModel = viewModel
-        self.editView.updateView()
-        self.playToolbar.updateView()
+        self.editView.configure(withViewModel: viewModel.makeEditViewModel())
+        self.playToolbar.configure(withViewModel: viewModel.makePlayViewModel())
     }
 }
 
@@ -75,7 +80,7 @@ private extension MainTableViewCell {
         ])
     }
     
-    func clear() {
+    func resetChilds() {
         editView.reset()
         playToolbar.reset()
     }

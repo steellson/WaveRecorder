@@ -12,7 +12,8 @@ import Foundation
 
 protocol MainViewModelProtocol: AnyObject {
     var numberOfRecords: Int { get }
-    var recordHasStarted: ((Bool) -> Void)? { get set }
+    
+    var recordDidStarted: ((Bool) -> Void)? { get set }
     
     func importRecord(_ record: Record)
     
@@ -34,7 +35,7 @@ final class MainViewModel: MainViewModelProtocol {
         records.count
     }
     
-    var recordHasStarted: ((Bool) -> Void)?
+    var recordDidStarted: ((Bool) -> Void)?
     
     private var records: [Record] = []
     private let storageService: StorageServiceProtocol
@@ -66,14 +67,14 @@ final class MainViewModel: MainViewModelProtocol {
 
 extension MainViewModel {
     
-    func getRecord(forIndexPath indexPath: IndexPath) -> Record {
-        records[indexPath.item]
-    }
-        
     func importRecord(_ record: Record) {
         storageService.save(record: record) { [unowned self] _ in
             self.records.append(record)
         }
+    }
+    
+    func getRecord(forIndexPath indexPath: IndexPath) -> Record {
+        records[indexPath.item]
     }
     
     func rename(recordForIndexPath indexPath: IndexPath, newName name: String) {
@@ -111,6 +112,8 @@ extension MainViewModel {
             switch result {
             case .success:
                 self.records.remove(at: indexPath.item)
+                // For update tableView
+                self.recordDidStarted?(false)
                 print("SUCCESS: Record with name \(record.name) deleted!")
                 
             case .failure(let error):

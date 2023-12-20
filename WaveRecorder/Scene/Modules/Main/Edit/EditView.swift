@@ -40,15 +40,12 @@ final class EditView: UIView {
         return button
     }()
     
-    private let viewModel: EditViewModelProtocol
+    private var viewModel: EditViewModelProtocol?
     
     
     //MARK: Lifecycle
     
-    init(
-        viewModel: EditViewModelProtocol
-    ) {
-        self.viewModel = viewModel
+    override init(frame: CGRect) {
         super.init(frame: .zero)
         
         setupContentView()
@@ -59,8 +56,37 @@ final class EditView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    func configure(withViewModel viewModel: EditViewModelProtocol) {
+        self.viewModel = viewModel
+        self.setupSubviewsAnimated()
+    }
+    
+    func reset() {
+        guard let viewModel else {
+            print("ERROR: EditViewModel isn't setted!")
+            return
+        }
+        
+        titleLabelField.text = ""
+        dateLabel.text = ""
+        animateRenameButton(isEditingStarts: viewModel.isEditing)
+    }
+    
     
     //MARK: Methods
+    
+    private func setupSubviewsAnimated() {
+        guard let viewModel else {
+            print("ERROR: EditViewModel isn't setted!")
+            return
+        }
+        
+        UIView.animate(withDuration: 0.3) {
+            self.titleLabelField.text = viewModel.recordName
+            self.dateLabel.text = Formatter.instance.formatDate(viewModel.recordedAt)
+            self.animateRenameButton(isEditingStarts: viewModel.isEditing)
+        }
+    }
     
     private func animateRenameButton(isEditingStarts isEditing: Bool) {
         UIView.animate(withDuration: 0.2) {
@@ -80,6 +106,11 @@ final class EditView: UIView {
     
     @objc
     private func renameButtonDidTapped() {
+        guard let viewModel else {
+            print("ERROR: EditViewModel isn't setted!")
+            return
+        }
+        
         viewModel.switchEditingMode()
         
         let isEditing = viewModel.isEditing
@@ -129,30 +160,15 @@ private extension EditView {
 }
 
 
-//MARK: - Presentation Updatable
-
-extension EditView: PresentationUpdatable {
-    
-    func updateView() {
-        titleLabelField.text = viewModel.recordName
-        dateLabel.text = Formatter.instance.formatDate(viewModel.recordedAt)
-        animateRenameButton(isEditingStarts: viewModel.isEditing)
-    }
-    
-    func reset() {
-        titleLabelField.text = ""
-        dateLabel.text = ""
-        animateRenameButton(isEditingStarts: viewModel.isEditing)
-    }
-}
-
-
 //MARK: - TextField Delegate
 
 extension EditView: UITextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        guard let newName = textField.text else { return }
+        guard 
+            let newName = textField.text,
+            let viewModel
+        else { return }
         viewModel.onEndEditing(withNewName: newName)
     }
 }

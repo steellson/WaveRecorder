@@ -11,8 +11,6 @@ import Foundation
 //MARK: - Protocol
 
 protocol PlayViewModelProtocol: AnyObject {
-    var isPlaying: Bool { get }
-    
     var progress: Float { get }
     var duration: Float { get }
     
@@ -30,8 +28,6 @@ protocol PlayViewModelProtocol: AnyObject {
 //MARK: - Impl
 
 final class PlayViewModel: PlayViewModelProtocol {
-
-    var isPlaying = false
     
     var progress: Float = 0.0
     var duration: Float { Float(record.duration ?? 0) }
@@ -43,11 +39,11 @@ final class PlayViewModel: PlayViewModelProtocol {
         format(withType: .duration(record.duration ?? 0))
     }
     
+    private var isPlaying = false
+    
     private let record: Record
     private let parentViewModel: MainCellViewModelProtocol
     private let audioService: AudioServiceProtocol
-
-    private var timer: Timer?
     
     private let formatter = Formatter.instance
 
@@ -73,22 +69,20 @@ extension PlayViewModel {
     }
     
     func play(atTime time: Float?, completion: @escaping (TimeInterval) -> Void) {
+        guard !isPlaying else {
+            print("ERROR: Audio is already playing!")
+            return
+        }
         audioService.play(record: record, onTime: time) { [unowned self] isPlaying in
             self.isPlaying = isPlaying
-            self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { timer in
-                print("Time int : \(timer.timeInterval)")
-                completion(timer.timeInterval)
-            })
+            completion(0.1)
         }
     }
     
     func stop(completion: @escaping () -> Void) {
-        if isPlaying {
-            audioService.stop() { [unowned self] isStopped in
-                self.isPlaying = !isStopped
-                self.timer?.invalidate()
-                completion()
-            }
+        audioService.stop() { [unowned self] isStopped in
+            self.isPlaying = !isStopped
+            completion()
         }
     }
     

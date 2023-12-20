@@ -45,13 +45,13 @@ extension RecordViewModel {
                 DispatchQueue.main.async {
                     guard let record else { return }
                     self.record = record
-                    self.parentViewModel.recordHasStarted?(false)
+                    self.parentViewModel.recordDidStarted?(false)
                     self.parentViewModel.importRecord(record)
                 }
             }
         } else {
             recordService.startRecord()
-            parentViewModel.recordHasStarted?(true)
+            parentViewModel.recordDidStarted?(true)
         }
     }
 }
