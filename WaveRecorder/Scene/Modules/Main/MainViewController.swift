@@ -113,14 +113,13 @@ private extension MainViewController {
     func setupTitleLabel() {
         titleLabel.text = R.Strings.navigationTitleMain.rawValue
         titleLabel.textColor = .black
+        titleLabel.backgroundColor = R.Colors.primaryBackgroundColor
         titleLabel.font = .systemFont(ofSize: 26, weight: .bold)
         titleLabel.textAlignment = .left
     }
     
     func setupSearchController() {
         searchController.searchBar.placeholder = R.Strings.searchTextFieldPlaceholder.rawValue
-        searchController.searchBar.searchTextField.backgroundColor = R.Colors.secondaryBackgroundColor
-        searchController.searchBar.backgroundColor = R.Colors.primaryBackgroundColor
         searchController.searchBar.tintColor = .black
         searchController.searchBar.autocapitalizationType = .none
         searchController.searchBar.autocorrectionType = .no
@@ -147,7 +146,7 @@ private extension MainViewController {
     }
 
     func setupRecordViewHeight() {
-        viewModel.recordStarted = { [weak self] isRecording in
+        viewModel.recordHasStarted = { [weak self] isRecording in
             
             self?.recViewHeightConstraint.constant = isRecording
             ? UIScreen.main.bounds.height * 0.25

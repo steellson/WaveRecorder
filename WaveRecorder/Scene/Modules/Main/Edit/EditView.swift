@@ -17,6 +17,7 @@ final class EditView: UIView {
     private lazy var titleLabelField: UITextField = {
         let field = UITextField()
         field.font = .systemFont(ofSize: 18, weight: .semibold)
+        field.backgroundColor = R.Colors.secondaryBackgroundColor
         field.textAlignment = .left
         field.isEnabled = false
         field.delegate = self
@@ -27,6 +28,7 @@ final class EditView: UIView {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .light)
         label.textAlignment = .left
+        label.backgroundColor = R.Colors.secondaryBackgroundColor
         return label
     }()
     

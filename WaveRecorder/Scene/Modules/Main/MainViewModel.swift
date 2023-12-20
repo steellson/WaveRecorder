@@ -12,7 +12,7 @@ import Foundation
 
 protocol MainViewModelProtocol: AnyObject {
     var numberOfRecords: Int { get }
-    var recordStarted: ((Bool) -> Void)? { get set }
+    var recordHasStarted: ((Bool) -> Void)? { get set }
     
     func importRecord(_ record: Record)
     
@@ -34,7 +34,7 @@ final class MainViewModel: MainViewModelProtocol {
         records.count
     }
     
-    var recordStarted: ((Bool) -> Void)?
+    var recordHasStarted: ((Bool) -> Void)?
     
     private var records: [Record] = []
     private let storageService: StorageServiceProtocol

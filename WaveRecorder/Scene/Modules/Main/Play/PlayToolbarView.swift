@@ -25,12 +25,14 @@ final class PlayToolbarView: UIView {
     private let startTimeLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .light)
+        label.backgroundColor = R.Colors.secondaryBackgroundColor
         return label
     }()
     
     private let endTimeLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .light)
+        label.backgroundColor = R.Colors.secondaryBackgroundColor
         return label
     }()
     
@@ -70,7 +72,7 @@ final class PlayToolbarView: UIView {
         UIView.animate(withDuration: 0.1) {
             if sender == self.playButton {
                 self.playButton.setImage(
-                    UIImage(systemName: isPlaying ? "stop.fill" : "play.fill"),
+                    UIImage(systemName: !isPlaying ? "stop.fill" : "play.fill"),
                     for: .normal
                 )
             }
@@ -81,13 +83,15 @@ final class PlayToolbarView: UIView {
             sender.alpha = 1
         }
     }
-    
+
     
     //MARK: Actions
     
     @objc
     private func progressValueChanged() {
-        viewModel.play(atTime: progressSlider.value)
+        viewModel.play(atTime: progressSlider.value) { [weak self] timeInterval in
+            self?.updateView()
+        }
     }
     
     @objc
@@ -99,8 +103,12 @@ final class PlayToolbarView: UIView {
             viewModel.goBack()
         case .play:
             viewModel.isPlaying
-            ? reset()
-            : updateView()
+            ? viewModel.stop() { [weak self] in
+                self?.reset()
+            }
+            : viewModel.play(atTime: progressSlider.value) { [weak self] timeInterval in
+                self?.updateView()
+            }
         case .goForward:
             viewModel.goForward()
         case .delete:
@@ -191,6 +199,7 @@ extension PlayToolbarView: PresentationUpdatable {
             self.progressSlider.value = 0
             self.startTimeLabel.text = self.viewModel.elapsedTimeFormatted
             self.endTimeLabel.text = self.viewModel.remainingTimeFormatted
+            self.playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
             self.layoutIfNeeded()
         }
     }

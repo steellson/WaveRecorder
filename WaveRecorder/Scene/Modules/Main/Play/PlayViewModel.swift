@@ -20,8 +20,8 @@ protocol PlayViewModelProtocol: AnyObject {
     var remainingTimeFormatted: String { get }
         
     func goBack()
-    func play(atTime time: Float?)
-    func stop()
+    func play(atTime time: Float?, completion: @escaping (TimeInterval) -> Void)
+    func stop(completion: @escaping () -> Void)
     func goForward()
     func deleteRecord()
 }
@@ -72,16 +72,22 @@ extension PlayViewModel {
         print("Go back tapped")
     }
     
-    func play(atTime time: Float?) {
+    func play(atTime time: Float?, completion: @escaping (TimeInterval) -> Void) {
         audioService.play(record: record, onTime: time) { [unowned self] isPlaying in
             self.isPlaying = isPlaying
+            self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { timer in
+                print("Time int : \(timer.timeInterval)")
+                completion(timer.timeInterval)
+            })
         }
     }
     
-    func stop() {
+    func stop(completion: @escaping () -> Void) {
         if isPlaying {
             audioService.stop() { [unowned self] isStopped in
                 self.isPlaying = !isStopped
+                self.timer?.invalidate()
+                completion()
             }
         }
     }

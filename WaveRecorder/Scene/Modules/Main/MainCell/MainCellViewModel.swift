@@ -12,6 +12,7 @@ import AVFoundation
 //MARK: - Protocol
 
 protocol MainCellViewModelProtocol: AnyObject {
+    
     func renameRecord(withNewName: String)
     func deleteRecord()
     
@@ -22,7 +23,7 @@ protocol MainCellViewModelProtocol: AnyObject {
 //MARK: - Impl
 
 final class MainCellViewModel: MainCellViewModelProtocol {
-       
+           
     private let record: Record
     private let indexPath: IndexPath
     private let parentViewModel: MainViewModelProtocol
