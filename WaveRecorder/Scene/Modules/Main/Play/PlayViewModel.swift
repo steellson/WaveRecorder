@@ -46,7 +46,6 @@ final class PlayViewModel: PlayViewModelProtocol {
     private let audioService: AudioServiceProtocol
     
     private let formatter = Formatter.instance
-    
     private let timeRefresher: TimeRefresherProtocol = TimeRefresher()
 
     
@@ -84,7 +83,7 @@ extension PlayViewModel {
     }
     
     func stop(completion: @escaping () -> Void) {
-        audioService.stop() { [unowned self] isStopped in 
+        audioService.stop() { [unowned self] isStopped in
             self.isPlaying = !isStopped
         }
         self.timeRefresher.stop()

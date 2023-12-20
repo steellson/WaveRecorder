@@ -74,43 +74,41 @@ final class PlayToolbarView: UIView {
         
         UIView.animate(withDuration: 0.2, delay: 0.1) {
             self.progressSlider.value = 0
-            self.startTimeLabel.text = viewModel.elapsedTimeFormatted
-            self.endTimeLabel.text = viewModel.remainingTimeFormatted
-            self.layoutIfNeeded()
+            self.animateLabels()
         }
     }
     
     
     //MARK: Private
     
-    private func setupSubviewsAnimated() {
-        guard let viewModel else {
-            print("ERROR: PlayViewModel isn't setted!")
-            return
-        }
-        
-        UIView.animate(withDuration: 0.3) {
-            self.progressSlider.value = 0
-            self.progressSlider.maximumValue = viewModel.duration
-            self.startTimeLabel.text = viewModel.elapsedTimeFormatted
-            self.endTimeLabel.text = viewModel.remainingTimeFormatted
-            self.layoutIfNeeded()
-        }
-    }
-    
-    private func animateProgress() {
+    private func animateLabels() {
         guard let viewModel else {
             print("ERROR: PlayViewModel isn't setted!")
             return
         }
         
         UIView.animate(withDuration: 0.1) {
-            self.progressSlider.value += 0.1
             self.startTimeLabel.text = viewModel.elapsedTimeFormatted
             self.endTimeLabel.text = viewModel.remainingTimeFormatted
             self.layoutIfNeeded()
         }
     }
+    
+    private func setupSubviewsAnimated() {
+        UIView.animate(withDuration: 0.5) {
+            self.progressSlider.value = 0
+            self.progressSlider.maximumValue = self.viewModel?.duration ?? 0
+            self.animateLabels()
+        }
+    }
+    
+    private func animateProgress() {
+        UIView.animate(withDuration: 0.1) {
+            self.progressSlider.value += 0.1
+            self.animateLabels()
+        }
+    }
+    
      
     private func animateTappedButton(withSender sender: PlayTolbarButton) {
         UIView.animate(withDuration: 0.1) {
@@ -149,13 +147,9 @@ final class PlayToolbarView: UIView {
         case .delete:
             viewModel.deleteRecord()
         case .play:
-            viewModel.play(atTime: progressSlider.value) { [weak self]  in
-                self?.animateProgress()
-            }
+            viewModel.play(atTime: progressSlider.value, completion: self.animateProgress)
         case .stop:
-            viewModel.stop { [weak self] in
-                self?.reset()
-            }
+            viewModel.stop(completion: self.reset)
         }
     }
 }
