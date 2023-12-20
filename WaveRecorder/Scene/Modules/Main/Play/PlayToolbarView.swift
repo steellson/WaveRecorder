@@ -67,11 +67,6 @@ final class PlayToolbarView: UIView {
     }
     
     func reset() {
-        guard let viewModel else {
-            print("ERROR: PlayViewModel isn't setted!")
-            return
-        }
-        
         UIView.animate(withDuration: 0.2, delay: 0.1) {
             self.progressSlider.value = 0
             self.animateLabels()
@@ -109,7 +104,6 @@ final class PlayToolbarView: UIView {
         }
     }
     
-     
     private func animateTappedButton(withSender sender: PlayTolbarButton) {
         UIView.animate(withDuration: 0.1) {
             sender.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
@@ -125,9 +119,7 @@ final class PlayToolbarView: UIView {
     
     @objc
     private func progressValueChanged() {
-        viewModel?.play(atTime: progressSlider.value) { [weak self]  in
-            self?.animateProgress()
-        }
+        viewModel?.play(atTime: progressSlider.value, completion: animateProgress)
     }
     
     @objc

@@ -8,14 +8,14 @@
 import Foundation
 
 
-typealias Ticker = () -> Void
+typealias TimeRefresherAction = () -> Void
 
 //MARK: - Protocol
 
 protocol TimeRefresherProtocol: AnyObject {
     var isRunning: Bool { get }
     
-    func register(_ ticker: @escaping Ticker)
+    func register(_ ticker: @escaping TimeRefresherAction)
     func start()
     func stop()
 }
@@ -26,7 +26,7 @@ protocol TimeRefresherProtocol: AnyObject {
 final class TimeRefresher: TimeRefresherProtocol  {
 
     private var timer: Timer? = nil
-    private var ticker: Ticker? = nil
+    private var action: TimeRefresherAction? = nil
 
     var isRunning: Bool = false
 
@@ -36,15 +36,15 @@ final class TimeRefresher: TimeRefresherProtocol  {
 
 extension TimeRefresher {
     
-    func register(_ ticker: @escaping Ticker) {
-        self.ticker = ticker
+    func register(_ action: @escaping TimeRefresherAction) {
+        self.action = action
         guard timer == nil else {
             return
         }
     }
 
     func start() {
-        guard ticker != nil else {
+        guard action != nil else {
             return
         }
         stop()
@@ -61,6 +61,7 @@ extension TimeRefresher {
         isRunning = false
         timer.invalidate()
         self.timer = nil
+        self.action = nil
     }
 }
 
@@ -70,10 +71,11 @@ extension TimeRefresher {
 private extension TimeRefresher {
     
     private func tick() {
-        guard let ticker = ticker else {
+        guard let action = action else {
             stop()
+            print("ERROR: TimeRefresher action is not registered!")
             return
         }
-        ticker()
+        action()
     }
 }
