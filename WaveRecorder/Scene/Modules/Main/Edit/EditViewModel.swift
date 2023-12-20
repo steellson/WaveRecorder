@@ -66,9 +66,11 @@ extension EditViewModel {
 private extension EditViewModel {
     
     func renameRecord(withNewName name: String) {
-        isEditing = true
+        guard name != record.name else {
+            print("ATTENTION: Record isn't renamed because of name is not changed")
+            return
+        }
         parentViewModel.renameRecord(withNewName: name)
         record.name = String(unicodeScalarLiteral: name)
-        isEditing = false
     }
 }
