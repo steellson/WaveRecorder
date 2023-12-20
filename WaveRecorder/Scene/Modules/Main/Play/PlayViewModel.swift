@@ -18,7 +18,7 @@ protocol PlayViewModelProtocol: AnyObject {
     var remainingTimeFormatted: String { get }
         
     func goBack()
-    func play(atTime time: Float?, completion: @escaping (TimeInterval) -> Void)
+    func play(atTime time: Float?, completion: @escaping () -> Void)
     func stop(completion: @escaping () -> Void)
     func goForward()
     func deleteRecord()
@@ -46,6 +46,8 @@ final class PlayViewModel: PlayViewModelProtocol {
     private let audioService: AudioServiceProtocol
     
     private let formatter = Formatter.instance
+    
+    private let timeRefresher: TimeRefresherProtocol = TimeRefresher()
 
     
     init(
@@ -68,22 +70,25 @@ extension PlayViewModel {
         print("Go back tapped")
     }
     
-    func play(atTime time: Float?, completion: @escaping (TimeInterval) -> Void) {
+    func play(atTime time: Float?, completion: @escaping () -> Void) {
         guard !isPlaying else {
             print("ERROR: Audio is already playing!")
             return
         }
         audioService.play(record: record, onTime: time) { [unowned self] isPlaying in
             self.isPlaying = isPlaying
-            completion(0.1)
         }
+        
+        timeRefresher.register(completion)
+        timeRefresher.start()
     }
     
     func stop(completion: @escaping () -> Void) {
-        audioService.stop() { [unowned self] isStopped in
+        audioService.stop() { [unowned self] isStopped in 
             self.isPlaying = !isStopped
-            completion()
         }
+        self.timeRefresher.stop()
+        completion()
     }
     
     func goForward() {

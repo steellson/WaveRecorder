@@ -55,6 +55,9 @@ final class EditView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    
+    //MARK: Public
 
     func configure(withViewModel viewModel: EditViewModelProtocol) {
         self.viewModel = viewModel
@@ -73,7 +76,7 @@ final class EditView: UIView {
     }
     
     
-    //MARK: Methods
+    //MARK: Private
     
     private func setupSubviewsAnimated() {
         guard let viewModel else {

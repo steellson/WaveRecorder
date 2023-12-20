@@ -14,9 +14,8 @@ final class PlayToolbarView: UIView {
                 
     //MARK: Variables
     
-    private lazy var progressSlider: UISlider = {
+    private let progressSlider: UISlider = {
         let slider = UISlider()
-        slider.maximumValue = viewModel?.duration ?? 0
         slider.tintColor = .darkGray
         slider.setThumbImage(UIImage(systemName: "circle.fill"), for: .normal)
         return slider
@@ -43,8 +42,6 @@ final class PlayToolbarView: UIView {
     private let deleteButton = PlayTolbarButton(type: .delete)
     
     private var viewModel: PlayViewModelProtocol?
-
-    private var timer: CADisplayLink?
     
     
     //MARK: Lifecycle
@@ -61,6 +58,9 @@ final class PlayToolbarView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
+    //MARK: Public
+    
     func configure(withViewModel viewModel: PlayViewModelProtocol) {
         self.viewModel = viewModel
         self.setupSubviewsAnimated()
@@ -72,7 +72,7 @@ final class PlayToolbarView: UIView {
             return
         }
         
-        UIView.animate(withDuration: 0.2, delay: 0.5) {
+        UIView.animate(withDuration: 0.2, delay: 0.1) {
             self.progressSlider.value = 0
             self.startTimeLabel.text = viewModel.elapsedTimeFormatted
             self.endTimeLabel.text = viewModel.remainingTimeFormatted
@@ -81,7 +81,7 @@ final class PlayToolbarView: UIView {
     }
     
     
-    //MARK: Methods
+    //MARK: Private
     
     private func setupSubviewsAnimated() {
         guard let viewModel else {
@@ -91,6 +91,21 @@ final class PlayToolbarView: UIView {
         
         UIView.animate(withDuration: 0.3) {
             self.progressSlider.value = 0
+            self.progressSlider.maximumValue = viewModel.duration
+            self.startTimeLabel.text = viewModel.elapsedTimeFormatted
+            self.endTimeLabel.text = viewModel.remainingTimeFormatted
+            self.layoutIfNeeded()
+        }
+    }
+    
+    private func animateProgress() {
+        guard let viewModel else {
+            print("ERROR: PlayViewModel isn't setted!")
+            return
+        }
+        
+        UIView.animate(withDuration: 0.1) {
+            self.progressSlider.value += 0.1
             self.startTimeLabel.text = viewModel.elapsedTimeFormatted
             self.endTimeLabel.text = viewModel.remainingTimeFormatted
             self.layoutIfNeeded()
@@ -112,8 +127,8 @@ final class PlayToolbarView: UIView {
     
     @objc
     private func progressValueChanged() {
-        viewModel?.play(atTime: progressSlider.value) { [weak self] timeInterval in
-            
+        viewModel?.play(atTime: progressSlider.value) { [weak self]  in
+            self?.animateProgress()
         }
     }
     
@@ -134,12 +149,12 @@ final class PlayToolbarView: UIView {
         case .delete:
             viewModel.deleteRecord()
         case .play:
-            viewModel.play(atTime: progressSlider.value) { timeInterval in
-                
+            viewModel.play(atTime: progressSlider.value) { [weak self]  in
+                self?.animateProgress()
             }
         case .stop:
-            viewModel.stop {
-                
+            viewModel.stop { [weak self] in
+                self?.reset()
             }
         }
     }

@@ -33,6 +33,7 @@
 		3DEAFFC32B109B6D004CAE97 /* UINavigationController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFC22B109B6D004CAE97 /* UINavigationController+Extension.swift */; };
 		3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCA2B14B60D004CAE97 /* Record.swift */; };
 		3DEAFFD22B15F54D004CAE97 /* Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD12B15F54D004CAE97 /* Formatter.swift */; };
+		3DFCE9AE2B331FF600D27A0B /* TimeRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +65,7 @@
 		3DEAFFC22B109B6D004CAE97 /* UINavigationController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extension.swift"; sourceTree = "<group>"; };
 		3DEAFFCA2B14B60D004CAE97 /* Record.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
 		3DEAFFD12B15F54D004CAE97 /* Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatter.swift; sourceTree = "<group>"; };
+		3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeRefresher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -227,6 +229,7 @@
 			children = (
 				3DEAFFD12B15F54D004CAE97 /* Formatter.swift */,
 				3D7CB10E2B26F2A500F5B91F /* URLBuilder.swift */,
+				3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -313,6 +316,7 @@
 				3D0FC3002B205B8700E10440 /* StorageService.swift in Sources */,
 				3D682DA42B1F29B000067DFE /* MainTableViewCell.swift in Sources */,
 				3DEAFFB42B0F7F2A004CAE97 /* UIView+Extension.swift in Sources */,
+				3DFCE9AE2B331FF600D27A0B /* TimeRefresher.swift in Sources */,
 				3D682DAE2B1F29DA00067DFE /* RecordView.swift in Sources */,
 				3D682DA52B1F29B000067DFE /* MainViewController.swift in Sources */,
 				3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */,
