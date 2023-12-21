@@ -75,15 +75,16 @@ extension PlayViewModel {
             print("ERROR: Audio is already playing!")
             return
         }
-        audioService.play(record: record, onTime: time) { [unowned self] isPlaying in
-            self.isPlaying = isPlaying
-        }
         
+        audioService.play(record: record, onTime: time)
+        self.isPlaying = true
+    
         timeRefresher.register { [weak self] in
             self?.updateTime(withValue: time)
             completion()
         }
         
+        setTimeWithDifference(startTime: time)
         timeRefresher.start()
     }
     
@@ -129,6 +130,11 @@ private extension PlayViewModel {
     
     
     //MARK: Time
+    
+    func setTimeWithDifference(startTime: Float) {
+        elapsedTime = startTime
+        remainingTime = duration - startTime
+    }
     
     func updateTime(withValue value: Float) {
         let step: Float = 0.1

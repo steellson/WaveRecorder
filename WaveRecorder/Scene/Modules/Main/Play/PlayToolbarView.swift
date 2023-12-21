@@ -99,8 +99,7 @@ final class PlayToolbarView: UIView {
     
     private func animateProgress() {
         guard 
-            let viewModel,
-            progressSlider.value < viewModel.duration
+            progressSlider.value < progressSlider.maximumValue
         else {
             reset()
             return
@@ -125,11 +124,6 @@ final class PlayToolbarView: UIView {
     //MARK: Actions
     
     @objc
-    private func progressValueChanged() {
-        viewModel?.play(atTime: progressSlider.value, completion: animateProgress)
-    }
-    
-    @objc
     private func toolBarButtonDidTapped(_ sender: PlayTolbarButton) {
         animateTappedButton(withSender: sender)
         
@@ -146,9 +140,9 @@ final class PlayToolbarView: UIView {
         case .delete:
             viewModel.deleteRecord()
         case .play:
-            viewModel.play(atTime: progressSlider.value, completion: self.animateProgress)
+            viewModel.play(atTime: progressSlider.value, completion: animateProgress)
         case .stop:
-            viewModel.stop(completion: self.reset)
+            viewModel.stop(completion: reset)
         }
     }
 }
@@ -175,7 +169,6 @@ private extension PlayToolbarView {
         stopButton.addTarget(self, action: #selector(toolBarButtonDidTapped), for: .touchUpInside)
         goForwardButton.addTarget(self, action: #selector(toolBarButtonDidTapped), for: .touchUpInside)
         deleteButton.addTarget(self, action: #selector(toolBarButtonDidTapped), for: .touchUpInside)
-        progressSlider.addTarget(self, action: #selector(progressValueChanged), for: .valueChanged)
     }
     
     
