@@ -11,10 +11,10 @@ import AVFoundation
 //MARK: - Protocol
 
 protocol AudioServiceProtocol: AnyObject {
-    var playerCurrentTime: TimeInterval? { get }
+    var playerCurrentTime: TimeInterval { get }
     
     func play(record: Record, onTime time: Float?, completion: @escaping (Bool) -> Void)
-    func stop(completion: @escaping (Bool) -> Void)
+    func stop()
 }
 
 
@@ -22,8 +22,8 @@ protocol AudioServiceProtocol: AnyObject {
 
 final class AudioService: AudioServiceProtocol {
     
-    var playerCurrentTime: TimeInterval? {
-        self.audioPlayer?.currentTime
+    var playerCurrentTime: TimeInterval {
+        self.audioPlayer?.currentTime ?? 0.0
     }
     
     private let fileManagerInstance = FileManager.default
@@ -105,16 +105,14 @@ extension AudioService {
     
     //MARK: Pause
     
-    func stop(completion: @escaping (Bool) -> Void) {
+    func stop() {
         guard self.audioPlayer != nil else {
             print("ERROR: AudioPlayer is not setted yet!")
-            completion(false)
             return
         }
         
         DispatchQueue.main.async { [weak self] in
             self?.audioPlayer?.stop()
-            completion(true)
         }
     }
 }

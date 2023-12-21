@@ -98,6 +98,13 @@ final class PlayToolbarView: UIView {
     }
     
     private func animateProgress() {
+        guard 
+            let viewModel,
+            progressSlider.value < viewModel.duration
+        else {
+            reset()
+            return
+        }
         UIView.animate(withDuration: 0.1) {
             self.progressSlider.value += 0.1
             self.animateLabels()

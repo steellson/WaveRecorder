@@ -28,7 +28,7 @@ protocol PlayViewModelProtocol: AnyObject {
 //MARK: - Impl
 
 final class PlayViewModel: PlayViewModelProtocol {
-    
+        
     var progress: Float = 0.0
     var duration: Float { Float(record.duration ?? 0) }
     
@@ -36,7 +36,7 @@ final class PlayViewModel: PlayViewModelProtocol {
     var remainingTimeFormatted: String = "00:00"
     
     private var isPlaying = false
-    
+
     private var elapsedTime: Float = 0.0
     private var remainingTime: Float = 0.0
     
@@ -79,19 +79,18 @@ extension PlayViewModel {
             self.isPlaying = isPlaying
         }
         
-        timeRefresher.register {
-            self.updateTime(withValue: time)
+        timeRefresher.register { [weak self] in
+            self?.updateTime(withValue: time)
             completion()
         }
+        
         timeRefresher.start()
     }
     
     func stop(completion: @escaping () -> Void) {
-        audioService.stop() { [unowned self] isStopped in
-            self.isPlaying = !isStopped
-        }
-        self.resetTime()
-        self.timeRefresher.stop()
+        audioService.stop()
+        timeRefresher.stop()
+        resetTime()
         completion()
     }
     
@@ -114,6 +113,8 @@ private extension PlayViewModel {
         case duration(TimeInterval)
     }
     
+    //MARK: Format
+    
     func format(withType type: FormatType) -> String {
         switch type {
         case .date(let date): formatter.formatDate(date)
@@ -121,27 +122,34 @@ private extension PlayViewModel {
         }
     }
     
-    func resetTime() {
-        elapsedTime = 0
-        remainingTime = duration
-        updateFormattedTime()
+    func updateFormattedTime() {
+        elapsedTimeFormatted = format(withType: .duration(TimeInterval(elapsedTime)))
+        remainingTimeFormatted = format(withType: .duration(TimeInterval(remainingTime)))
     }
+    
+    
+    //MARK: Time
     
     func updateTime(withValue value: Float) {
         let step: Float = 0.1
         
-        if elapsedTime < duration {
+        if elapsedTime <= duration {
+            progress += step
             elapsedTime += step
             remainingTime -= step
-            
             updateFormattedTime()
         } else {
+            audioService.stop()
             resetTime()
+            isPlaying = false
         }
     }
     
-    func updateFormattedTime() {
-        elapsedTimeFormatted = format(withType: .duration(TimeInterval(elapsedTime)))
-        remainingTimeFormatted = format(withType: .duration(TimeInterval(remainingTime)))
+    func resetTime() {
+        timeRefresher.stop()
+        progress = 0.0
+        elapsedTime = 0.0
+        remainingTime = duration
+        updateFormattedTime()
     }
 }

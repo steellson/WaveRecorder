@@ -61,7 +61,6 @@ extension TimeRefresher {
         isRunning = false
         timer.invalidate()
         self.timer = nil
-        self.action = nil
     }
 }
 
