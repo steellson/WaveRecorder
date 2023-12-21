@@ -17,7 +17,7 @@ final class Formatter {
     private init() {}
     
     func formatDate(_ date: Date) -> String {
-        dateFormatter.dateFormat = "d MMM. YYYY"
+        dateFormatter.dateFormat = "d MMM. YYYY hh:mm"
         return dateFormatter.string(from: date)
     }
     

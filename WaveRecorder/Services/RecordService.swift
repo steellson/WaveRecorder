@@ -69,14 +69,34 @@ private extension RecordService {
             .urls(for: .documentDirectory, in: .userDomainMask)[0]
             .path()
         
+        let defaultPrefix = "Record-"
+        
         do {
-            let count = try fileManagerInstance
-                .contentsOfDirectory(atPath: documentsPath)
-                .count
-            return "Record-\(count + 1)"
+            let files = try fileManagerInstance.contentsOfDirectory(atPath: documentsPath)
+            
+            if !files.isEmpty {
+                let maxRecords = files
+                    .compactMap { file in
+                        if file.hasPrefix(defaultPrefix) {
+                            let postfix = file
+                                .components(separatedBy: "-")
+                                .last
+                            return postfix?
+                                .components(separatedBy: ".")
+                                .first
+                        } else {
+                            return nil
+                        }
+                    }
+                    .compactMap { Int($0) }
+                    .max()
+                
+                return defaultPrefix + String(((maxRecords ?? 0) + 1))
+            }
         } catch {
-            return "Record-1"
+            return defaultPrefix + String(1)
         }
+        return defaultPrefix + String(1)
     }
     
     func setupSettings() -> [String: Any] {

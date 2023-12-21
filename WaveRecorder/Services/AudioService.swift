@@ -11,23 +11,15 @@ import AVFoundation
 //MARK: - Protocol
 
 protocol AudioServiceProtocol: AnyObject {
-    var playerCurrentTime: TimeInterval? { get }
-    
-    func play(record: Record, onTime time: Float?, completion: @escaping (Bool) -> Void)
-    func stop(completion: @escaping (Bool) -> Void)
+    func play(record: Record, onTime time: Float)
+    func stop()
 }
 
 
 //MARK: - Impl
 
 final class AudioService: AudioServiceProtocol {
-    
-    var playerCurrentTime: TimeInterval? {
-        self.audioPlayer?.currentTime
-    }
-    
     private let fileManagerInstance = FileManager.default
-    
     private var audioPlayer: AVAudioPlayer?
 }
 
@@ -46,19 +38,13 @@ private extension AudioService {
         audioPlayer.numberOfLoops = 0
     }
     
-    func startPlay(atTime time: Float? = nil, fromURL url: URL) {
+    func startPlay(atTime time: Float, fromURL url: URL) {
         setupSettings()
-        
-        print(">> Will start playing audio with URL: \(url)")
-        
         audioPlayer?.prepareToPlay()
+        audioPlayer?.currentTime = TimeInterval(time)
+        audioPlayer?.play()
         
-        if let time {
-            audioPlayer?.currentTime = TimeInterval(time)
-            audioPlayer?.play()
-        } else {
-            audioPlayer?.play()
-        }
+        print(">> Start playing audio with URL: \(url)")
     }
 }
 
@@ -69,7 +55,7 @@ extension AudioService {
     
     //MARK: Play
     
-    func play(record: Record, onTime time: Float?, completion: @escaping (Bool) -> Void) {
+    func play(record: Record, onTime time: Float) {
         let recordURL = URLBuilder.buildURL(
             forRecordWithName: record.name,
             andFormat: record.format
@@ -79,25 +65,15 @@ extension AudioService {
             fileManagerInstance.fileExists(atPath: recordURL.path(percentEncoded: false))
         else {
             print("ERROR: File with name \(record.name) doesn't exist!")
-            completion(false)
             return
         }
         
         DispatchQueue.global().async { [unowned self] in
             do {
                 self.audioPlayer = try AVAudioPlayer(contentsOf: recordURL)
-                
-                if let time {
-                    self.startPlay(atTime: time, fromURL: recordURL)
-                } else {
-                    self.startPlay(fromURL: recordURL)
-                }
-                
-                completion(true)
-                
+                self.startPlay(atTime: time, fromURL: recordURL)
             } catch {
                 print("ERROR: AudioPlayer could not be instantiated \(error)")
-                completion(false)
             }
         }
     }
@@ -105,16 +81,14 @@ extension AudioService {
     
     //MARK: Pause
     
-    func stop(completion: @escaping (Bool) -> Void) {
+    func stop() {
         guard self.audioPlayer != nil else {
             print("ERROR: AudioPlayer is not setted yet!")
-            completion(false)
             return
         }
         
         DispatchQueue.main.async { [weak self] in
             self?.audioPlayer?.stop()
-            completion(true)
         }
     }
 }

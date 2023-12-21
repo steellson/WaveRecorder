@@ -31,6 +31,6 @@ enum R {
     
     enum Colors {
         static let primaryBackgroundColor = UIColor(red: 183/255, green: 198/255, blue: 206/255, alpha: 1)
-        static let secondaryBackgroundColor = UIColor.white.withAlphaComponent(0.3)
+        static let secondaryBackgroundColor = UIColor.white
     }
 }

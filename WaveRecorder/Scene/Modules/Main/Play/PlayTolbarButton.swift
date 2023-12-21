@@ -12,6 +12,7 @@ import UIKit
 enum PlayToolbarButtonType {
     case goBack
     case play
+    case stop
     case goForward
     case delete
 }
@@ -43,6 +44,8 @@ final class PlayTolbarButton: UIButton {
             setImage(UIImage(systemName: "gobackward.15"), for: .normal)
         case .play:
             setImage(UIImage(systemName: "play.fill"), for: .normal)
+        case .stop:
+            setImage(UIImage(systemName: "stop.fill"), for: .normal)
         case .goForward:
             setImage(UIImage(systemName: "goforward.15"), for: .normal)
         case .delete:
@@ -51,6 +54,6 @@ final class PlayTolbarButton: UIButton {
         
         backgroundColor = .clear
         tintColor = .black
-        transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
     }
 }

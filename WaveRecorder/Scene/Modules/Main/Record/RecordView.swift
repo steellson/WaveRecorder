@@ -64,11 +64,19 @@ private extension RecordView {
 }
 
 
+//MARK: - Presentation Updatable
+
+extension RecordView: PresentationUpdatable {
+    func updateView() { }
+    func reset() { }
+}
+
+
 //MARK: - RoundedRecButtonView Delegate
 
 extension RecordView: RoundedRecButtonViewDelegate {
     
-    func recButtonDidTapped() {
-        viewModel.record(isRecording: !recButtonView.isRecording)
+    func recButtonDidTapped(_ isRecording: Bool) {
+        viewModel.record(isRecording: isRecording)
     }
 }

@@ -12,9 +12,12 @@ import UIKit
 //MARK: - Protocol
 
 protocol AssemblyProtocol: AnyObject {
-    func build(module: Assembly.Module) -> UIViewController
-    func build(subModule: Assembly.SubModule) -> UIView
-    func buildMainCellViewModel(withRecord record: Record) -> MainCellViewModelProtocol
+    func get(module: Assembly.Module) -> UIViewController
+    func get(subModule: Assembly.SubModule) -> PresentationUpdatable
+    
+    func getMainCellViewModel(withRecord record: Record, indexPath: IndexPath) -> MainCellViewModelProtocol
+    func getEditViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> EditViewModelProtocol
+    func getPlayViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> PlayViewModelProtocol
 }
 
 
@@ -22,24 +25,58 @@ protocol AssemblyProtocol: AnyObject {
 
 final class Assembly: AssemblyProtocol {
     
+    //MARK: Selection
+    
     enum Module {
         case main
     }
     
     enum SubModule {
-        case record
+        case record(parentVM: MainViewModel)
     }
     
-    static let builder = Assembly()
     
     private let services = Services()
+    
+    //MARK: Main View Model
 
     private lazy var mainViewModel: MainViewModelProtocol = {
-        MainViewModel(storageService: services.storageService)
+        MainViewModel(
+            storageService: services.storageService
+        )
     }()
+}
 
+
+//MARK: - Public
+
+extension Assembly {
     
-    //MARK: Build
+    func get(module: Module) -> UIViewController {
+        build(module: module)
+    }
+    
+    func get(subModule: SubModule) -> PresentationUpdatable {
+        build(subModule: subModule)
+    }
+    
+    func getMainCellViewModel(withRecord record: Record, indexPath: IndexPath) -> MainCellViewModelProtocol {
+        buildMainCellViewModel(withRecord: record, indexPath: indexPath)
+    }
+    
+    func getEditViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> EditViewModelProtocol {
+        buildEditViewModel(withRecord: record, parentViewModel: parentViewModel)
+    }
+    
+    func getPlayViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> PlayViewModelProtocol {
+        buildPlayViewModel(withRecord: record, parentViewModel: parentViewModel)
+    }
+}
+
+
+//MARK: - Private
+
+private extension Assembly {
     
     func build(module: Module) -> UIViewController {
         switch module {
@@ -48,7 +85,7 @@ final class Assembly: AssemblyProtocol {
         }
     }
     
-    func build(subModule: SubModule) -> UIView {
+    func build(subModule: SubModule) -> PresentationUpdatable {
         switch subModule {
         case .record:
             let viewModel: RecordViewModelProtocol = RecordViewModel(
@@ -59,9 +96,24 @@ final class Assembly: AssemblyProtocol {
         }
     }
     
-    func buildMainCellViewModel(withRecord record: Record) -> MainCellViewModelProtocol {
+    func buildMainCellViewModel(withRecord record: Record, indexPath: IndexPath) -> MainCellViewModelProtocol {
         MainCellViewModel(
-            parentViewModel: mainViewModel,
+            record: record,
+            indexPath: indexPath,
+            parentViewModel: mainViewModel
+        )
+    }
+        
+    func buildEditViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> EditViewModelProtocol {
+        EditViewModel(
+            parentViewModel: parentViewModel,
+            record: record
+        )
+    }
+    
+    func buildPlayViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> PlayViewModelProtocol {
+        PlayViewModel(
+            parentViewModel: parentViewModel,
             audioService: services.audioService,
             record: record
         )
@@ -77,3 +129,7 @@ struct Services {
     let storageService: StorageServiceProtocol = StorageService()
 }
 
+
+//MARK: - Presentation Updatable
+
+protocol PresentationUpdatable: UIView { }
