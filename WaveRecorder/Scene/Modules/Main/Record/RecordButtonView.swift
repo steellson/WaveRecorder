@@ -1,5 +1,5 @@
 //
-//  RoundedRecButton.swift
+//  RecordButtonView.swift
 //  WaveRecorder
 //
 //  Created by Andrew Steellson on 24.11.2023.
@@ -11,16 +11,16 @@ import UIKit
 
 //MARK: - Protocol
 
-protocol RoundedRecButtonViewDelegate: AnyObject {
+protocol RecordButtonViewDelegate: AnyObject {
     func recButtonDidTapped(_ isRecording: Bool)
 }
 
 
 //MARK: - Impl
 
-final class RoundedRecButtonView: UIView {
+final class RecordButtonView: UIView {
     
-    weak var delegate: RoundedRecButtonViewDelegate?
+    weak var delegate: RecordButtonViewDelegate?
     
     //MARK: Variables
     
@@ -96,7 +96,7 @@ final class RoundedRecButtonView: UIView {
 
 //MARK: - Setup
 
-private extension RoundedRecButtonView {
+private extension RecordButtonView {
     
     func setupContentView() {
         backgroundColor = .clear

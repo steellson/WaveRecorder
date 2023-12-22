@@ -77,7 +77,7 @@ extension PlayViewModel {
         }
         
         audioService.play(record: record, onTime: time)
-        self.isPlaying = true
+        isPlaying = true
     
         timeRefresher.register { [weak self] in
             self?.updateTime(withValue: time)
@@ -92,6 +92,7 @@ extension PlayViewModel {
         audioService.stop()
         timeRefresher.stop()
         resetTime()
+        isPlaying = false
         completion()
     }
     

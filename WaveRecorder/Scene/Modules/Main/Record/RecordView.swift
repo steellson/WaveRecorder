@@ -14,8 +14,11 @@ final class RecordView: UIView {
     
     private let viewModel: RecordViewModelProtocol
     
+    private let recordWaveContainerView = UIView()
+    private let recordWaveView = RecordWaveView()
+    
     private let buttonRadius: CGFloat = 30
-    private lazy var recButtonView: RoundedRecButtonView = RoundedRecButtonView(radius: buttonRadius)
+    private lazy var recordButtonView: RecordButtonView = RecordButtonView(radius: buttonRadius)
         
     
     //MARK: Lifecycle
@@ -27,7 +30,7 @@ final class RecordView: UIView {
         super.init(frame: .zero)
         
         seutupContentView()
-        recButtonView.delegate = self
+        recordButtonView.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -47,18 +50,46 @@ private extension RecordView {
     
     func seutupContentView() {
         backgroundColor = R.Colors.primaryBackgroundColor
-        addNewSubview(recButtonView)
+        addNewSubview(recordButtonView)
     }
     
+    func setupRecordWaveView() {
+        addNewSubview(recordWaveContainerView)
+        recordWaveContainerView.addNewSubview(recordWaveView)
+        
+        NSLayoutConstraint.activate([
+            recordWaveContainerView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            recordWaveContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            recordWaveContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            recordWaveContainerView.bottomAnchor.constraint(equalTo: recordButtonView.topAnchor, constant: -12),
+            
+            recordWaveView.centerXAnchor.constraint(equalTo: recordWaveContainerView.centerXAnchor),
+            recordWaveView.centerYAnchor.constraint(equalTo: recordWaveContainerView.centerYAnchor),
+            recordWaveView.widthAnchor.constraint(equalToConstant: 12),
+            recordWaveView.heightAnchor.constraint(equalToConstant: 12)
+        ])
+        
+        recordWaveView.configureWith(amplitude: 20, duration: 20, rate: 500)
+        recordWaveView.start()
+    }
+    
+    func resetRecordWaveView() {
+        recordWaveView.stop()
+        recordWaveView.removeFromSuperview()
+        recordWaveView.constraints.forEach { $0.isActive = false }
+        recordWaveContainerView.removeFromSuperview()
+        recordWaveContainerView.constraints.forEach { $0.isActive = false }
+    }
+
 
     //MARK: Constraints
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            recButtonView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            recButtonView.heightAnchor.constraint(equalToConstant: buttonRadius * 2),
-            recButtonView.widthAnchor.constraint(equalToConstant: buttonRadius * 2),
-            recButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -12)
+            recordButtonView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            recordButtonView.heightAnchor.constraint(equalToConstant: buttonRadius * 2),
+            recordButtonView.widthAnchor.constraint(equalToConstant: buttonRadius * 2),
+            recordButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -12)
         ])
     }
 }
@@ -66,17 +97,22 @@ private extension RecordView {
 
 //MARK: - Presentation Updatable
 
-extension RecordView: PresentationUpdatable {
-    func updateView() { }
-    func reset() { }
-}
+extension RecordView: PresentationUpdatable { }
 
 
 //MARK: - RoundedRecButtonView Delegate
 
-extension RecordView: RoundedRecButtonViewDelegate {
+extension RecordView: RecordButtonViewDelegate {
     
     func recButtonDidTapped(_ isRecording: Bool) {
         viewModel.record(isRecording: isRecording)
+        
+        if !isRecording {
+            setupRecordWaveView()
+        } else {
+             resetRecordWaveView()
+        }
+        
+        layoutIfNeeded()
     }
 }
