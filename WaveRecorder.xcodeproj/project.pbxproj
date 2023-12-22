@@ -34,7 +34,7 @@
 		3DEAFFCB2B14B60D004CAE97 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFCA2B14B60D004CAE97 /* Record.swift */; };
 		3DEAFFD22B15F54D004CAE97 /* Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD12B15F54D004CAE97 /* Formatter.swift */; };
 		3DFCE9AE2B331FF600D27A0B /* TimeRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */; };
-		3DFCE9C92B347F5200D27A0B /* RecordWaveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFCE9C82B347F5200D27A0B /* RecordWaveView.swift */; };
+		3DFCE9CF2B35B68800D27A0B /* RecordWaveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFCE9CE2B35B68800D27A0B /* RecordWaveView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,7 +67,7 @@
 		3DEAFFCA2B14B60D004CAE97 /* Record.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
 		3DEAFFD12B15F54D004CAE97 /* Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatter.swift; sourceTree = "<group>"; };
 		3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeRefresher.swift; sourceTree = "<group>"; };
-		3DFCE9C82B347F5200D27A0B /* RecordWaveView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordWaveView.swift; sourceTree = "<group>"; };
+		3DFCE9CE2B35B68800D27A0B /* RecordWaveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordWaveView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,7 +126,7 @@
 			children = (
 				3D682D982B1F297600067DFE /* RecordViewModel.swift */,
 				3D682DAC2B1F29DA00067DFE /* RecordView.swift */,
-				3DFCE9C82B347F5200D27A0B /* RecordWaveView.swift */,
+				3DFCE9CE2B35B68800D27A0B /* RecordWaveView.swift */,
 				3D682DAD2B1F29DA00067DFE /* RecordButtonView.swift */,
 			);
 			path = Record;
@@ -312,7 +312,6 @@
 				3D682D9D2B1F297600067DFE /* MainCellViewModel.swift in Sources */,
 				3D7CB1252B2C557A00F5B91F /* PlayViewModel.swift in Sources */,
 				3D682DAA2B1F29D300067DFE /* PlayTolbarButton.swift in Sources */,
-				3DFCE9C92B347F5200D27A0B /* RecordWaveView.swift in Sources */,
 				3D7CB10F2B26F2A500F5B91F /* URLBuilder.swift in Sources */,
 				3DEAFFA92B0F6713004CAE97 /* Resources.swift in Sources */,
 				3DEAFFC32B109B6D004CAE97 /* UINavigationController+Extension.swift in Sources */,
@@ -329,6 +328,7 @@
 				3D682DA32B1F29B000067DFE /* EditView.swift in Sources */,
 				3D7CB1092B26E2ED00F5B91F /* RecordService.swift in Sources */,
 				3DEAFFAF2B0F766E004CAE97 /* Assembly.swift in Sources */,
+				3DFCE9CF2B35B68800D27A0B /* RecordWaveView.swift in Sources */,
 				3D682D9B2B1F297600067DFE /* RecordViewModel.swift in Sources */,
 				3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */,
 				3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */,

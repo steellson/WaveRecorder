@@ -14,7 +14,6 @@ final class RecordView: UIView {
     
     private let viewModel: RecordViewModelProtocol
     
-    private let recordWaveContainerView = UIView()
     private let recordWaveView = RecordWaveView()
     
     private let buttonRadius: CGFloat = 30
@@ -54,31 +53,24 @@ private extension RecordView {
     }
     
     func setupRecordWaveView() {
-        addNewSubview(recordWaveContainerView)
-        recordWaveContainerView.addNewSubview(recordWaveView)
+        recordWaveView.configureWith(direction: .right, speed: 20)
+        recordWaveView.clipsToBounds = true
+        addNewSubview(recordWaveView)
         
         NSLayoutConstraint.activate([
-            recordWaveContainerView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            recordWaveContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            recordWaveContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-            recordWaveContainerView.bottomAnchor.constraint(equalTo: recordButtonView.topAnchor, constant: -12),
-            
-            recordWaveView.centerXAnchor.constraint(equalTo: recordWaveContainerView.centerXAnchor),
-            recordWaveView.centerYAnchor.constraint(equalTo: recordWaveContainerView.centerYAnchor),
-            recordWaveView.widthAnchor.constraint(equalToConstant: 12),
-            recordWaveView.heightAnchor.constraint(equalToConstant: 12)
+            recordWaveView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            recordWaveView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            recordWaveView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            recordWaveView.bottomAnchor.constraint(equalTo: recordButtonView.topAnchor, constant: -32)
         ])
         
-        recordWaveView.configureWith(amplitude: 20, duration: 20, rate: 500)
-        recordWaveView.start()
+        recordWaveView.animationStart()
     }
     
     func resetRecordWaveView() {
-        recordWaveView.stop()
-        recordWaveView.removeFromSuperview()
+        recordWaveView.animationStop()
         recordWaveView.constraints.forEach { $0.isActive = false }
-        recordWaveContainerView.removeFromSuperview()
-        recordWaveContainerView.constraints.forEach { $0.isActive = false }
+        recordWaveView.removeFromSuperview()
     }
 
 

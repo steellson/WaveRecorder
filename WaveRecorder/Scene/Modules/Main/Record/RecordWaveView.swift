@@ -1,8 +1,8 @@
 //
-//  RecordWaveView.swift
+//  ReordWaveView.swift
 //  WaveRecorder
 //
-//  Created by Andrew Steellson on 14.12.2023.
+//  Created by Andrew Steellson on 22.12.2023.
 //
 
 import Foundation
@@ -12,51 +12,110 @@ import UIKit
 
 final class RecordWaveView: UIView {
     
-    var amplitudeValue: CGFloat = 20
-    var duration: CGFloat = 20
-    var rate: Int = 500
+    private let shapeLayer = CAShapeLayer()
     
-    private let sineWaveAnimation = CAKeyframeAnimation()
-    private let animationKeyPath = "position"
-    private let animationKey = "sine-wave-animaiton"
+    //MARK: Variables
     
-    private var isAnimateNow = false
+    private var speed: Double = 10
+    private var frequency = 8.0
+    private var parameterA = 1.5
+    private var parameterB = 9.0
+    private var phase = 0.0
+    private var direction: RecordWaveView.Direction = .right
+    
+    private var startTime: CFTimeInterval = 0
+    private weak var displayLink: CADisplayLink?
+    
+    
+    enum Direction {
+        case right
+        case left
+    }
+    
+    
+    //MARK: Methods
+    
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
+                
+        let path = UIBezierPath()
+        let width = Double(self.frame.width)
+        let height = Double(self.frame.height) - 30
+        let mid = height * 0.5
+        let waveLength = width / frequency
+        let waveHeightCoef = Double(frequency)
+        
+        path.move(to: CGPoint(x: 0, y: self.frame.midY))
+        
+        for x in stride(from: 0, through: width, by: 1) {
+            let actualX = x / waveLength
+            let sine = -cos(parameterA*(actualX + phase)) * sin((actualX + phase) / parameterB)
+            let y = waveHeightCoef * sine + mid
+            
+            path.addLine(to: CGPoint(x: x, y: y))
+        }
+   
+        setupShapeLayer(withRect: rect, andPath: path.cgPath)
+    }
+    
+    
+    //MARK: Configure
+    
+    func configureWith(
+        direction: Direction,
+        speed: Double
+    ) {
+        self.direction = direction
+        self.speed = speed
+    }
+    
+    func configureWith(
+        speed: Double = 10,
+        frequency: Double = 8.0,
+        parameterA: Double = 1.5,
+        parameterB: Double = 9.0,
+        phase: Double = 0.0,
+        direction: Direction = .right
+    ) {
+        self.speed = speed
+        self.frequency = frequency
+        self.parameterA = parameterA
+        self.parameterB = parameterA
+        self.phase = phase
+        self.direction = direction
+    }
+                      
+    
+    //MARK: Setup
 
-    
-    //MARK: Init
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupView()
-        setupShadow()
-        setupAnimationSettings()
-        setupValues()
+    private func setupShapeLayer(withRect rect: CGRect, andPath path: CGPath) {
+        shapeLayer.frame = CGRect(
+            x: -8,
+            y: rect.midY,
+            width: rect.width,
+            height: rect.height
+        )
+        shapeLayer.path = path
+        shapeLayer.lineWidth = 1
+        shapeLayer.fillColor = R.Colors.primaryBackgroundColor.cgColor
+        shapeLayer.strokeColor = UIColor.black.cgColor
+       
+        layer.addSublayer(shapeLayer)
     }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func configureWith(amplitude: CGFloat, duration: CGFloat, rate: Int) {
-        self.amplitudeValue = amplitude
-        self.duration = duration
-        self.rate = rate
-    }
- }
+}
 
 
 //MARK: - Public
 
 extension RecordWaveView {
     
-    func start() {
-        layer.add(sineWaveAnimation, forKey: animationKey)
-        isAnimateNow = true
+    func animationStart() {
+        speed = direction == .right ? -speed : speed
+        startDisplayLink()
     }
-
-    func stop() {
-        layer.removeAllAnimations()
-        isAnimateNow = false
+    
+    func animationStop() {
+        stopDisplayLink()
     }
 }
 
@@ -65,37 +124,25 @@ extension RecordWaveView {
 
 private extension RecordWaveView {
     
-    func setupView() {
-        backgroundColor = .black
-        layer.cornerRadius = frame.size.width / 2
+    func startDisplayLink() {
+        self.startTime = CACurrentMediaTime()
+        self.displayLink?.invalidate()
+        
+        let displayLink = CADisplayLink(target: self, selector:#selector(handleDisplayLink(_:)))
+        displayLink.add(to: .main, forMode: .common)
+        
+        self.displayLink = displayLink
     }
     
-    func setupShadow() {
-        layer.shadowOffset = .init(width: 0.5, height: 2)
-        layer.shadowOpacity = 1
-        layer.shadowRadius = 10
-        layer.shadowColor = UIColor.black.cgColor
+    func stopDisplayLink() {
+        self.displayLink?.remove(from: .main, forMode: .common)
+        self.displayLink?.invalidate()
     }
     
-    func setupAnimationSettings() {
-        sineWaveAnimation.keyPath = animationKeyPath
-        sineWaveAnimation.duration = duration
-        sineWaveAnimation.isAdditive = true
-    }
-    
-    func setupValues() {
-        if isAnimateNow {
-            
-            // Need to return view in default position slowly
-            
-        } else {
-            sineWaveAnimation.values = (0..<rate).map({ (x: Int) -> NSValue in
-                let xPos = CGFloat(x)
-                let yPos = sin(xPos)
-                
-                let point = CGPoint(x: xPos, y: yPos * amplitudeValue)
-                return NSValue(cgPoint: point)
-            })
-        }
+    @objc
+    func handleDisplayLink(_ displayLink: CADisplayLink) {
+        self.phase = (CACurrentMediaTime() - startTime) * speed
+        self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+        self.setNeedsDisplay()
     }
 }
