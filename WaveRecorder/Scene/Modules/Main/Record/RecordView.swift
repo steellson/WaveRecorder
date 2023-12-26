@@ -14,8 +14,11 @@ final class RecordView: UIView {
     
     private let viewModel: RecordViewModelProtocol
     
+    private let recordVisualizerView = RecordVisualizerView()
+    private let recordWaveView = RecordWaveView()
+    
     private let buttonRadius: CGFloat = 30
-    private lazy var recButtonView: RoundedRecButtonView = RoundedRecButtonView(radius: buttonRadius)
+    private lazy var recordButtonView: RecordButtonView = RecordButtonView(radius: buttonRadius)
         
     
     //MARK: Lifecycle
@@ -27,7 +30,7 @@ final class RecordView: UIView {
         super.init(frame: .zero)
         
         seutupContentView()
-        recButtonView.delegate = self
+        recordButtonView.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -47,18 +50,68 @@ private extension RecordView {
     
     func seutupContentView() {
         backgroundColor = R.Colors.primaryBackgroundColor
-        addNewSubview(recButtonView)
+        addNewSubview(recordButtonView)
     }
     
+    func setupRecordVisualizerView() {
+        recordVisualizerView.configureWith(
+            numbreOfColumns: 20,
+            duration: 0.5,
+            rate: 0.2,
+            color: R.Colors.secondaryBackgroundColor.withAlphaComponent(0.3)
+        )
+        recordVisualizerView.clipsToBounds = true
+        addNewSubview(recordVisualizerView)
+        
+        NSLayoutConstraint.activate([
+            recordVisualizerView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            recordVisualizerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            recordVisualizerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            recordVisualizerView.bottomAnchor.constraint(equalTo: recordButtonView.topAnchor, constant: -18)
+        ])
+        
+        recordVisualizerView.animationStart()
+    }
+    
+    func setupRecordWaveView() {
+        recordWaveView.configureWith(
+            direction: .right,
+            speed: 20,
+            waveWidth: 2,
+            color: .systemRed
+        )
+        recordWaveView.clipsToBounds = true
+        addNewSubview(recordWaveView)
+        
+        NSLayoutConstraint.activate([
+            recordWaveView.topAnchor.constraint(equalTo: recordVisualizerView.topAnchor),
+            recordWaveView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            recordWaveView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            recordWaveView.bottomAnchor.constraint(equalTo: recordVisualizerView.centerYAnchor, constant: 12)
+        ])
+        
+        recordWaveView.animationStart()
+    }
+    
+    func resetAnimatedViews() {
+        recordVisualizerView.animationStop()
+        recordVisualizerView.constraints.forEach { $0.isActive = false }
+        recordVisualizerView.removeFromSuperview()
+        
+        recordWaveView.animationStop()
+        recordWaveView.constraints.forEach { $0.isActive = false }
+        recordWaveView.removeFromSuperview()
+    }
+
 
     //MARK: Constraints
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            recButtonView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            recButtonView.heightAnchor.constraint(equalToConstant: buttonRadius * 2),
-            recButtonView.widthAnchor.constraint(equalToConstant: buttonRadius * 2),
-            recButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -12)
+            recordButtonView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            recordButtonView.heightAnchor.constraint(equalToConstant: buttonRadius * 2),
+            recordButtonView.widthAnchor.constraint(equalToConstant: buttonRadius * 2),
+            recordButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -12)
         ])
     }
 }
@@ -66,17 +119,23 @@ private extension RecordView {
 
 //MARK: - Presentation Updatable
 
-extension RecordView: PresentationUpdatable {
-    func updateView() { }
-    func reset() { }
-}
+extension RecordView: PresentationUpdatable { }
 
 
 //MARK: - RoundedRecButtonView Delegate
 
-extension RecordView: RoundedRecButtonViewDelegate {
+extension RecordView: RecordButtonViewDelegate {
     
     func recButtonDidTapped(_ isRecording: Bool) {
         viewModel.record(isRecording: isRecording)
+        
+        if !isRecording {
+            setupRecordVisualizerView()
+            setupRecordWaveView()
+        } else {
+            resetAnimatedViews()
+        }
+        
+        layoutIfNeeded()
     }
 }
