@@ -99,6 +99,7 @@ extension MainViewModel {
             switch result {
             case .success(let records):
                 self.records = records
+                self.recordDidStarted?(false)
             case .failure(let error):
                 print("ERROR: Cant search records with text \(text). \(error)")
             }

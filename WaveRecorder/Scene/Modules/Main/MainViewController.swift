@@ -244,6 +244,6 @@ extension MainViewController: UISearchResultsUpdating {
         guard let searchText = searchController.searchBar.searchTextField.text else {
             return
         }
-        viewModel.search(withText: searchText.lowercased().trimmingCharacters(in: .illegalCharacters))
+        viewModel.search(withText: searchText.trimmingCharacters(in: .illegalCharacters))
     }
 }
