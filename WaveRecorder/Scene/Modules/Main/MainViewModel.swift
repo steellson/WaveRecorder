@@ -15,8 +15,8 @@ protocol MainViewModelProtocol: AnyObject {
     
     var recordDidStarted: ((Bool) -> Void)? { get set }
     
+    func uploadRecords()
     func importRecord(_ record: Record)
-    
     func getRecord(forIndexPath indexPath: IndexPath) -> Record
     func rename(recordForIndexPath indexPath: IndexPath, newName name: String)
     func search(withText text: String)
@@ -67,6 +67,18 @@ final class MainViewModel: MainViewModelProtocol {
 
 extension MainViewModel {
     
+    func uploadRecords() {
+        storageService.getRecords { [unowned self] result in
+            switch result {
+            case .success(let records):
+                self.records = records
+                self.recordDidStarted?(false)
+            case .failure(let error):
+                print("ERROR: Cant get records from storage! \(error)")
+            }
+        }
+    }
+    
     func importRecord(_ record: Record) {
         storageService.save(record: record) { [unowned self] _ in
             self.records.append(record)
@@ -93,7 +105,10 @@ extension MainViewModel {
     }
     
     func search(withText text: String) {
-        guard !text.isEmpty else { return }
+        guard !text.isEmpty else {
+            uploadRecords()
+            return
+        }
         
         storageService.searchRecords(withText: text) { [unowned self] result in
             switch result {
@@ -128,14 +143,5 @@ extension MainViewModel {
 
 private extension MainViewModel {
     
-    func uploadRecords() {
-        storageService.getRecords { [unowned self] result in
-            switch result {
-            case .success(let records):
-                self.records = records
-            case .failure(let error):
-                print("ERROR: Cant get records from storage! \(error)")
-            }
-        }
-    }
+
 }

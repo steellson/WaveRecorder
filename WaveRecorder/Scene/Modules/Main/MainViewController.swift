@@ -127,6 +127,8 @@ private extension MainViewController {
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+        searchController.searchBar.searchTextField.delegate = self
         searchController.searchBar.setShowsCancelButton(false, animated: true)
     }
     
@@ -232,6 +234,34 @@ extension MainViewController: UITableViewDelegate {
                 self.tableView.reloadData()
             }
         )])
+    }
+}
+
+
+//MARK: - SearchBar+Field Delegate
+
+extension MainViewController: UISearchBarDelegate, UISearchTextFieldDelegate {
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        guard searchText.isEmpty else { return }
+        searchBar.resignFirstResponder()
+    }
+    
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        guard 
+            textField == searchController.searchBar.searchTextField
+        else {
+            print("ERROR: Wrong field responder")
+            return false
+        }
+        
+        textField.text = ""
+        textField.endEditing(true)
+        textField.resignFirstResponder()
+        
+        viewModel.uploadRecords()
+        
+        return false
     }
 }
 
