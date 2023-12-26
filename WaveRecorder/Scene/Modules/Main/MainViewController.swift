@@ -57,6 +57,7 @@ final class MainViewController: UIViewController {
         setupTitleLabel()
         setupSearchController()
         setupTableView()
+        hideKeyboardWhenTappedAround()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -69,12 +70,8 @@ final class MainViewController: UIViewController {
         setupRecordViewHeight()
         setupConstrtaints()
     }
-
     
-    //MARK: Actions
-    
-    @objc
-    private func editButtonDidTapped() {
+    private func animateEditButton() {
         UIView.animate(withDuration: 0.5) {
             self.tableView.isEditing.toggle()
             
@@ -82,6 +79,14 @@ final class MainViewController: UIViewController {
             ? R.Strings.stopEditButtonTitle.rawValue
             : R.Strings.editButtonTitle.rawValue
         }
+    }
+
+    
+    //MARK: Actions
+    
+    @objc
+    private func editButtonDidTapped() {
+        animateEditButton()
     }
 }
 
@@ -127,6 +132,8 @@ private extension MainViewController {
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+        searchController.searchBar.searchTextField.delegate = self
         searchController.searchBar.setShowsCancelButton(false, animated: true)
     }
     
@@ -187,6 +194,22 @@ private extension MainViewController {
 }
 
 
+//MARK: - Hide Keyboard
+
+private extension MainViewController {
+    
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(MainViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        searchController.searchBar.searchTextField.endEditing(true)
+    }
+}
+
+
 ///MARK: - DataSource
 
 extension MainViewController: UITableViewDataSource {
@@ -230,8 +253,37 @@ extension MainViewController: UITableViewDelegate {
             handler: { _, _, _ in
                 self.viewModel.delete(recordForIndexPath: indexPath)
                 self.tableView.reloadData()
+                self.animateEditButton()
             }
         )])
+    }
+}
+
+
+//MARK: - SearchBar+Field Delegate
+
+extension MainViewController: UISearchBarDelegate, UISearchTextFieldDelegate {
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        guard searchText.isEmpty else { return }
+        searchBar.resignFirstResponder()
+    }
+    
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        guard 
+            textField == searchController.searchBar.searchTextField
+        else {
+            print("ERROR: Wrong field responder")
+            return false
+        }
+        
+        textField.text = ""
+        textField.endEditing(true)
+        textField.resignFirstResponder()
+        
+        viewModel.uploadRecords()
+        
+        return false
     }
 }
 
@@ -244,6 +296,6 @@ extension MainViewController: UISearchResultsUpdating {
         guard let searchText = searchController.searchBar.searchTextField.text else {
             return
         }
-        viewModel.search(withText: searchText.lowercased().trimmingCharacters(in: .illegalCharacters))
+        viewModel.search(withText: searchText.trimmingCharacters(in: .illegalCharacters))
     }
 }

@@ -156,7 +156,7 @@ extension StorageService {
                 completion(.success(records))
             } else {
                 print("ATTENTION: Fetched records is emtpy!")
-                completion(.failure(.fetchedRecordsEmpty))
+                completion(.success(records))
             }
         } catch {
             print("ERROR: Cant get records from storage: \(error)")
