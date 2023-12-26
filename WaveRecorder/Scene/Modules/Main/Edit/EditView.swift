@@ -18,6 +18,10 @@ final class EditView: UIView {
         let field = UITextField()
         field.font = .systemFont(ofSize: 18, weight: .semibold)
         field.backgroundColor = R.Colors.secondaryBackgroundColor
+        field.autocapitalizationType = .none
+        field.autocorrectionType = .no
+        field.keyboardType = .asciiCapable
+        field.returnKeyType = .continue
         field.textAlignment = .left
         field.isEnabled = false
         field.delegate = self
@@ -86,6 +90,7 @@ final class EditView: UIView {
         
         UIView.animate(withDuration: 0.3) {
             self.titleLabelField.text = viewModel.recordName
+            self.titleLabelField.isEnabled = viewModel.isEditing
             self.dateLabel.text = Formatter.instance.formatDate(viewModel.recordedAt)
             self.animateRenameButton(isEditingStarts: viewModel.isEditing)
         }
@@ -104,6 +109,19 @@ final class EditView: UIView {
         }
     }
     
+    private func animateTitleLabelField(isEditing: Bool) {
+        self.titleLabelField.isEnabled = isEditing
+        UIView.animate(withDuration: 0.2) {
+            if isEditing {
+                self.titleLabelField.becomeFirstResponder()
+                self.titleLabelField.backgroundColor = R.Colors.primaryBackgroundColor.withAlphaComponent(0.3)
+            } else {
+                self.titleLabelField.resignFirstResponder()
+                self.titleLabelField.backgroundColor = R.Colors.secondaryBackgroundColor
+            }
+        }
+    }
+    
     
     //MARK: Action
     
@@ -114,18 +132,10 @@ final class EditView: UIView {
             return
         }
         
-        viewModel.switchEditingMode()
+        viewModel.switchEditing()
         
-        let isEditing = viewModel.isEditing
-        titleLabelField.isEnabled = isEditing
-        
-        if isEditing {
-            titleLabelField.becomeFirstResponder()
-        } else {
-            titleLabelField.resignFirstResponder()
-        }
-        
-        animateRenameButton(isEditingStarts: isEditing)
+        animateTitleLabelField(isEditing: viewModel.isEditing)
+        animateRenameButton(isEditingStarts: viewModel.isEditing)
     }
 }
             
@@ -171,7 +181,29 @@ extension EditView: UITextFieldDelegate {
         guard 
             let newName = textField.text,
             let viewModel
-        else { return }
+        else {
+            return
+        }
+        
         viewModel.onEndEditing(withNewName: newName)
+        
+        animateTitleLabelField(isEditing: viewModel.isEditing)
+        animateRenameButton(isEditingStarts: viewModel.isEditing)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        guard
+            let newName = textField.text,
+            let viewModel
+        else {
+            return false
+        }
+        
+        viewModel.onEndEditing(withNewName: newName)
+        
+        animateTitleLabelField(isEditing: viewModel.isEditing)
+        animateRenameButton(isEditingStarts: viewModel.isEditing)
+
+        return true
     }
 }

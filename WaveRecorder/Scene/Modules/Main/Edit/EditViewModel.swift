@@ -14,7 +14,7 @@ protocol EditViewModelProtocol: AnyObject {
     var recordedAt: Date { get }
     var isEditing: Bool { get }
             
-    func switchEditingMode()
+    func switchEditing()
     func onEndEditing(withNewName newName: String)
 }
 
@@ -32,7 +32,7 @@ final class EditViewModel: EditViewModelProtocol {
         record.date
     }
     
-    var isEditing = false
+    private(set) var isEditing = false
     
     private let record: Record
     
@@ -51,17 +51,15 @@ final class EditViewModel: EditViewModelProtocol {
 //MARK: - Public
 
 extension EditViewModel {
-
-    func switchEditingMode() {
+    
+    func switchEditing() {
         isEditing.toggle()
     }
-    
+
     func onEndEditing(withNewName newName: String) {
-        guard newName != record.name else {
-            print("ATTENTION: Record isn't renamed because of name is not changed")
-            return
-        }
-        parentViewModel.renameRecord(withNewName: newName)
+        isEditing = false
+        guard newName != record.name else { return }
+        renameRecord(withNewName: newName.trimmingCharacters(in: .whitespacesAndNewlines))
     }
 }
 
