@@ -14,6 +14,7 @@ final class RecordView: UIView {
     
     private let viewModel: RecordViewModelProtocol
     
+    private let recordVisualizerView = RecordVisualizerView()
     private let recordWaveView = RecordWaveView()
     
     private let buttonRadius: CGFloat = 30
@@ -52,22 +53,51 @@ private extension RecordView {
         addNewSubview(recordButtonView)
     }
     
+    func setupRecordVisualizerView() {
+        recordVisualizerView.configureWith(
+            numbreOfColumns: 20,
+            duration: 0.5,
+            rate: 0.2,
+            color: R.Colors.secondaryBackgroundColor.withAlphaComponent(0.3)
+        )
+        recordVisualizerView.clipsToBounds = true
+        addNewSubview(recordVisualizerView)
+        
+        NSLayoutConstraint.activate([
+            recordVisualizerView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            recordVisualizerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            recordVisualizerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            recordVisualizerView.bottomAnchor.constraint(equalTo: recordButtonView.topAnchor, constant: -18)
+        ])
+        
+        recordVisualizerView.animationStart()
+    }
+    
     func setupRecordWaveView() {
-        recordWaveView.configureWith(direction: .right, speed: 20)
+        recordWaveView.configureWith(
+            direction: .right,
+            speed: 20,
+            waveWidth: 2,
+            color: .systemRed
+        )
         recordWaveView.clipsToBounds = true
         addNewSubview(recordWaveView)
         
         NSLayoutConstraint.activate([
-            recordWaveView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            recordWaveView.topAnchor.constraint(equalTo: recordVisualizerView.topAnchor),
             recordWaveView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
             recordWaveView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-            recordWaveView.bottomAnchor.constraint(equalTo: recordButtonView.topAnchor, constant: -32)
+            recordWaveView.bottomAnchor.constraint(equalTo: recordVisualizerView.centerYAnchor, constant: 12)
         ])
         
         recordWaveView.animationStart()
     }
     
-    func resetRecordWaveView() {
+    func resetAnimatedViews() {
+        recordVisualizerView.animationStop()
+        recordVisualizerView.constraints.forEach { $0.isActive = false }
+        recordVisualizerView.removeFromSuperview()
+        
         recordWaveView.animationStop()
         recordWaveView.constraints.forEach { $0.isActive = false }
         recordWaveView.removeFromSuperview()
@@ -100,9 +130,10 @@ extension RecordView: RecordButtonViewDelegate {
         viewModel.record(isRecording: isRecording)
         
         if !isRecording {
+            setupRecordVisualizerView()
             setupRecordWaveView()
         } else {
-             resetRecordWaveView()
+            resetAnimatedViews()
         }
         
         layoutIfNeeded()

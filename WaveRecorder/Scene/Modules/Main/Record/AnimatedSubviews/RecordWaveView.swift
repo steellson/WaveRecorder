@@ -16,12 +16,15 @@ final class RecordWaveView: UIView {
     
     //MARK: Variables
     
-    private var speed: Double = 10
+    private var speed = 10.0
     private var frequency = 8.0
     private var parameterA = 1.5
     private var parameterB = 9.0
     private var phase = 0.0
     private var direction: RecordWaveView.Direction = .right
+    
+    private var color: UIColor = .black
+    private var waveWidth: CGFloat = 1
     
     private var startTime: CFTimeInterval = 0
     private weak var displayLink: CADisplayLink?
@@ -63,10 +66,14 @@ final class RecordWaveView: UIView {
     
     func configureWith(
         direction: Direction,
-        speed: Double
+        speed: Double,
+        waveWidth: CGFloat,
+        color: UIColor
     ) {
         self.direction = direction
         self.speed = speed
+        self.waveWidth = waveWidth
+        self.color = color
     }
     
     func configureWith(
@@ -75,7 +82,9 @@ final class RecordWaveView: UIView {
         parameterA: Double = 1.5,
         parameterB: Double = 9.0,
         phase: Double = 0.0,
-        direction: Direction = .right
+        direction: Direction = .right,
+        waveWidth: CGFloat = 1,
+        color: UIColor = .black
     ) {
         self.speed = speed
         self.frequency = frequency
@@ -83,6 +92,8 @@ final class RecordWaveView: UIView {
         self.parameterB = parameterA
         self.phase = phase
         self.direction = direction
+        self.waveWidth = waveWidth
+        self.color = color
     }
                       
     
@@ -96,9 +107,9 @@ final class RecordWaveView: UIView {
             height: rect.height
         )
         shapeLayer.path = path
-        shapeLayer.lineWidth = 1
-        shapeLayer.fillColor = R.Colors.primaryBackgroundColor.cgColor
-        shapeLayer.strokeColor = UIColor.black.cgColor
+        shapeLayer.lineWidth = waveWidth
+        shapeLayer.fillColor = .none
+        shapeLayer.strokeColor = color.cgColor
        
         layer.addSublayer(shapeLayer)
     }
