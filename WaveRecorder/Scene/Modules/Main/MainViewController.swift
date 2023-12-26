@@ -57,6 +57,7 @@ final class MainViewController: UIViewController {
         setupTitleLabel()
         setupSearchController()
         setupTableView()
+        hideKeyboardWhenTappedAround()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -69,12 +70,8 @@ final class MainViewController: UIViewController {
         setupRecordViewHeight()
         setupConstrtaints()
     }
-
     
-    //MARK: Actions
-    
-    @objc
-    private func editButtonDidTapped() {
+    private func animateEditButton() {
         UIView.animate(withDuration: 0.5) {
             self.tableView.isEditing.toggle()
             
@@ -82,6 +79,14 @@ final class MainViewController: UIViewController {
             ? R.Strings.stopEditButtonTitle.rawValue
             : R.Strings.editButtonTitle.rawValue
         }
+    }
+
+    
+    //MARK: Actions
+    
+    @objc
+    private func editButtonDidTapped() {
+        animateEditButton()
     }
 }
 
@@ -189,6 +194,22 @@ private extension MainViewController {
 }
 
 
+//MARK: - Hide Keyboard
+
+private extension MainViewController {
+    
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(MainViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        searchController.searchBar.searchTextField.endEditing(true)
+    }
+}
+
+
 ///MARK: - DataSource
 
 extension MainViewController: UITableViewDataSource {
@@ -232,6 +253,7 @@ extension MainViewController: UITableViewDelegate {
             handler: { _, _, _ in
                 self.viewModel.delete(recordForIndexPath: indexPath)
                 self.tableView.reloadData()
+                self.animateEditButton()
             }
         )])
     }
