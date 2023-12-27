@@ -75,7 +75,7 @@ final class MainViewController: UIViewController {
     //MARK: Animate
     
     private func animateEditButton() {
-        UIView.animate(withDuration: 0.5) {
+        UIView.animate(withDuration: 0.3) {
             self.tableView.isEditing.toggle()
             
             self.editButton.title = self.tableView.isEditing
@@ -86,12 +86,11 @@ final class MainViewController: UIViewController {
     
     private func animateUpdatedLayout() {
         UIView.animate(
-            withDuration: 0.5,
+            withDuration: 0.2,
             delay: 0,
-            usingSpringWithDamping: 0.7,
-            initialSpringVelocity: 3
+            usingSpringWithDamping: 1,
+            initialSpringVelocity: 1
         ) {
-            self.view.layoutIfNeeded()
             DispatchQueue.main.async { [unowned self] in
                 self.tableView.reloadData()
             }
@@ -213,13 +212,14 @@ private extension MainViewController {
         view.addGestureRecognizer(tap)
     }
     
-    @objc func dismissKeyboard() {
+    @objc 
+    func dismissKeyboard() {
         searchController.searchBar.searchTextField.endEditing(true)
     }
 }
 
 
-///MARK: - DataSource
+//MARK: - DataSource
 
 extension MainViewController: UITableViewDataSource {
     
@@ -228,9 +228,12 @@ extension MainViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: MainTableViewCell.mainTableViewCellIdentifier,
-            for: indexPath) as? MainTableViewCell else {
+        guard 
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: MainTableViewCell.mainTableViewCellIdentifier,
+                for: indexPath
+            ) as? MainTableViewCell
+        else {
             os_log("\(R.Strings.Errors.cantDequeReusableCell.rawValue)")
             return UITableViewCell()
         }
@@ -258,11 +261,9 @@ extension MainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         UISwipeActionsConfiguration(actions: [ UIContextualAction(
             style: .destructive, 
-            title: "Delete",
+            title: "Kill",
             handler: { _, _, _ in
                 self.viewModel.delete(recordForIndexPath: indexPath)
-                self.tableView.reloadData()
-                self.animateEditButton()
             }
         )])
     }
@@ -305,6 +306,7 @@ extension MainViewController: UISearchResultsUpdating {
         guard let searchText = searchController.searchBar.searchTextField.text else {
             return
         }
+        
         viewModel.search(withText: searchText.trimmingCharacters(in: .illegalCharacters))
     }
 }
