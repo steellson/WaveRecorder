@@ -153,7 +153,7 @@ private extension MainViewController {
     }
 
     func setupRecordViewHeight() {
-        viewModel.recordDidStarted = { [weak self] isRecording in
+        viewModel.shouldUpdateInterface = { [weak self] isRecording in
             
             self?.recViewHeightConstraint.constant = isRecording
             ? UIScreen.main.bounds.height * 0.25

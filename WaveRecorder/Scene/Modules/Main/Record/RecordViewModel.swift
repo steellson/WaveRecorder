@@ -11,9 +11,7 @@ import AVFoundation
 
 //MARK: - Protocol
 
-protocol RecordViewModelProtocol: AnyObject {
-    func record(isRecording: Bool)
-}
+protocol RecordViewModelProtocol: RecordServiceRepresentative { }
 
 
 //MARK: - Impl
@@ -45,13 +43,13 @@ extension RecordViewModel {
                 DispatchQueue.main.async {
                     guard let record else { return }
                     self.record = record
-                    self.parentViewModel.recordDidStarted?(false)
+                    self.parentViewModel.shouldUpdateInterface?(false)
                     self.parentViewModel.importRecord(record)
                 }
             }
         } else {
             recordService.startRecord()
-            parentViewModel.recordDidStarted?(true)
+            parentViewModel.shouldUpdateInterface?(true)
         }
     }
 }

@@ -9,11 +9,15 @@ import Foundation
 import AVFoundation
 
 
-//MARK: - Protocol
+//MARK: - Protocols
 
 protocol RecordServiceProtocol: AnyObject {
     func startRecord()
     func stopRecord(completion: ((Record?) -> Void)?)
+}
+
+protocol RecordServiceRepresentative: AnyObject {
+    func record(isRecording: Bool)
 }
 
 

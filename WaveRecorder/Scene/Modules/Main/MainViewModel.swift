@@ -10,17 +10,14 @@ import Foundation
 
 //MARK: - Protocols
 
-protocol MainViewModelProtocol: AnyObject {
+protocol InterfaceUpdatable: AnyObject {
+    var shouldUpdateInterface: ((Bool) -> Void)? { get set }
+}
+
+protocol MainViewModelProtocol: InterfaceUpdatable, StorageServiceRepresentative {
     var numberOfRecords: Int { get }
-    
-    var recordDidStarted: ((Bool) -> Void)? { get set }
-    
-    func uploadRecords()
+        
     func importRecord(_ record: Record)
-    func getRecord(forIndexPath indexPath: IndexPath) -> Record
-    func rename(recordForIndexPath indexPath: IndexPath, newName name: String)
-    func search(withText text: String)
-    func delete(recordForIndexPath indexPath: IndexPath)
     
     func makeRecordView() -> PresentationUpdatable
     func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol
@@ -31,12 +28,12 @@ protocol MainViewModelProtocol: AnyObject {
 
 final class MainViewModel: MainViewModelProtocol {
     
+    var shouldUpdateInterface: ((Bool) -> Void)?
+    
     var numberOfRecords: Int {
         records.count
     }
-    
-    var recordDidStarted: ((Bool) -> Void)?
-    
+        
     private var records: [Record] = []
     private let storageService: StorageServiceProtocol
     
@@ -72,7 +69,7 @@ extension MainViewModel {
             switch result {
             case .success(let records):
                 self.records = records
-                self.recordDidStarted?(false)
+                self.shouldUpdateInterface?(false)
             case .failure(let error):
                 print("ERROR: Cant get records from storage! \(error)")
             }
@@ -114,7 +111,7 @@ extension MainViewModel {
             switch result {
             case .success(let records):
                 self.records = records
-                self.recordDidStarted?(false)
+                self.shouldUpdateInterface?(false)
             case .failure(let error):
                 print("ERROR: Cant search records with text \(text). \(error)")
             }
@@ -128,8 +125,7 @@ extension MainViewModel {
             switch result {
             case .success:
                 self.records.remove(at: indexPath.item)
-                // For update tableView
-                self.recordDidStarted?(false)
+                self.shouldUpdateInterface?(false)
                 print("SUCCESS: Record with name \(record.name) deleted!")
                 
             case .failure(let error):

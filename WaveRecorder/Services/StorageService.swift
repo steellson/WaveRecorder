@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-//MARK: - Protocol
+//MARK: - Protocols
 
 protocol StorageServiceProtocol: AnyObject {
     func save(record: Record, completion: @escaping (Result<Void, StorageError>) -> Void)
@@ -17,6 +17,15 @@ protocol StorageServiceProtocol: AnyObject {
     func searchRecords(withText text: String, completion: @escaping (Result<[Record], StorageError>) -> Void)
     func rename(record: Record, newName name: String, completion: @escaping (Result<Void, StorageError>) -> Void)
 }
+
+protocol StorageServiceRepresentative: AnyObject {
+    func uploadRecords()
+    func getRecord(forIndexPath indexPath: IndexPath) -> Record
+    func rename(recordForIndexPath indexPath: IndexPath, newName name: String)
+    func search(withText text: String)
+    func delete(recordForIndexPath indexPath: IndexPath)
+}
+
 
 //MARK: Storage error
 

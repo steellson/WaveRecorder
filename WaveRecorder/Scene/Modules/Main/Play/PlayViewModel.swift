@@ -10,18 +10,12 @@ import Foundation
 
 //MARK: - Protocol
 
-protocol PlayViewModelProtocol: AnyObject {
+protocol PlayViewModelProtocol: AudioServiceRepresentative {
     var progress: Float { get }
     var duration: Float { get }
     
     var elapsedTimeFormatted: String { get }
     var remainingTimeFormatted: String { get }
-        
-    func goBack()
-    func play(atTime time: Float, completion: @escaping () -> Void)
-    func stop(completion: @escaping () -> Void)
-    func goForward()
-    func deleteRecord()
 }
 
 

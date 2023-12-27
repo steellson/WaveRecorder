@@ -24,6 +24,7 @@
 		3D7CB1252B2C557A00F5B91F /* PlayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7CB1242B2C557A00F5B91F /* PlayViewModel.swift */; };
 		3D7CB1282B2C6FB900F5B91F /* EditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7CB1272B2C6FB900F5B91F /* EditViewModel.swift */; };
 		3D8589222B39AC8900F2D643 /* RecordVisualizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D8589212B39AC8800F2D643 /* RecordVisualizerView.swift */; };
+		3D93526A2B3C419400CE6A16 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9352692B3C419400CE6A16 /* Protocols.swift */; };
 		3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF8E2B0F65F3004CAE97 /* AppDelegate.swift */; };
 		3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF902B0F65F3004CAE97 /* SceneDelegate.swift */; };
 		3DEAFF982B0F65F4004CAE97 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3DEAFF972B0F65F4004CAE97 /* Assets.xcassets */; };
@@ -56,6 +57,7 @@
 		3D7CB1242B2C557A00F5B91F /* PlayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayViewModel.swift; sourceTree = "<group>"; };
 		3D7CB1272B2C6FB900F5B91F /* EditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewModel.swift; sourceTree = "<group>"; };
 		3D8589212B39AC8800F2D643 /* RecordVisualizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordVisualizerView.swift; sourceTree = "<group>"; };
+		3D9352692B3C419400CE6A16 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		3DEAFF8B2B0F65F3004CAE97 /* WaveRecorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WaveRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DEAFF8E2B0F65F3004CAE97 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3DEAFF902B0F65F3004CAE97 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -199,6 +201,7 @@
 				3DEAFFAE2B0F766E004CAE97 /* Assembly.swift */,
 				3DEAFF8E2B0F65F3004CAE97 /* AppDelegate.swift */,
 				3DEAFF902B0F65F3004CAE97 /* SceneDelegate.swift */,
+				3D9352692B3C419400CE6A16 /* Protocols.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -341,6 +344,7 @@
 				3D7CB1092B26E2ED00F5B91F /* RecordService.swift in Sources */,
 				3DEAFFAF2B0F766E004CAE97 /* Assembly.swift in Sources */,
 				3DFCE9CF2B35B68800D27A0B /* RecordWaveView.swift in Sources */,
+				3D93526A2B3C419400CE6A16 /* Protocols.swift in Sources */,
 				3D682D9B2B1F297600067DFE /* RecordViewModel.swift in Sources */,
 				3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */,
 				3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */,
