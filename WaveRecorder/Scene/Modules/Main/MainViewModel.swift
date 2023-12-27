@@ -36,6 +36,7 @@ final class MainViewModel: MainViewModelProtocol {
     }
         
     private var records: [Record] = []
+    
     private let assemblyBuilder: AssemblyProtocol
     private let storageService: StorageServiceProtocol
     

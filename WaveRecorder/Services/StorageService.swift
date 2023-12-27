@@ -48,11 +48,19 @@ final class StorageService: StorageServiceProtocol {
     private var container: ModelContainer?
     private var context: ModelContext?
     
-    private let fileManagerInstance = FileManager.default
+    private let fileManager: FileManager
     
-    init() {
+    init(
+        fileManager: FileManager
+    ) {
+        self.fileManager = fileManager
+        initialSetup()
+    }
+    
+    private func initialSetup() {
         do {
             container = try ModelContainer(for: Record.self)
+            
             if let container{
                 context = ModelContext(container)
             }
@@ -61,9 +69,6 @@ final class StorageService: StorageServiceProtocol {
         }
     }
 }
-
-
-//MARK: - Public
 
 extension StorageService {
     
@@ -135,7 +140,7 @@ extension StorageService {
                 forRecordWithName: record.name,
                 andFormat: record.format
             )
-            try fileManagerInstance.removeItem(at: recordURL)
+            try fileManager.removeItem(at: recordURL)
             os_log("** File will deleted: \(recordURL)")
             
             completion(.success(()))

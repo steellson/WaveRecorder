@@ -27,19 +27,20 @@ protocol RecordServiceRepresentative: AnyObject {
 
 final class RecordService: RecordServiceProtocol {
     
-    var isAudioRecordingAllowed = false
+    private var isAudioRecordingAllowed = false
     
     private var record: Record?
-        
     private var format: AudioFormat = .m4a
     
-    private let fileManagerInstance = FileManager.default
-    
-    private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
     private var audioRecorder: AVAudioRecorder!
+    private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
     
+    private let fileManager: FileManager
     
-    init() {
+    init(
+        fileManager: FileManager
+    ) {
+        self.fileManager = fileManager
         setupAudioRecorder()
     }
 }
@@ -71,14 +72,14 @@ private extension RecordService {
     }
     
     func setupRecordName() -> String {
-        let documentsPath = fileManagerInstance
+        let documentsPath = fileManager
             .urls(for: .documentDirectory, in: .userDomainMask)[0]
             .path()
         
         let defaultPrefix = "Record-"
         
         do {
-            let files = try fileManagerInstance.contentsOfDirectory(atPath: documentsPath)
+            let files = try fileManager.contentsOfDirectory(atPath: documentsPath)
             
             if !files.isEmpty {
                 let maxRecords = files

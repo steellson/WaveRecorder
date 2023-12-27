@@ -28,8 +28,16 @@ protocol AudioServiceRepresentative: AnyObject {
 //MARK: - Impl
 
 final class AudioService: AudioServiceProtocol {
-    private let fileManagerInstance = FileManager.default
+    
+    private let fileManager: FileManager
+    
     private var audioPlayer: AVAudioPlayer?
+    
+    init(
+        fileManager: FileManager
+    ) {
+        self.fileManager = fileManager
+    }
 }
 
 
@@ -71,7 +79,7 @@ extension AudioService {
         )
         
         guard
-            fileManagerInstance.fileExists(atPath: recordURL.path(percentEncoded: false))
+            fileManager.fileExists(atPath: recordURL.path(percentEncoded: false))
         else {
             os_log("ERROR: File with name \(record.name) doesn't exist!")
             return

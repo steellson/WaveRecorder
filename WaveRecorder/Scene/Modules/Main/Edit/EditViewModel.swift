@@ -35,8 +35,10 @@ final class EditViewModel: EditViewModelProtocol {
     private(set) var isEditing = false
     
     private let record: Record
-    
     private let parentViewModel: MainCellViewModelProtocol
+    
+    
+    //MARK: Init
     
     init(
         parentViewModel: MainCellViewModelProtocol,

@@ -35,8 +35,8 @@ final class Assembly: AssemblyProtocol {
         case record(parentVM: MainViewModel)
     }
     
-    
     private let services = Services()
+    private let helpers = Helpers()
     
     //MARK: Main View Model
 
@@ -115,21 +115,34 @@ private extension Assembly {
     
     func buildPlayViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> PlayViewModelProtocol {
         PlayViewModel(
-            parentViewModel: parentViewModel,
+            record: record,
             audioService: services.audioService,
-            record: record
+            parentViewModel: parentViewModel,
+            timeRefresher: helpers.timeRefresher,
+            formatter: helpers.formatter
         )
     }
 }
 
 
+//MARK: Helpers
+
+struct Helpers {
+    let fileManager: FileManager = FileManager.default
+    let formatter: Formatter = Formatter.instance
+    let timeRefresher: TimeRefresherProtocol = TimeRefresher()
+}
+
+
 //MARK: - Services
 
-struct Services {
-    let audioService: AudioServiceProtocol = AudioService()
-    let recordService: RecordServiceProtocol = RecordService()
-    let storageService: StorageServiceProtocol = StorageService()
+struct Services<FManager: FileManager> {
+
+    let audioService: AudioServiceProtocol = AudioService(fileManager: FManager.default)
+    let recordService: RecordServiceProtocol = RecordService(fileManager: FManager.default)
+    let storageService: StorageServiceProtocol = StorageService(fileManager: FManager.default)
 }
+
 
 
 //MARK: - Isolated View
