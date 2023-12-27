@@ -137,6 +137,8 @@ extension RecordService {
         DispatchQueue.global().async { [unowned self] in
             do {
                 try self.audioSession.setActive(true)
+                try self.audioSession.setCategory(.record)
+                
                 self.audioRecorder = try AVAudioRecorder(url: storedURL, settings: settings)
                 self.audioRecorder.isMeteringEnabled = true
                 self.audioRecorder.prepareToRecord()
