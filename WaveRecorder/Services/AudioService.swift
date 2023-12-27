@@ -6,13 +6,22 @@
 //
 
 import AVFoundation
+import OSLog
 
 
-//MARK: - Protocol
+//MARK: - Protocols
 
 protocol AudioServiceProtocol: AnyObject {
     func play(record: Record, onTime time: Float)
     func stop()
+}
+
+protocol AudioServiceRepresentative: AnyObject {
+    func goBack()
+    func play(atTime time: Float, completion: @escaping () -> Void)
+    func stop(completion: @escaping () -> Void)
+    func goForward()
+    func deleteRecord()
 }
 
 
@@ -30,7 +39,7 @@ private extension AudioService {
     
     func setupSettings() {
         guard let audioPlayer = self.audioPlayer else {
-            print("ERROR: AudioPlayer is not setted yet!")
+            os_log("ERROR: AudioPlayer is not setted yet!")
             return
         }
         
@@ -44,7 +53,7 @@ private extension AudioService {
         audioPlayer?.currentTime = TimeInterval(time)
         audioPlayer?.play()
         
-        print(">> Start playing audio with URL: \(url)")
+        os_log(">> Start playing audio with URL: \(url)")
     }
 }
 
@@ -64,7 +73,7 @@ extension AudioService {
         guard
             fileManagerInstance.fileExists(atPath: recordURL.path(percentEncoded: false))
         else {
-            print("ERROR: File with name \(record.name) doesn't exist!")
+            os_log("ERROR: File with name \(record.name) doesn't exist!")
             return
         }
         
@@ -73,7 +82,7 @@ extension AudioService {
                 self.audioPlayer = try AVAudioPlayer(contentsOf: recordURL)
                 self.startPlay(atTime: time, fromURL: recordURL)
             } catch {
-                print("ERROR: AudioPlayer could not be instantiated \(error)")
+                os_log("ERROR: AudioPlayer could not be instantiated \(error)")
             }
         }
     }
@@ -83,7 +92,7 @@ extension AudioService {
     
     func stop() {
         guard self.audioPlayer != nil else {
-            print("ERROR: AudioPlayer is not setted yet!")
+            os_log("ERROR: AudioPlayer is not setted yet!")
             return
         }
         

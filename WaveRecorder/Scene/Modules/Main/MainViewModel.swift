@@ -6,23 +6,21 @@
 //
 
 import Foundation
+import OSLog
 
 
 //MARK: - Protocols
 
-protocol MainViewModelProtocol: AnyObject {
+protocol InterfaceUpdatable: AnyObject {
+    var shouldUpdateInterface: ((Bool) -> Void)? { get set }
+}
+
+protocol MainViewModelProtocol: InterfaceUpdatable, StorageServiceRepresentative {
     var numberOfRecords: Int { get }
-    
-    var recordDidStarted: ((Bool) -> Void)? { get set }
-    
-    func uploadRecords()
+        
     func importRecord(_ record: Record)
-    func getRecord(forIndexPath indexPath: IndexPath) -> Record
-    func rename(recordForIndexPath indexPath: IndexPath, newName name: String)
-    func search(withText text: String)
-    func delete(recordForIndexPath indexPath: IndexPath)
     
-    func makeRecordView() -> PresentationUpdatable
+    func makeRecordView() -> IsolatedView
     func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol
 }
 
@@ -31,31 +29,36 @@ protocol MainViewModelProtocol: AnyObject {
 
 final class MainViewModel: MainViewModelProtocol {
     
+    var shouldUpdateInterface: ((Bool) -> Void)?
+    
     var numberOfRecords: Int {
         records.count
     }
-    
-    var recordDidStarted: ((Bool) -> Void)?
-    
+        
     private var records: [Record] = []
+    private let assemblyBuilder: AssemblyProtocol
     private let storageService: StorageServiceProtocol
     
     
+    //MARK: Init
+    
     init(
+        assemblyBuilder: AssemblyProtocol,
         storageService: StorageServiceProtocol
     ) {
+        self.assemblyBuilder = assemblyBuilder
         self.storageService = storageService
         
         uploadRecords()
     }
     
     
-    func makeRecordView() -> PresentationUpdatable {
-        AssemblyBuilder.get(subModule: .record(parentVM: self))
+    func makeRecordView() -> IsolatedView {
+        assemblyBuilder.get(subModule: .record(parentVM: self))
     }
     
     func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol {
-        AssemblyBuilder.getMainCellViewModel(
+        assemblyBuilder.getMainCellViewModel(
             withRecord: records[indexPath.item],
             indexPath: indexPath
         )
@@ -63,21 +66,9 @@ final class MainViewModel: MainViewModelProtocol {
 }
 
 
-//MARK: - Public
-
 extension MainViewModel {
     
-    func uploadRecords() {
-        storageService.getRecords { [unowned self] result in
-            switch result {
-            case .success(let records):
-                self.records = records
-                self.recordDidStarted?(false)
-            case .failure(let error):
-                print("ERROR: Cant get records from storage! \(error)")
-            }
-        }
-    }
+    //MARK: - Import
     
     func importRecord(_ record: Record) {
         storageService.save(record: record) { [unowned self] _ in
@@ -85,9 +76,28 @@ extension MainViewModel {
         }
     }
     
+    //MARK: Upload
+    
+    func uploadRecords() {
+        storageService.getRecords { [unowned self] result in
+            switch result {
+            case .success(let records):
+                self.records = records
+                self.shouldUpdateInterface?(false)
+            case .failure(let error):
+                os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
+            }
+        }
+    }
+    
+    //MARK: Get
+    
     func getRecord(forIndexPath indexPath: IndexPath) -> Record {
         records[indexPath.item]
     }
+    
+    
+    //MARK: Rename
     
     func rename(recordForIndexPath indexPath: IndexPath, newName name: String) {
         storageService.rename(
@@ -99,10 +109,12 @@ extension MainViewModel {
             case .success:
                 self.records[indexPath.item].name = name
             case .failure(let error):
-                print("ERROR: Cant rename record! \(error)")
+                os_log("\(R.Strings.Errors.cantRenameRecord.rawValue + " \(error)")")
             }
         }
     }
+    
+    //MARK: Search
     
     func search(withText text: String) {
         guard !text.isEmpty else {
@@ -114,12 +126,15 @@ extension MainViewModel {
             switch result {
             case .success(let records):
                 self.records = records
-                self.recordDidStarted?(false)
+                self.shouldUpdateInterface?(false)
             case .failure(let error):
-                print("ERROR: Cant search records with text \(text). \(error)")
+                os_log("\(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")")
             }
         }
     }
+    
+    
+    //MARK: Delete
     
     func delete(recordForIndexPath indexPath: IndexPath) {
         let record = records[indexPath.item]
@@ -128,20 +143,13 @@ extension MainViewModel {
             switch result {
             case .success:
                 self.records.remove(at: indexPath.item)
-                // For update tableView
-                self.recordDidStarted?(false)
-                print("SUCCESS: Record with name \(record.name) deleted!")
+                self.shouldUpdateInterface?(false)
+                
+                os_log("\(R.Strings.Logs.recordDeleted.rawValue + record.name)")
                 
             case .failure(let error):
-                print("ERROR: Cant delete record with name \(record.name). \(error)")
+                os_log("\(R.Strings.Errors.cantDeleteRecordWithName.rawValue + record.name + " \(error)")")
             }
         }
     }
-}
-
-//MARK: - Private
-
-private extension MainViewModel {
-    
-
 }

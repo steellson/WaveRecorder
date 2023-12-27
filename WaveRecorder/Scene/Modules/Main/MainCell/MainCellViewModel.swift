@@ -24,10 +24,10 @@ protocol MainCellViewModelProtocol: AnyObject {
 
 final class MainCellViewModel: MainCellViewModelProtocol {
                
-    private let record: Record
     private let indexPath: IndexPath
+    private let record: Record
     private let parentViewModel: MainViewModelProtocol
-
+    private let assemblyBuilder: AssemblyProtocol
     
     enum ChildViewModelType {
         case editor
@@ -35,34 +35,40 @@ final class MainCellViewModel: MainCellViewModelProtocol {
     }
     
     
+    //MARK:  Init
+    
     init(
-        record: Record,
         indexPath: IndexPath,
-        parentViewModel: MainViewModelProtocol
+        record: Record,
+        parentViewModel: MainViewModelProtocol,
+        assemblyBuilder: AssemblyProtocol
     ) {
-        self.record = record
         self.indexPath = indexPath
+        self.record = record
         self.parentViewModel = parentViewModel
+        self.assemblyBuilder = assemblyBuilder
     }
     
     
     func makeEditViewModel() -> EditViewModelProtocol {
-        AssemblyBuilder.getEditViewModel(withRecord: record, parentViewModel: self)
+        assemblyBuilder.getEditViewModel(withRecord: record, parentViewModel: self)
     }
     
     func makePlayViewModel() -> PlayViewModelProtocol {
-        AssemblyBuilder.getPlayViewModel(withRecord: record, parentViewModel: self)
+        assemblyBuilder.getPlayViewModel(withRecord: record, parentViewModel: self)
     }
 }
 
-
-//MARK: - Public
-
 extension MainCellViewModel {
+    
+    //MARK: Rename
 
     func renameRecord(withNewName name: String) {
         parentViewModel.rename(recordForIndexPath: indexPath, newName: name)
     }
+    
+    
+    //MARK: Delete
     
     func deleteRecord() {
         parentViewModel.delete(recordForIndexPath: indexPath)

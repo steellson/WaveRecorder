@@ -6,22 +6,17 @@
 //
 
 import Foundation
+import OSLog
 
 
 //MARK: - Protocol
 
-protocol PlayViewModelProtocol: AnyObject {
+protocol PlayViewModelProtocol: AudioServiceRepresentative {
     var progress: Float { get }
     var duration: Float { get }
     
     var elapsedTimeFormatted: String { get }
     var remainingTimeFormatted: String { get }
-        
-    func goBack()
-    func play(atTime time: Float, completion: @escaping () -> Void)
-    func stop(completion: @escaping () -> Void)
-    func goForward()
-    func deleteRecord()
 }
 
 
@@ -48,6 +43,8 @@ final class PlayViewModel: PlayViewModelProtocol {
     private let timeRefresher: TimeRefresherProtocol = TimeRefresher()
 
     
+    //MARK: Init
+    
     init(
         parentViewModel: MainCellViewModelProtocol,
         audioService: AudioServiceProtocol,
@@ -61,18 +58,20 @@ final class PlayViewModel: PlayViewModelProtocol {
     }
 }
 
-
-//MARK: - Public
-
 extension PlayViewModel {
     
+    //MARK: Go back
+    
     func goBack() {
-        print("Go back tapped")
+        os_log("Go back tapped")
     }
+    
+    
+    //MARK: Play
     
     func play(atTime time: Float, completion: @escaping () -> Void) {
         guard !isPlaying else {
-            print("ERROR: Audio is already playing!")
+            os_log("\(R.Strings.Errors.audioIsAlreadyPlaying.rawValue)")
             return
         }
         
@@ -88,6 +87,9 @@ extension PlayViewModel {
         timeRefresher.start()
     }
     
+    
+    //MARK: Stop
+    
     func stop(completion: @escaping () -> Void) {
         audioService.stop()
         timeRefresher.stop()
@@ -96,17 +98,21 @@ extension PlayViewModel {
         completion()
     }
     
+    
+    //MARK: Go forward
+    
     func goForward() {
-        print("Go forward tapped")
+        os_log("Go forward tapped")
     }
+    
+    
+    //MARK: Delete
     
     func deleteRecord() {
         parentViewModel.deleteRecord()
     }
 }
 
-
-//MARK: - Private
 
 private extension PlayViewModel {
     

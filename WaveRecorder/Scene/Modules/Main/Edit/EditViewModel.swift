@@ -47,29 +47,22 @@ final class EditViewModel: EditViewModelProtocol {
     }
 }
 
-
-//MARK: - Public
-
 extension EditViewModel {
+    
+    //MARK: Switch editing state
     
     func switchEditing() {
         isEditing.toggle()
     }
+    
+    
+    //MARK: On end editing
 
     func onEndEditing(withNewName newName: String) {
         isEditing = false
         guard newName != record.name else { return }
-        renameRecord(withNewName: newName.trimmingCharacters(in: .whitespacesAndNewlines))
+        parentViewModel.renameRecord(withNewName: newName)
+        record.name = String(unicodeScalarLiteral: newName)
     }
 }
 
-
-//MARK: - Private
-
-private extension EditViewModel {
-    
-    func renameRecord(withNewName name: String) {
-        parentViewModel.renameRecord(withNewName: name)
-        record.name = String(unicodeScalarLiteral: name)
-    }
-}

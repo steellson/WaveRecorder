@@ -13,7 +13,7 @@ import UIKit
 
 protocol AssemblyProtocol: AnyObject {
     func get(module: Assembly.Module) -> UIViewController
-    func get(subModule: Assembly.SubModule) -> PresentationUpdatable
+    func get(subModule: Assembly.SubModule) -> IsolatedView
     
     func getMainCellViewModel(withRecord record: Record, indexPath: IndexPath) -> MainCellViewModelProtocol
     func getEditViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> EditViewModelProtocol
@@ -42,6 +42,7 @@ final class Assembly: AssemblyProtocol {
 
     private lazy var mainViewModel: MainViewModelProtocol = {
         MainViewModel(
+            assemblyBuilder: self,
             storageService: services.storageService
         )
     }()
@@ -56,7 +57,7 @@ extension Assembly {
         build(module: module)
     }
     
-    func get(subModule: SubModule) -> PresentationUpdatable {
+    func get(subModule: SubModule) -> IsolatedView {
         build(subModule: subModule)
     }
     
@@ -85,7 +86,7 @@ private extension Assembly {
         }
     }
     
-    func build(subModule: SubModule) -> PresentationUpdatable {
+    func build(subModule: SubModule) -> IsolatedView {
         switch subModule {
         case .record:
             let viewModel: RecordViewModelProtocol = RecordViewModel(
@@ -98,9 +99,10 @@ private extension Assembly {
     
     func buildMainCellViewModel(withRecord record: Record, indexPath: IndexPath) -> MainCellViewModelProtocol {
         MainCellViewModel(
-            record: record,
             indexPath: indexPath,
-            parentViewModel: mainViewModel
+            record: record,
+            parentViewModel: mainViewModel,
+            assemblyBuilder: self
         )
     }
         
@@ -130,6 +132,6 @@ struct Services {
 }
 
 
-//MARK: - Presentation Updatable
+//MARK: - Isolated View
 
-protocol PresentationUpdatable: UIView { }
+protocol IsolatedView: UIView { }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import OSLog
 
 
 typealias TimeRefresherAction = () -> Void
@@ -72,7 +73,7 @@ private extension TimeRefresher {
     private func tick() {
         guard let action = action else {
             stop()
-            print("ERROR: TimeRefresher action is not registered!")
+            os_log("ERROR: TimeRefresher action is not registered!")
             return
         }
         action()

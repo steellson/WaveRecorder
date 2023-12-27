@@ -7,13 +7,19 @@
 
 import Foundation
 import AVFoundation
+import OSLog
 
 
-//MARK: - Protocol
+
+//MARK: - Protocols
 
 protocol RecordServiceProtocol: AnyObject {
     func startRecord()
     func stopRecord(completion: ((Record?) -> Void)?)
+}
+
+protocol RecordServiceRepresentative: AnyObject {
+    func record(isRecording: Bool)
 }
 
 
@@ -50,17 +56,17 @@ private extension RecordService {
                 DispatchQueue.main.async { [unowned self] in
                     
                     if !allowed {
-                        print("ERROR: Audio permission is not allowed!")
+                        os_log("ERROR: Audio permission is not allowed!")
                         self.isAudioRecordingAllowed = false
                     } else {
-                        print("SUCCESS: Audio permission allowed!")
+                        os_log("SUCCESS: Audio permission allowed!")
                         self.isAudioRecordingAllowed = true
                     }
 
                 }
             }
         } catch {
-            print("ERROR: Cant setup audio recorder. \(error)")
+            os_log("ERROR: Cant setup audio recorder. \(error)")
         }
     }
     
@@ -121,7 +127,7 @@ extension RecordService {
         guard
             isAudioRecordingAllowed
         else {
-            print("ERROR: Cant start recording because it is not allowed!")
+            os_log("ERROR: Cant start recording because it is not allowed!")
             return
         }
         
@@ -154,12 +160,12 @@ extension RecordService {
                 
                 // Check result
                 self.audioRecorder.isRecording
-                ? print(">>> RECORD STARTED!")
-                : print(">>> RECORD IS NOT STARTERD! SOMETHING WRONG")
+                ? os_log(">>> RECORD STARTED!")
+                : os_log(">>> RECORD IS NOT STARTERD! SOMETHING WRONG")
                 
             } catch {
                 self.stopRecord(completion: nil)
-                print("ERROR: Cant initialize audio recorder")
+                os_log("ERROR: Cant initialize audio recorder")
             }
         }
     }
@@ -179,8 +185,8 @@ extension RecordService {
             
             // Check
             !self.audioRecorder.isRecording
-            ? print(">>> RECORD FINISHED!")
-            : print(">>> RECORD IS NOT STOPPED! SOMETHING WRONG")
+            ? os_log(">>> RECORD FINISHED!")
+            : os_log(">>> RECORD IS NOT STOPPED! SOMETHING WRONG")
             
             // Remove recorder
             self.audioRecorder = nil

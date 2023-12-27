@@ -5,6 +5,7 @@
 //  Created by Andrew Steellson on 23.11.2023.
 //
 
+import OSLog
 import UIKit
 
 
@@ -71,13 +72,28 @@ final class MainViewController: UIViewController {
         setupConstrtaints()
     }
     
+    //MARK: Animate
+    
     private func animateEditButton() {
-        UIView.animate(withDuration: 0.5) {
+        UIView.animate(withDuration: 0.3) {
             self.tableView.isEditing.toggle()
             
             self.editButton.title = self.tableView.isEditing
-            ? R.Strings.stopEditButtonTitle.rawValue
-            : R.Strings.editButtonTitle.rawValue
+            ? R.Strings.Titles.stopEditButtonTitle.rawValue
+            : R.Strings.Titles.editButtonTitle.rawValue
+        }
+    }
+    
+    private func animateUpdatedLayout() {
+        UIView.animate(
+            withDuration: 0.2,
+            delay: 0,
+            usingSpringWithDamping: 1,
+            initialSpringVelocity: 1
+        ) {
+            DispatchQueue.main.async { [unowned self] in
+                self.tableView.reloadData()
+            }
         }
     }
 
@@ -86,7 +102,9 @@ final class MainViewController: UIViewController {
     
     @objc
     private func editButtonDidTapped() {
-        animateEditButton()
+        DispatchQueue.main.async { [unowned self] in
+            self.animateEditButton()
+        }
     }
 }
 
@@ -109,14 +127,14 @@ private extension MainViewController {
     }
     
     func setupEditButton() {
-        editButton.title = R.Strings.editButtonTitle.rawValue
+        editButton.title = R.Strings.Titles.editButtonTitle.rawValue
         editButton.tintColor = .black
         editButton.target = self
         editButton.action = #selector(editButtonDidTapped)
     }
     
     func setupTitleLabel() {
-        titleLabel.text = R.Strings.navigationTitleMain.rawValue
+        titleLabel.text = R.Strings.Titles.navigationTitleMain.rawValue
         titleLabel.textColor = .black
         titleLabel.backgroundColor = R.Colors.primaryBackgroundColor
         titleLabel.font = .systemFont(ofSize: 26, weight: .bold)
@@ -124,7 +142,7 @@ private extension MainViewController {
     }
     
     func setupSearchController() {
-        searchController.searchBar.placeholder = R.Strings.searchTextFieldPlaceholder.rawValue
+        searchController.searchBar.placeholder = R.Strings.Titles.searchTextFieldPlaceholder.rawValue
         searchController.searchBar.tintColor = .black
         searchController.searchBar.autocapitalizationType = .none
         searchController.searchBar.autocorrectionType = .no
@@ -153,23 +171,13 @@ private extension MainViewController {
     }
 
     func setupRecordViewHeight() {
-        viewModel.recordDidStarted = { [weak self] isRecording in
+        viewModel.shouldUpdateInterface = { [weak self] isRecording in
             
             self?.recViewHeightConstraint.constant = isRecording
             ? UIScreen.main.bounds.height * 0.25
             : UIScreen.main.bounds.height * 0.15
      
-            UIView.animate(
-                withDuration: 0.5,
-                delay: 0,
-                usingSpringWithDamping: 0.7,
-                initialSpringVelocity: 3
-            ) {
-                self?.view.layoutIfNeeded()
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()
-                }
-            }
+            self?.animateUpdatedLayout()
         }
     }
     
@@ -204,13 +212,14 @@ private extension MainViewController {
         view.addGestureRecognizer(tap)
     }
     
-    @objc func dismissKeyboard() {
+    @objc 
+    func dismissKeyboard() {
         searchController.searchBar.searchTextField.endEditing(true)
     }
 }
 
 
-///MARK: - DataSource
+//MARK: - DataSource
 
 extension MainViewController: UITableViewDataSource {
     
@@ -219,10 +228,13 @@ extension MainViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: MainTableViewCell.mainTableViewCellIdentifier,
-            for: indexPath) as? MainTableViewCell else {
-            print("ERROR: Cant dequeue reusable cell")
+        guard 
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: MainTableViewCell.mainTableViewCellIdentifier,
+                for: indexPath
+            ) as? MainTableViewCell
+        else {
+            os_log("\(R.Strings.Errors.cantDequeReusableCell.rawValue)")
             return UITableViewCell()
         }
 
@@ -249,11 +261,9 @@ extension MainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         UISwipeActionsConfiguration(actions: [ UIContextualAction(
             style: .destructive, 
-            title: "Delete",
+            title: "Kill",
             handler: { _, _, _ in
                 self.viewModel.delete(recordForIndexPath: indexPath)
-                self.tableView.reloadData()
-                self.animateEditButton()
             }
         )])
     }
@@ -273,7 +283,7 @@ extension MainViewController: UISearchBarDelegate, UISearchTextFieldDelegate {
         guard 
             textField == searchController.searchBar.searchTextField
         else {
-            print("ERROR: Wrong field responder")
+            os_log("\(R.Strings.Errors.wrongFieldResponder.rawValue)")
             return false
         }
         
@@ -296,6 +306,7 @@ extension MainViewController: UISearchResultsUpdating {
         guard let searchText = searchController.searchBar.searchTextField.text else {
             return
         }
+        
         viewModel.search(withText: searchText.trimmingCharacters(in: .illegalCharacters))
     }
 }
