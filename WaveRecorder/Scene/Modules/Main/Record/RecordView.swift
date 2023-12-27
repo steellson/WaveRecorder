@@ -10,7 +10,7 @@ import UIKit
 
 //MARK: - Impl
 
-final class RecordView: UIView {
+final class RecordView: UIView, IsolatedView {
     
     private let viewModel: RecordViewModelProtocol
     
@@ -115,11 +115,6 @@ private extension RecordView {
         ])
     }
 }
-
-
-//MARK: - Presentation Updatable
-
-extension RecordView: PresentationUpdatable { }
 
 
 //MARK: - RoundedRecButtonView Delegate

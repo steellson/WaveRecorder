@@ -13,7 +13,7 @@ import UIKit
 
 protocol AssemblyProtocol: AnyObject {
     func get(module: Assembly.Module) -> UIViewController
-    func get(subModule: Assembly.SubModule) -> PresentationUpdatable
+    func get(subModule: Assembly.SubModule) -> IsolatedView
     
     func getMainCellViewModel(withRecord record: Record, indexPath: IndexPath) -> MainCellViewModelProtocol
     func getEditViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> EditViewModelProtocol
@@ -57,7 +57,7 @@ extension Assembly {
         build(module: module)
     }
     
-    func get(subModule: SubModule) -> PresentationUpdatable {
+    func get(subModule: SubModule) -> IsolatedView {
         build(subModule: subModule)
     }
     
@@ -86,7 +86,7 @@ private extension Assembly {
         }
     }
     
-    func build(subModule: SubModule) -> PresentationUpdatable {
+    func build(subModule: SubModule) -> IsolatedView {
         switch subModule {
         case .record:
             let viewModel: RecordViewModelProtocol = RecordViewModel(
@@ -132,6 +132,6 @@ struct Services {
 }
 
 
-//MARK: - Presentation Updatable
+//MARK: - Isolated View
 
-protocol PresentationUpdatable: UIView { }
+protocol IsolatedView: UIView { }

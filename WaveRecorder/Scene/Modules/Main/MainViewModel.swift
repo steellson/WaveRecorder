@@ -20,7 +20,7 @@ protocol MainViewModelProtocol: InterfaceUpdatable, StorageServiceRepresentative
         
     func importRecord(_ record: Record)
     
-    func makeRecordView() -> PresentationUpdatable
+    func makeRecordView() -> IsolatedView
     func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol
 }
 
@@ -53,7 +53,7 @@ final class MainViewModel: MainViewModelProtocol {
     }
     
     
-    func makeRecordView() -> PresentationUpdatable {
+    func makeRecordView() -> IsolatedView {
         assemblyBuilder.get(subModule: .record(parentVM: self))
     }
     
