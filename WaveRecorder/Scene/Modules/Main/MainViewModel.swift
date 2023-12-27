@@ -35,12 +35,15 @@ final class MainViewModel: MainViewModelProtocol {
     }
         
     private var records: [Record] = []
+    private let assemblyBuilder: AssemblyProtocol
     private let storageService: StorageServiceProtocol
     
     
     init(
+        assemblyBuilder: AssemblyProtocol,
         storageService: StorageServiceProtocol
     ) {
+        self.assemblyBuilder = assemblyBuilder
         self.storageService = storageService
         
         uploadRecords()
@@ -48,11 +51,11 @@ final class MainViewModel: MainViewModelProtocol {
     
     
     func makeRecordView() -> PresentationUpdatable {
-        AssemblyBuilder.get(subModule: .record(parentVM: self))
+        assemblyBuilder.get(subModule: .record(parentVM: self))
     }
     
     func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol {
-        AssemblyBuilder.getMainCellViewModel(
+        assemblyBuilder.getMainCellViewModel(
             withRecord: records[indexPath.item],
             indexPath: indexPath
         )
@@ -60,9 +63,17 @@ final class MainViewModel: MainViewModelProtocol {
 }
 
 
-//MARK: - Public
-
 extension MainViewModel {
+    
+    //MARK: - Import
+    
+    func importRecord(_ record: Record) {
+        storageService.save(record: record) { [unowned self] _ in
+            self.records.append(record)
+        }
+    }
+    
+    //MARK: Upload
     
     func uploadRecords() {
         storageService.getRecords { [unowned self] result in
@@ -76,15 +87,14 @@ extension MainViewModel {
         }
     }
     
-    func importRecord(_ record: Record) {
-        storageService.save(record: record) { [unowned self] _ in
-            self.records.append(record)
-        }
-    }
+    //MARK: Get
     
     func getRecord(forIndexPath indexPath: IndexPath) -> Record {
         records[indexPath.item]
     }
+    
+    
+    //MARK: Rename
     
     func rename(recordForIndexPath indexPath: IndexPath, newName name: String) {
         storageService.rename(
@@ -100,6 +110,8 @@ extension MainViewModel {
             }
         }
     }
+    
+    //MARK: Search
     
     func search(withText text: String) {
         guard !text.isEmpty else {
@@ -118,6 +130,9 @@ extension MainViewModel {
         }
     }
     
+    
+    //MARK: Delete
+    
     func delete(recordForIndexPath indexPath: IndexPath) {
         let record = records[indexPath.item]
         
@@ -133,11 +148,4 @@ extension MainViewModel {
             }
         }
     }
-}
-
-//MARK: - Private
-
-private extension MainViewModel {
-    
-
 }

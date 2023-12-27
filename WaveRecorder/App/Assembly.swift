@@ -42,6 +42,7 @@ final class Assembly: AssemblyProtocol {
 
     private lazy var mainViewModel: MainViewModelProtocol = {
         MainViewModel(
+            assemblyBuilder: self,
             storageService: services.storageService
         )
     }()
@@ -98,9 +99,10 @@ private extension Assembly {
     
     func buildMainCellViewModel(withRecord record: Record, indexPath: IndexPath) -> MainCellViewModelProtocol {
         MainCellViewModel(
-            record: record,
             indexPath: indexPath,
-            parentViewModel: mainViewModel
+            record: record,
+            parentViewModel: mainViewModel,
+            assemblyBuilder: self
         )
     }
         

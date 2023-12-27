@@ -23,6 +23,9 @@ final class RecordViewModel: RecordViewModelProtocol {
     private let parentViewModel: MainViewModelProtocol
     private let recordService: RecordServiceProtocol
     
+    
+    //MARK: Init
+    
     init(
         parentViewModel: MainViewModelProtocol,
         recordService: RecordServiceProtocol
@@ -32,10 +35,9 @@ final class RecordViewModel: RecordViewModelProtocol {
     }
 }
 
-
-//MARK: - Public
-
 extension RecordViewModel {
+    
+    //MARK: Record
     
     func record(isRecording: Bool) {
         if isRecording {

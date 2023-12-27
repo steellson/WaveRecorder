@@ -86,7 +86,9 @@ final class MainViewController: UIViewController {
     
     @objc
     private func editButtonDidTapped() {
-        animateEditButton()
+        DispatchQueue.main.async { [unowned self] in
+            self.animateEditButton()
+        }
     }
 }
 

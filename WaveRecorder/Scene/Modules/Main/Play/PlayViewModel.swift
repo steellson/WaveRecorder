@@ -42,6 +42,8 @@ final class PlayViewModel: PlayViewModelProtocol {
     private let timeRefresher: TimeRefresherProtocol = TimeRefresher()
 
     
+    //MARK: Init
+    
     init(
         parentViewModel: MainCellViewModelProtocol,
         audioService: AudioServiceProtocol,
@@ -55,14 +57,16 @@ final class PlayViewModel: PlayViewModelProtocol {
     }
 }
 
-
-//MARK: - Public
-
 extension PlayViewModel {
+    
+    //MARK: Go back
     
     func goBack() {
         print("Go back tapped")
     }
+    
+    
+    //MARK: Play
     
     func play(atTime time: Float, completion: @escaping () -> Void) {
         guard !isPlaying else {
@@ -82,6 +86,9 @@ extension PlayViewModel {
         timeRefresher.start()
     }
     
+    
+    //MARK: Stop
+    
     func stop(completion: @escaping () -> Void) {
         audioService.stop()
         timeRefresher.stop()
@@ -90,17 +97,21 @@ extension PlayViewModel {
         completion()
     }
     
+    
+    //MARK: Go forward
+    
     func goForward() {
         print("Go forward tapped")
     }
+    
+    
+    //MARK: Delete
     
     func deleteRecord() {
         parentViewModel.deleteRecord()
     }
 }
 
-
-//MARK: - Private
 
 private extension PlayViewModel {
     
