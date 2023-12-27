@@ -36,6 +36,8 @@ final class MainViewController: UIViewController {
 
     private let viewModel: MainViewModelProtocol
     
+    private let notificationCenter = NotificationCenter.default
+   
         
     //MARK: Lifecycle
     
@@ -64,6 +66,7 @@ final class MainViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         seutpNavigationBar()
+        setupNorifications()
     }
     
     override func viewDidLayoutSubviews() {
@@ -71,6 +74,12 @@ final class MainViewController: UIViewController {
         setupRecordViewHeight()
         setupConstrtaints()
     }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        removeNotifications()
+    }
+    
     
     //MARK: Animate
     
@@ -199,6 +208,29 @@ private extension MainViewController {
             tableView.bottomAnchor.constraint(equalTo: recordView.topAnchor)
         ])
     }
+    
+    
+    //MARK: Notifications
+    
+    func setupNorifications() {
+        notificationCenter.addObserver(self, 
+                                       selector: #selector(adjustForKeyboard),
+                                       name: UIResponder.keyboardWillHideNotification,
+                                       object: nil)
+        notificationCenter.addObserver(self, 
+                                       selector: #selector(adjustForKeyboard),
+                                       name: UIResponder.keyboardWillChangeFrameNotification,
+                                       object: nil)
+    }
+    
+    func removeNotifications() {
+        notificationCenter.removeObserver(self,
+                                          name: UIResponder.keyboardWillHideNotification,
+                                          object: nil)
+        notificationCenter.removeObserver(self,
+                                          name: UIResponder.keyboardWillChangeFrameNotification,
+                                          object: nil)
+    }
 }
 
 
@@ -215,6 +247,30 @@ private extension MainViewController {
     @objc 
     func dismissKeyboard() {
         searchController.searchBar.searchTextField.endEditing(true)
+    }
+    
+    @objc func adjustForKeyboard(notification: Notification) {
+        guard
+            let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
+        else {
+            return
+        }
+        
+        let keyboardScreenEndFrame = keyboardValue.cgRectValue
+        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+        
+        if notification.name == UIResponder.keyboardWillHideNotification {
+            tableView.contentInset = .zero
+        } else {
+            tableView.contentInset = UIEdgeInsets(
+                top: 0,
+                left: 0,
+                bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom,
+                right: 0
+            )
+        }
+        
+        tableView.scrollIndicatorInsets = tableView.contentInset
     }
 }
 
