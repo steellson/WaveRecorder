@@ -71,6 +71,8 @@ final class MainViewController: UIViewController {
         setupConstrtaints()
     }
     
+    //MARK: Animate
+    
     private func animateEditButton() {
         UIView.animate(withDuration: 0.5) {
             self.tableView.isEditing.toggle()
@@ -78,6 +80,20 @@ final class MainViewController: UIViewController {
             self.editButton.title = self.tableView.isEditing
             ? R.Strings.stopEditButtonTitle.rawValue
             : R.Strings.editButtonTitle.rawValue
+        }
+    }
+    
+    private func animateUpdatedLayout() {
+        UIView.animate(
+            withDuration: 0.5,
+            delay: 0,
+            usingSpringWithDamping: 0.7,
+            initialSpringVelocity: 3
+        ) {
+            self.view.layoutIfNeeded()
+            DispatchQueue.main.async { [unowned self] in
+                self.tableView.reloadData()
+            }
         }
     }
 
@@ -161,17 +177,7 @@ private extension MainViewController {
             ? UIScreen.main.bounds.height * 0.25
             : UIScreen.main.bounds.height * 0.15
      
-            UIView.animate(
-                withDuration: 0.5,
-                delay: 0,
-                usingSpringWithDamping: 0.7,
-                initialSpringVelocity: 3
-            ) {
-                self?.view.layoutIfNeeded()
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()
-                }
-            }
+            self?.animateUpdatedLayout()
         }
     }
     
