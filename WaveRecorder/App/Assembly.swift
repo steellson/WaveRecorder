@@ -38,12 +38,14 @@ final class Assembly: AssemblyProtocol {
     private let services = Services()
     private let helpers = Helpers()
     
+    
     //MARK: Main View Model
 
     private lazy var mainViewModel: MainViewModelProtocol = {
         MainViewModel(
             assemblyBuilder: self,
-            storageService: services.storageService
+            storageService: services.storageService,
+            notificationCenter: helpers.notificationCenter
         )
     }()
 }
@@ -129,6 +131,7 @@ private extension Assembly {
 
 struct Helpers {
     let fileManager: FileManager = FileManager.default
+    let notificationCenter: NotificationCenter = NotificationCenter.default
     let formatter: Formatter = Formatter.instance
     let timeRefresher: TimeRefresherProtocol = TimeRefresher()
 }
@@ -137,7 +140,6 @@ struct Helpers {
 //MARK: - Services
 
 struct Services<FManager: FileManager> {
-
     let audioService: AudioServiceProtocol = AudioService(fileManager: FManager.default)
     let recordService: RecordServiceProtocol = RecordService(fileManager: FManager.default)
     let storageService: StorageServiceProtocol = StorageService(fileManager: FManager.default)

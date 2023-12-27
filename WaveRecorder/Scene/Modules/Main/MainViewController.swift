@@ -35,10 +35,8 @@ final class MainViewController: UIViewController {
     private var tableViewCellHeight: CGFloat = 200
 
     private let viewModel: MainViewModelProtocol
+
     
-    private let notificationCenter = NotificationCenter.default
-   
-        
     //MARK: Lifecycle
     
     init(
@@ -213,23 +211,28 @@ private extension MainViewController {
     //MARK: Notifications
     
     func setupNorifications() {
-        notificationCenter.addObserver(self, 
-                                       selector: #selector(adjustForKeyboard),
-                                       name: UIResponder.keyboardWillHideNotification,
-                                       object: nil)
-        notificationCenter.addObserver(self, 
-                                       selector: #selector(adjustForKeyboard),
-                                       name: UIResponder.keyboardWillChangeFrameNotification,
-                                       object: nil)
+        viewModel.activateNotification(
+            withName: UIResponder.keyboardWillHideNotification,
+            selector: #selector(adjustForKeyboard),
+            from: self
+        )
+        viewModel.activateNotification(
+            withName: UIResponder.keyboardWillChangeFrameNotification,
+            selector: #selector(adjustForKeyboard),
+            from: self
+        )
     }
     
     func removeNotifications() {
-        notificationCenter.removeObserver(self,
-                                          name: UIResponder.keyboardWillHideNotification,
-                                          object: nil)
-        notificationCenter.removeObserver(self,
-                                          name: UIResponder.keyboardWillChangeFrameNotification,
-                                          object: nil)
+        viewModel.removeNotification(
+            withName: UIResponder.keyboardWillHideNotification,
+            from: self
+        )
+        viewModel.removeNotification(
+            withName: UIResponder.keyboardWillChangeFrameNotification,
+            from: self
+        )
+
     }
 }
 

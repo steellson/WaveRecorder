@@ -15,7 +15,12 @@ protocol InterfaceUpdatable: AnyObject {
     var shouldUpdateInterface: ((Bool) -> Void)? { get set }
 }
 
-protocol MainViewModelProtocol: InterfaceUpdatable, StorageServiceRepresentative {
+protocol Notifier: AnyObject {
+    func activateNotification(withName name: NSNotification.Name, selector: Selector, from: Any?)
+    func removeNotification(withName name: NSNotification.Name, from: Any?)
+}
+
+protocol MainViewModelProtocol: InterfaceUpdatable, StorageServiceRepresentative, Notifier {
     var numberOfRecords: Int { get }
         
     func importRecord(_ record: Record)
@@ -39,16 +44,19 @@ final class MainViewModel: MainViewModelProtocol {
     
     private let assemblyBuilder: AssemblyProtocol
     private let storageService: StorageServiceProtocol
-    
+    private let notificationCenter: NotificationCenter
+
     
     //MARK: Init
     
     init(
         assemblyBuilder: AssemblyProtocol,
-        storageService: StorageServiceProtocol
+        storageService: StorageServiceProtocol,
+        notificationCenter: NotificationCenter
     ) {
         self.assemblyBuilder = assemblyBuilder
         self.storageService = storageService
+        self.notificationCenter = notificationCenter
         
         uploadRecords()
     }
@@ -152,5 +160,45 @@ extension MainViewModel {
                 os_log("\(R.Strings.Errors.cantDeleteRecordWithName.rawValue + record.name + " \(error)")")
             }
         }
+    }
+}
+
+//MARK: Notifier
+
+extension MainViewModel {
+    
+    func activateNotification(withName
+                              name: NSNotification.Name,
+                              selector: Selector, 
+                              from: Any?) {
+        guard 
+            let recievedFrom = from
+        else {
+            os_log("\(R.Strings.Errors.notificationCouldntBeActivated.rawValue)")
+            return
+        }
+        
+        notificationCenter.addObserver(recievedFrom,
+                                       selector: selector,
+                                       name: name,
+                                       object: nil)
+        
+    }
+    
+    
+    func removeNotification(withName
+                            name: NSNotification.Name,
+                            from: Any?) {
+        guard 
+            let recievedFrom = from
+        else {
+            os_log("\(R.Strings.Errors.notificationCouldntBeRemoved.rawValue)")
+            return
+        }
+        
+        notificationCenter.removeObserver(recievedFrom,
+                                          name: name,
+                                          object: nil)
+        
     }
 }

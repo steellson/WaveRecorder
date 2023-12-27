@@ -22,6 +22,8 @@ enum R {
             case cantRenameRecord = "ERROR: Cant rename record! "
             case cantSearchRecordsWithText = "ERROR: Cant search records with text: "
             case cantDeleteRecordWithName = "ERROR: Cant delete record with name "
+            case notificationCouldntBeActivated = "ERROR: Notification couldnt be activated"
+            case notificationCouldntBeRemoved = "ERROR: Notification couldnt be removed"
             
             //MARK: Main View
             case cantDequeReusableCell = "ERROR: Cant dequeue reusable cell"
