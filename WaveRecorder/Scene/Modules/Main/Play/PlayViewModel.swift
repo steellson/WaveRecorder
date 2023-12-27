@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import OSLog
 
 
 //MARK: - Protocol
@@ -62,7 +63,7 @@ extension PlayViewModel {
     //MARK: Go back
     
     func goBack() {
-        print("Go back tapped")
+        os_log("Go back tapped")
     }
     
     
@@ -70,7 +71,7 @@ extension PlayViewModel {
     
     func play(atTime time: Float, completion: @escaping () -> Void) {
         guard !isPlaying else {
-            print(R.Strings.Errors.audioIsAlreadyPlaying)
+            os_log("\(R.Strings.Errors.audioIsAlreadyPlaying.rawValue)")
             return
         }
         
@@ -101,7 +102,7 @@ extension PlayViewModel {
     //MARK: Go forward
     
     func goForward() {
-        print("Go forward tapped")
+        os_log("Go forward tapped")
     }
     
     

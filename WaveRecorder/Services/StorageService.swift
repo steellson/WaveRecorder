@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import OSLog
 import SwiftData
 
 //MARK: - Protocols
@@ -56,7 +57,7 @@ final class StorageService: StorageServiceProtocol {
                 context = ModelContext(container)
             }
         } catch {
-            print(error)
+            os_log("\(error)")
         }
     }
 }
@@ -70,7 +71,7 @@ extension StorageService {
     
     func save(record: Record, completion: @escaping (Result<Void, StorageError>) -> Void) {
         guard let context else {
-            print("ERROR: Cant get storage context")
+            os_log("ERROR: Cant get storage context")
             completion(.failure(.cantGetStorageContext))
             return
         }
@@ -84,7 +85,7 @@ extension StorageService {
     
     func getRecords(completion: @escaping (Result<[Record], StorageError>) -> Void) {
         guard let context else {
-            print("ERROR: Cant get storage context")
+            os_log("ERROR: Cant get storage context")
             completion(.failure(.cantGetStorageContext))
             return
         }
@@ -97,11 +98,11 @@ extension StorageService {
             if !records.isEmpty {
                 completion(.success(records))
             } else {
-                print("ATTENTION: Fetched records is emtpy!")
+                os_log("ATTENTION: Fetched records is emtpy!")
                 completion(.failure(.fetchedRecordsEmpty))
             }
         } catch {
-            print("ERROR: Cant get records from storage: \(error)")
+            os_log("ERROR: Cant get records from storage: \(error)")
             completion(.failure(.cantGetRecordsFormStorage))
         }
     }
@@ -111,7 +112,7 @@ extension StorageService {
     
     func delete(record: Record, completion: @escaping (Result<Void, StorageError>) -> Void) {
         guard let context else {
-            print("ERROR: Cant get storage context")
+            os_log("ERROR: Cant get storage context")
             completion(.failure(.cantGetStorageContext))
             return
         }
@@ -123,7 +124,7 @@ extension StorageService {
         do {
             // Delete from storage
             guard let record = try context.fetch(fetchDescriptor).first else {
-                print("ERROR: Cant get record with name \(originalName) from storage")
+                os_log("ERROR: Cant get record with name \(originalName) from storage")
                 completion(.failure(.cantGetRecordWithIDFormStorage))
                 return
             }
@@ -135,11 +136,11 @@ extension StorageService {
                 andFormat: record.format
             )
             try fileManagerInstance.removeItem(at: recordURL)
-            print("** File will deleted: \(recordURL)")
+            os_log("** File will deleted: \(recordURL)")
             
             completion(.success(()))
         } catch {
-            print("ERROR: Cant delete record with name \(record.name), error: \(error)")
+            os_log("ERROR: Cant delete record with name \(record.name), error: \(error)")
             completion(.failure(.cantDeleteRecord))
             return
         }
@@ -150,7 +151,7 @@ extension StorageService {
     
     func searchRecords(withText text: String, completion: @escaping (Result<[Record], StorageError>) -> Void) {
         guard let context else {
-            print("ERROR: Cant get storage context")
+            os_log("ERROR: Cant get storage context")
             completion(.failure(.cantGetStorageContext))
             return
         }
@@ -164,11 +165,11 @@ extension StorageService {
             if !records.isEmpty {
                 completion(.success(records))
             } else {
-                print("ATTENTION: Fetched records is emtpy!")
+                os_log("ATTENTION: Fetched records is emtpy!")
                 completion(.success(records))
             }
         } catch {
-            print("ERROR: Cant get records from storage: \(error)")
+            os_log("ERROR: Cant get records from storage: \(error)")
             completion(.failure(.cantGetRecordsFormStorage))
         }
     }
@@ -178,7 +179,7 @@ extension StorageService {
     
     func rename(record: Record, newName name: String, completion: @escaping (Result<Void, StorageError>) -> Void) {
         guard let context else {
-            print("ERROR: Cant get storage context")
+            os_log("ERROR: Cant get storage context")
             completion(.failure(.cantGetStorageContext))
             return
         }
@@ -192,7 +193,7 @@ extension StorageService {
                 let record = try context.fetch(fetchDescriptor).first,
                 let recordDuration = record.duration
             else {
-                print("ERROR: Cant get record with name \(record.name) from storage")
+                os_log("ERROR: Cant get record with name \(record.name) from storage")
                 completion(.failure(.cantGetRecordWithIDFormStorage))
                 return
             }
@@ -212,9 +213,9 @@ extension StorageService {
             ))
             
             completion(.success(()))
-            print("** File \(originalName) renamed on: \(name)")
+            os_log("** File \(originalName) renamed on: \(name)")
         } catch {
-            print("ERROR: Cant get old record from storage: \(error)")
+            os_log("ERROR: Cant get old record from storage: \(error)")
             completion(.failure(.cantRenameRecord))
             return
         }

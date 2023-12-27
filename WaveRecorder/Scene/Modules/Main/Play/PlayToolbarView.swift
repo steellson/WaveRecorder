@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import OSLog
 import UIKit
 
 //MARK: - Impl
@@ -78,7 +79,7 @@ final class PlayToolbarView: UIView {
     
     private func animateLabels() {
         guard let viewModel else {
-            print(R.Strings.Errors.playViewModelIsNotSetted.rawValue)
+            os_log("\(R.Strings.Errors.playViewModelIsNotSetted.rawValue)")
             return
         }
         
@@ -128,7 +129,7 @@ final class PlayToolbarView: UIView {
         animateTappedButton(withSender: sender)
         
         guard let viewModel else {
-            print(R.Strings.Errors.playViewModelIsNotSetted.rawValue)
+            os_log("\(R.Strings.Errors.playViewModelIsNotSetted.rawValue)")
             return
         }
         

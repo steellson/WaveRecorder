@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import OSLog
 
 
 //MARK: - Protocols
@@ -38,6 +39,8 @@ final class MainViewModel: MainViewModelProtocol {
     private let assemblyBuilder: AssemblyProtocol
     private let storageService: StorageServiceProtocol
     
+    
+    //MARK: Init
     
     init(
         assemblyBuilder: AssemblyProtocol,
@@ -82,7 +85,7 @@ extension MainViewModel {
                 self.records = records
                 self.shouldUpdateInterface?(false)
             case .failure(let error):
-                print(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")
+                os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
             }
         }
     }
@@ -106,7 +109,7 @@ extension MainViewModel {
             case .success:
                 self.records[indexPath.item].name = name
             case .failure(let error):
-                print(R.Strings.Errors.cantRenameRecord.rawValue + " \(error)")
+                os_log("\(R.Strings.Errors.cantRenameRecord.rawValue + " \(error)")")
             }
         }
     }
@@ -125,7 +128,7 @@ extension MainViewModel {
                 self.records = records
                 self.shouldUpdateInterface?(false)
             case .failure(let error):
-                print(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")
+                os_log("\(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")")
             }
         }
     }
@@ -142,10 +145,10 @@ extension MainViewModel {
                 self.records.remove(at: indexPath.item)
                 self.shouldUpdateInterface?(false)
                 
-                print(R.Strings.Logs.recordDeleted.rawValue + record.name)
+                os_log("\(R.Strings.Logs.recordDeleted.rawValue + record.name)")
                 
             case .failure(let error):
-                print(R.Strings.Errors.cantDeleteRecordWithName.rawValue + record.name + " \(error)")
+                os_log("\(R.Strings.Errors.cantDeleteRecordWithName.rawValue + record.name + " \(error)")")
             }
         }
     }

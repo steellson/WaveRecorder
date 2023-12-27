@@ -5,6 +5,7 @@
 //  Created by Andrew Steellson on 23.11.2023.
 //
 
+import OSLog
 import UIKit
 
 
@@ -230,7 +231,7 @@ extension MainViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: MainTableViewCell.mainTableViewCellIdentifier,
             for: indexPath) as? MainTableViewCell else {
-            print(R.Strings.Errors.cantDequeReusableCell.rawValue)
+            os_log("\(R.Strings.Errors.cantDequeReusableCell.rawValue)")
             return UITableViewCell()
         }
 
@@ -281,7 +282,7 @@ extension MainViewController: UISearchBarDelegate, UISearchTextFieldDelegate {
         guard 
             textField == searchController.searchBar.searchTextField
         else {
-            print(R.Strings.Errors.wrongFieldResponder.rawValue)
+            os_log("\(R.Strings.Errors.wrongFieldResponder.rawValue)")
             return false
         }
         
