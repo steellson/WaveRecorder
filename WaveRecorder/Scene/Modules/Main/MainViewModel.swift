@@ -82,7 +82,7 @@ extension MainViewModel {
                 self.records = records
                 self.shouldUpdateInterface?(false)
             case .failure(let error):
-                print(R.Strings.cantGetRecordsFromStorage.rawValue + " \(error)")
+                print(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")
             }
         }
     }
@@ -106,7 +106,7 @@ extension MainViewModel {
             case .success:
                 self.records[indexPath.item].name = name
             case .failure(let error):
-                print(R.Strings.cantRenameRecord.rawValue + " \(error)")
+                print(R.Strings.Errors.cantRenameRecord.rawValue + " \(error)")
             }
         }
     }
@@ -125,7 +125,7 @@ extension MainViewModel {
                 self.records = records
                 self.shouldUpdateInterface?(false)
             case .failure(let error):
-                print(R.Strings.cantSearchRecordsWithText.rawValue + text + " \(error)")
+                print(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")
             }
         }
     }
@@ -142,10 +142,10 @@ extension MainViewModel {
                 self.records.remove(at: indexPath.item)
                 self.shouldUpdateInterface?(false)
                 
-                print(R.Strings.recordDeleted.rawValue + record.name)
+                print(R.Strings.Logs.recordDeleted.rawValue + record.name)
                 
             case .failure(let error):
-                print(R.Strings.cantDeleteRecordWithName.rawValue + record.name + " \(error)")
+                print(R.Strings.Errors.cantDeleteRecordWithName.rawValue + record.name + " \(error)")
             }
         }
     }
