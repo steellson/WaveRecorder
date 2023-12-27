@@ -78,7 +78,7 @@ final class PlayToolbarView: UIView {
     
     private func animateLabels() {
         guard let viewModel else {
-            print("ERROR: PlayViewModel isn't setted!")
+            print(R.Strings.Errors.playViewModelIsNotSetted.rawValue)
             return
         }
         
@@ -128,7 +128,7 @@ final class PlayToolbarView: UIView {
         animateTappedButton(withSender: sender)
         
         guard let viewModel else {
-            print("ERROR: PlayViewModel isn't setted!")
+            print(R.Strings.Errors.playViewModelIsNotSetted.rawValue)
             return
         }
         

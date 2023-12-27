@@ -70,7 +70,7 @@ extension PlayViewModel {
     
     func play(atTime time: Float, completion: @escaping () -> Void) {
         guard !isPlaying else {
-            print("ERROR: Audio is already playing!")
+            print(R.Strings.audioIsAlreadyPlaying)
             return
         }
         

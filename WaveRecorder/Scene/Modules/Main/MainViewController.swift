@@ -78,8 +78,8 @@ final class MainViewController: UIViewController {
             self.tableView.isEditing.toggle()
             
             self.editButton.title = self.tableView.isEditing
-            ? R.Strings.stopEditButtonTitle.rawValue
-            : R.Strings.editButtonTitle.rawValue
+            ? R.Strings.Titles.stopEditButtonTitle.rawValue
+            : R.Strings.Titles.editButtonTitle.rawValue
         }
     }
     
@@ -127,14 +127,14 @@ private extension MainViewController {
     }
     
     func setupEditButton() {
-        editButton.title = R.Strings.editButtonTitle.rawValue
+        editButton.title = R.Strings.Titles.editButtonTitle.rawValue
         editButton.tintColor = .black
         editButton.target = self
         editButton.action = #selector(editButtonDidTapped)
     }
     
     func setupTitleLabel() {
-        titleLabel.text = R.Strings.navigationTitleMain.rawValue
+        titleLabel.text = R.Strings.Titles.navigationTitleMain.rawValue
         titleLabel.textColor = .black
         titleLabel.backgroundColor = R.Colors.primaryBackgroundColor
         titleLabel.font = .systemFont(ofSize: 26, weight: .bold)
@@ -142,7 +142,7 @@ private extension MainViewController {
     }
     
     func setupSearchController() {
-        searchController.searchBar.placeholder = R.Strings.searchTextFieldPlaceholder.rawValue
+        searchController.searchBar.placeholder = R.Strings.Titles.searchTextFieldPlaceholder.rawValue
         searchController.searchBar.tintColor = .black
         searchController.searchBar.autocapitalizationType = .none
         searchController.searchBar.autocorrectionType = .no
@@ -230,7 +230,7 @@ extension MainViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: MainTableViewCell.mainTableViewCellIdentifier,
             for: indexPath) as? MainTableViewCell else {
-            print("ERROR: Cant dequeue reusable cell")
+            print(R.Strings.Errors.cantDequeReusableCell.rawValue)
             return UITableViewCell()
         }
 
@@ -281,7 +281,7 @@ extension MainViewController: UISearchBarDelegate, UISearchTextFieldDelegate {
         guard 
             textField == searchController.searchBar.searchTextField
         else {
-            print("ERROR: Wrong field responder")
+            print(R.Strings.Errors.wrongFieldResponder.rawValue)
             return false
         }
         

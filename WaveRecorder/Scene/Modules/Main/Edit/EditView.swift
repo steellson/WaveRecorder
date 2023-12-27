@@ -70,7 +70,7 @@ final class EditView: UIView {
     
     func reset() {
         guard let viewModel else {
-            print("ERROR: EditViewModel isn't setted!")
+            print(R.Strings.Errors.editViewModelIsNotSetted.rawValue)
             return
         }
         
@@ -84,7 +84,7 @@ final class EditView: UIView {
     
     private func setupSubviewsAnimated() {
         guard let viewModel else {
-            print("ERROR: EditViewModel isn't setted!")
+            print(R.Strings.Errors.editViewModelIsNotSetted.rawValue)
             return
         }
         
@@ -128,7 +128,7 @@ final class EditView: UIView {
     @objc
     private func renameButtonDidTapped() {
         guard let viewModel else {
-            print("ERROR: EditViewModel isn't setted!")
+            print(R.Strings.Errors.editViewModelIsNotSetted.rawValue)
             return
         }
         

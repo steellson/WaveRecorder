@@ -11,20 +11,58 @@ enum R {
     
     //MARK: - Strings
     
-    enum Strings: String {
+    enum Strings {
+     
         
-        //MARK: Main Screen
-        case navigationTitleMain = "All records"
-        case editButtonTitle = "Edit"
-        case stopEditButtonTitle = "Cancel"
-        case searchTextFieldPlaceholder = "Search"
+        //MARK: Erorrs
+        enum Errors: String {
+            
+            // Main View Model
+            case cantGetRecordsFromStorage = "ERROR: Cant get records from storage! "
+            case cantRenameRecord = "ERROR: Cant rename record! "
+            case cantSearchRecordsWithText = "ERROR: Cant search records with text: "
+            case cantDeleteRecordWithName = "ERROR: Cant delete record with name "
+            
+            //MARK: Main View
+            case cantDequeReusableCell = "ERROR: Cant dequeue reusable cell"
+            case wrongFieldResponder = "ERROR: Wrong field responder"
+            
+            
+            //MARK: Edit View
+            case editViewModelIsNotSetted = "ERROR: EditViewModel isn't setted!"
+            
+            
+            //MARK: Play View Model
+            case audioIsAlreadyPlaying = "ERROR: Audio is already playing!"
+
+            //MARK: Play View
+            case playViewModelIsNotSetted = "ERROR: PlayViewModel isn't setted!"
+        }
         
-        //MARK: System Log Messages
-        case dequeueMainTableViewCellError = "ERROR: Dequeue MainTableViewCell error!"
+        
+        //MARK: Logs
+        enum Logs: String {
+            case recordDeleted = "SUCCESS: Record deleted. Name: "
+        }
+        
+        
+        //MARK: Titles
+        enum Titles: String {
+            
+            //MARK: Main Screen
+            case navigationTitleMain = "All records"
+            case editButtonTitle = "Edit"
+            case stopEditButtonTitle = "Cancel"
+            case searchTextFieldPlaceholder = "Search"
+        }
+        
         
         //MARK: Identity
-        case mainTableViewCellIdentifier = "MainTableViewCellIdentifier"
+        enum Identifiers: String {
+            case mainTableViewCellIdentifier = "MainTableViewCellIdentifier"
+        }
     }
+    
     
     
     //MARK: - Colors

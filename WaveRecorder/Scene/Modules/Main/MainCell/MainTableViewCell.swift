@@ -12,7 +12,11 @@ import UIKit
 
 final class MainTableViewCell:  UITableViewCell {
     
-    static let mainTableViewCellIdentifier = R.Strings.mainTableViewCellIdentifier.rawValue
+    static let mainTableViewCellIdentifier = R.Strings
+        .Identifiers
+        .mainTableViewCellIdentifier
+        .rawValue
+    
     
     //MARK: Variables
     
