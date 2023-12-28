@@ -54,7 +54,6 @@ final class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupContentView()
-        setupEditButton()
         setupTitleLabel()
         setupSearchController()
         setupTableView()
@@ -63,6 +62,7 @@ final class MainViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        setupEditButton()
         seutpNavigationBar()
         setupNorifications()
     }
@@ -99,6 +99,7 @@ final class MainViewController: UIViewController {
             initialSpringVelocity: 1
         ) {
             DispatchQueue.main.async { [unowned self] in
+                self.setupEditButton()
                 self.tableView.reloadData()
             }
         }
@@ -109,6 +110,8 @@ final class MainViewController: UIViewController {
     
     @objc
     private func editButtonDidTapped() {
+        guard viewModel.numberOfRecords != 0 else { return }
+        
         DispatchQueue.main.async { [unowned self] in
             self.animateEditButton()
         }
@@ -138,6 +141,7 @@ private extension MainViewController {
         editButton.tintColor = .black
         editButton.target = self
         editButton.action = #selector(editButtonDidTapped)
+        editButton.isHidden = viewModel.numberOfRecords == 0
     }
     
     func setupTitleLabel() {
