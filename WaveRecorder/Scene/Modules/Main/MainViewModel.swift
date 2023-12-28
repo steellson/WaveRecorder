@@ -20,11 +20,7 @@ protocol Notifier: AnyObject {
     func removeNotification(withName name: NSNotification.Name, from: Any?)
 }
 
-protocol MainViewModelProtocol: InterfaceUpdatable, StorageServiceRepresentative, Notifier {
-    var numberOfRecords: Int { get }
-        
-    func importRecord(_ record: Record)
-    
+protocol MainViewModelProtocol: InterfaceUpdatable, StorageServiceRepresentative, Notifier {            
     func makeRecordView() -> IsolatedView
     func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol
 }
@@ -77,14 +73,6 @@ final class MainViewModel: MainViewModelProtocol {
 
 extension MainViewModel {
     
-    //MARK: - Import
-    
-    func importRecord(_ record: Record) {
-        storageService.save(record: record) { [unowned self] _ in
-            self.records.append(record)
-        }
-    }
-    
     //MARK: Upload
     
     func uploadRecords() {
@@ -98,6 +86,16 @@ extension MainViewModel {
             }
         }
     }
+    
+    
+    //MARK: Save
+    
+    func saveRecord(_ record: Record) {
+        storageService.save(record: record) { [unowned self] _ in
+            self.records.append(record)
+        }
+    }
+    
     
     //MARK: Get
     

@@ -46,7 +46,7 @@ extension RecordViewModel {
                     guard let record else { return }
                     self.record = record
                     self.parentViewModel.shouldUpdateInterface?(false)
-                    self.parentViewModel.importRecord(record)
+                    self.parentViewModel.saveRecord(record)
                 }
             }
         } else {

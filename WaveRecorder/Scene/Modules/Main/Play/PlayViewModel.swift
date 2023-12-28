@@ -11,10 +11,7 @@ import OSLog
 
 //MARK: - Protocol
 
-protocol PlayViewModelProtocol: AudioServiceRepresentative {
-    var progress: Float { get }
-    var duration: Float { get }
-    
+protocol PlayViewModelProtocol: AudioServiceRepresentative {    
     var elapsedTimeFormatted: String { get }
     var remainingTimeFormatted: String { get }
 }
@@ -27,13 +24,13 @@ final class PlayViewModel: PlayViewModelProtocol {
     var progress: Float = 0.0
     var duration: Float { Float(record.duration ?? 0) }
     
-    var elapsedTimeFormatted: String = "00:00"
-    var remainingTimeFormatted: String = "00:00"
+    private(set) var elapsedTimeFormatted: String = "00:00"
+    private(set) var remainingTimeFormatted: String = "00:00"
     
-    private var isPlaying = false
-
     private var elapsedTime: Float = 0.0
     private var remainingTime: Float = 0.0
+    
+    private var isPlaying = false
     
     private let record: Record
     private let audioService: AudioServiceProtocol

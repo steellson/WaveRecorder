@@ -20,7 +20,10 @@ protocol StorageServiceProtocol: AnyObject {
 }
 
 protocol StorageServiceRepresentative: AnyObject {
+    var numberOfRecords: Int { get }
+    
     func uploadRecords()
+    func saveRecord(_ record: Record)
     func getRecord(forIndexPath indexPath: IndexPath) -> Record
     func rename(recordForIndexPath indexPath: IndexPath, newName name: String)
     func search(withText text: String)
