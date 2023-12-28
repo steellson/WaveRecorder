@@ -92,6 +92,7 @@ extension MainViewModel {
     
     func saveRecord(_ record: Record) {
         storageService.save(record: record) { [unowned self] _ in
+            self.records.append(record)
             self.uploadRecords()
         }
     }

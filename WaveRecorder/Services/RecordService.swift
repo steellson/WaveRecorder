@@ -189,6 +189,13 @@ extension RecordService {
             ? os_log(">>> RECORD FINISHED!")
             : os_log(">>> RECORD IS NOT STOPPED! SOMETHING WRONG")
             
+            // Reset category back
+            do {
+                try self.audioSession.setCategory(.playback)
+            } catch {
+                os_log("ERROR: Couldnt reset audio session category after record. \(error)")
+            }
+            
             // Remove recorder
             self.audioRecorder = nil
 
