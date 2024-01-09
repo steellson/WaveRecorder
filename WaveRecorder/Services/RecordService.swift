@@ -141,7 +141,7 @@ extension RecordService {
         )
         
         // Process
-        DispatchQueue.global().async { [weak self] in
+        DispatchQueue.global(qos: .userInitiated).sync { [weak self] in
             guard let strongSelf = self else { return }
 
             do {
@@ -173,7 +173,7 @@ extension RecordService {
     //MARK: Stop
     
     func stopRecord(completion: ((Record?) -> Void)?) {
-        DispatchQueue.global().async { [weak self] in
+        DispatchQueue.global(qos: .userInitiated).sync { [weak self] in
             guard let strongSelf = self else { return }
             
             // Set duration
