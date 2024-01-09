@@ -141,31 +141,29 @@ extension RecordService {
         )
         
         // Process
-        DispatchQueue.global().async { [unowned self] in
+        DispatchQueue.global().async { [weak self] in
+            guard let strongSelf = self else { return }
+
             do {
-                try self.audioSession.setActive(true)
-                try self.audioSession.setCategory(.record)
+                try strongSelf.audioSession.setActive(true)
+                try strongSelf.audioSession.setCategory(.record)
                 
-                self.audioRecorder = try AVAudioRecorder(url: storedURL, settings: settings)
-                self.audioRecorder.isMeteringEnabled = true
-                self.audioRecorder.prepareToRecord()
-                self.audioRecorder.record()
+                strongSelf.audioRecorder = try AVAudioRecorder(url: storedURL, settings: settings)
+                strongSelf.audioRecorder.isMeteringEnabled = true
+                strongSelf.audioRecorder.prepareToRecord()
+                strongSelf.audioRecorder.record()
+                os_log(">>> RECORD STARTED!")
                 
                 let record = Record(
                     name: recordWillNamed,
                     date: .now,
-                    format: format.rawValue,
+                    format: strongSelf.format.rawValue,
                     duration: nil
                 )
-                self.record = record
-                
-                // Check result
-                self.audioRecorder.isRecording
-                ? os_log(">>> RECORD STARTED!")
-                : os_log(">>> RECORD IS NOT STARTERD! SOMETHING WRONG")
+                strongSelf.record = record
                 
             } catch {
-                self.stopRecord(completion: nil)
+                strongSelf.stopRecord(completion: nil)
                 os_log("ERROR: Cant initialize audio recorder")
             }
         }
@@ -175,32 +173,29 @@ extension RecordService {
     //MARK: Stop
     
     func stopRecord(completion: ((Record?) -> Void)?) {
-        DispatchQueue.global().async { [unowned self] in
+        DispatchQueue.global().async { [weak self] in
+            guard let strongSelf = self else { return }
             
             // Set duration
-            let duration = self.audioRecorder.currentTime
-            self.record?.duration = duration
+            let duration = strongSelf.audioRecorder.currentTime
+            strongSelf.record?.duration = duration
             
             // Stop recording
-            self.audioRecorder.stop()
-            
-            // Check
-            !self.audioRecorder.isRecording
-            ? os_log(">>> RECORD FINISHED!")
-            : os_log(">>> RECORD IS NOT STOPPED! SOMETHING WRONG")
+            strongSelf.audioRecorder.stop()
+            os_log(">>> RECORD FINISHED!")
             
             // Reset category back
             do {
-                try self.audioSession.setCategory(.playback)
+                try strongSelf.audioSession.setCategory(.playback)
             } catch {
                 os_log("ERROR: Couldnt reset audio session category after record. \(error)")
             }
             
             // Remove recorder
-            self.audioRecorder = nil
+            strongSelf.audioRecorder = nil
 
             // Send record
-            completion?(self.record)
+            completion?(strongSelf.record)
         }
     }
 }
