@@ -23,6 +23,7 @@ protocol RecordServiceRepresentative: AnyObject {
 }
 
 
+
 //MARK: - Impl
 
 final class RecordService: RecordServiceProtocol {
@@ -132,6 +133,8 @@ extension RecordService {
             return
         }
         
+        guard audioRecorder == nil else { return }
+        
         // Prepare
         let settings = setupSettings()
         let recordWillNamed = setupRecordName()
@@ -173,6 +176,8 @@ extension RecordService {
     //MARK: Stop
     
     func stopRecord(completion: ((Record?) -> Void)?) {
+        guard audioRecorder != nil else { return }
+
         DispatchQueue.global(qos: .userInitiated).sync { [weak self] in
             guard let strongSelf = self else { return }
             
