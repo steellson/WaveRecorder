@@ -13,7 +13,7 @@ import OSLog
 
 //MARK: - Protocols
 
-protocol RecordServiceProtocol: AnyObject {
+protocol RecordServiceProtocol: AnyObject, Service {
     func startRecord()
     func stopRecord(completion: ((Record?) -> Void)?)
 }

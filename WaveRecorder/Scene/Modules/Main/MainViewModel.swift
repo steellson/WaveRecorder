@@ -21,7 +21,7 @@ protocol Notifier: AnyObject {
 }
 
 protocol MainViewModelProtocol: InterfaceUpdatable, StorageServiceRepresentative, Notifier {            
-    func makeRecordView() -> IsolatedView
+    func makeRecordView() -> IsolatedViewModule
     func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol
 }
 
@@ -35,13 +35,13 @@ final class MainViewModel: MainViewModelProtocol {
     var numberOfRecords: Int {
         records.count
     }
-        
+    
     private var records: [Record] = []
     
     private let assemblyBuilder: AssemblyProtocol
     private let storageService: StorageServiceProtocol
     private let notificationCenter: NotificationCenter
-
+    
     
     //MARK: Init
     
@@ -58,7 +58,7 @@ final class MainViewModel: MainViewModelProtocol {
     }
     
     
-    func makeRecordView() -> IsolatedView {
+    func makeRecordView() -> IsolatedViewModule {
         assemblyBuilder.get(subModule: .record(parentVM: self))
     }
     

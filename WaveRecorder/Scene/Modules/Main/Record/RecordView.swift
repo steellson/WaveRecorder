@@ -10,7 +10,7 @@ import UIKit
 
 //MARK: - Impl
 
-final class RecordView: UIView, IsolatedView {
+final class RecordView: UIView, IsolatedViewModule {
     
     private let viewModel: RecordViewModelProtocol
     

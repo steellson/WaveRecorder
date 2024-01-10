@@ -11,7 +11,7 @@ import SwiftData
 
 //MARK: - Protocols
 
-protocol StorageServiceProtocol: AnyObject {
+protocol StorageServiceProtocol: AnyObject, Service {
     func save(record: Record, completion: @escaping (Result<Void, StorageError>) -> Void)
     func getRecords(completion: @escaping (Result<[Record], StorageError>) -> Void)
     func delete(record: Record, completion: @escaping (Result<Void, StorageError>) -> Void)

@@ -11,7 +11,7 @@ import UIKit
 
 //MARK: - Impl
 
-final class MainViewController: UIViewController {
+final class MainViewController: UIViewController, IsolatedControllerModule {
     
     private let editButton = UIBarButtonItem()
     private let titleLabel = UILabel()

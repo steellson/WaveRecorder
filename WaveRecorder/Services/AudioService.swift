@@ -11,7 +11,7 @@ import OSLog
 
 //MARK: - Protocols
 
-protocol AudioServiceProtocol: AnyObject {
+protocol AudioServiceProtocol: AnyObject, Service {
     func play(record: Record, onTime time: Float)
     func stop()
 }

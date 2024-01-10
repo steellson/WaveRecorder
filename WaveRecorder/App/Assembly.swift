@@ -12,8 +12,8 @@ import UIKit
 //MARK: - Protocol
 
 protocol AssemblyProtocol: AnyObject {
-    func get(module: Assembly.Module) -> UIViewController
-    func get(subModule: Assembly.SubModule) -> IsolatedView
+    func get(module: Assembly.Module) -> IsolatedControllerModule
+    func get(subModule: Assembly.SubModule) -> IsolatedViewModule
     
     func getMainCellViewModel(withRecord record: Record, indexPath: IndexPath) -> MainCellViewModelProtocol
     func getEditViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> EditViewModelProtocol
@@ -35,8 +35,9 @@ final class Assembly: AssemblyProtocol {
         case record(parentVM: MainViewModel)
     }
     
-    private let services = Services()
+    
     private let helpers = Helpers()
+    private lazy var serviceFactory: ServiceFactoryProtocol = ServiceFactory(helpers: helpers)
     
     
     //MARK: Main View Model
@@ -44,7 +45,7 @@ final class Assembly: AssemblyProtocol {
     private lazy var mainViewModel: MainViewModelProtocol = {
         MainViewModel(
             assemblyBuilder: self,
-            storageService: services.storageService,
+            storageService: serviceFactory.createService(ofType: .storageService) as! StorageServiceProtocol,
             notificationCenter: helpers.notificationCenter
         )
     }()
@@ -55,11 +56,11 @@ final class Assembly: AssemblyProtocol {
 
 extension Assembly {
     
-    func get(module: Module) -> UIViewController {
+    func get(module: Module) -> IsolatedControllerModule {
         build(module: module)
     }
     
-    func get(subModule: SubModule) -> IsolatedView {
+    func get(subModule: SubModule) -> IsolatedViewModule {
         build(subModule: subModule)
     }
     
@@ -81,19 +82,19 @@ extension Assembly {
 
 private extension Assembly {
     
-    func build(module: Module) -> UIViewController {
+    func build(module: Module) -> IsolatedControllerModule {
         switch module {
         case .main:
             MainViewController(viewModel: mainViewModel)
         }
     }
     
-    func build(subModule: SubModule) -> IsolatedView {
+    func build(subModule: SubModule) -> IsolatedViewModule {
         switch subModule {
         case .record:
             let viewModel: RecordViewModelProtocol = RecordViewModel(
                 parentViewModel: mainViewModel,
-                recordService: services.recordService
+                recordService: serviceFactory.createService(ofType: .recordService) as! RecordServiceProtocol
             )
             return RecordView(viewModel: viewModel)
         }
@@ -118,7 +119,7 @@ private extension Assembly {
     func buildPlayViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> PlayViewModelProtocol {
         PlayViewModel(
             record: record,
-            audioService: services.audioService,
+            audioService: serviceFactory.createService(ofType: .audioService) as! AudioServiceProtocol,
             parentViewModel: parentViewModel,
             timeRefresher: helpers.timeRefresher,
             formatter: helpers.formatter
@@ -137,16 +138,7 @@ struct Helpers {
 }
 
 
-//MARK: - Services
-
-struct Services<FManager: FileManager> {
-    let audioService: AudioServiceProtocol = AudioService(fileManager: FManager.default)
-    let recordService: RecordServiceProtocol = RecordService(fileManager: FManager.default)
-    let storageService: StorageServiceProtocol = StorageService(fileManager: FManager.default)
-}
-
-
-
 //MARK: - Isolated View
 
-protocol IsolatedView: UIView { }
+protocol IsolatedViewModule: UIView { }
+protocol IsolatedControllerModule: UIViewController { }
