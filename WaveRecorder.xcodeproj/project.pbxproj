@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		3D0FC3002B205B8700E10440 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0FC2FF2B205B8700E10440 /* StorageService.swift */; };
 		3D568FA72B4EDD900074ADB4 /* ServiceFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D568FA62B4EDD900074ADB4 /* ServiceFactory.swift */; };
-		3D568FA92B4EE70F0074ADB4 /* ViewModelFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D568FA82B4EE70F0074ADB4 /* ViewModelFactory.swift */; };
 		3D682D9B2B1F297600067DFE /* RecordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D682D982B1F297600067DFE /* RecordViewModel.swift */; };
 		3D682D9C2B1F297600067DFE /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D682D992B1F297600067DFE /* MainViewModel.swift */; };
 		3D682D9D2B1F297600067DFE /* MainCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D682D9A2B1F297600067DFE /* MainCellViewModel.swift */; };
@@ -43,7 +42,6 @@
 /* Begin PBXFileReference section */
 		3D0FC2FF2B205B8700E10440 /* StorageService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		3D568FA62B4EDD900074ADB4 /* ServiceFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceFactory.swift; sourceTree = "<group>"; };
-		3D568FA82B4EE70F0074ADB4 /* ViewModelFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelFactory.swift; sourceTree = "<group>"; };
 		3D682D982B1F297600067DFE /* RecordViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordViewModel.swift; sourceTree = "<group>"; };
 		3D682D992B1F297600067DFE /* MainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		3D682D9A2B1F297600067DFE /* MainCellViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainCellViewModel.swift; sourceTree = "<group>"; };
@@ -101,7 +99,6 @@
 			isa = PBXGroup;
 			children = (
 				3D568FA62B4EDD900074ADB4 /* ServiceFactory.swift */,
-				3D568FA82B4EE70F0074ADB4 /* ViewModelFactory.swift */,
 			);
 			path = Factories;
 			sourceTree = "<group>";
@@ -342,7 +339,6 @@
 				3DEAFFC32B109B6D004CAE97 /* UINavigationController+Extension.swift in Sources */,
 				3D7CB10D2B26E69000F5B91F /* AudioService.swift in Sources */,
 				3D0FC3002B205B8700E10440 /* StorageService.swift in Sources */,
-				3D568FA92B4EE70F0074ADB4 /* ViewModelFactory.swift in Sources */,
 				3D682DA42B1F29B000067DFE /* MainTableViewCell.swift in Sources */,
 				3DEAFFB42B0F7F2A004CAE97 /* UIView+Extension.swift in Sources */,
 				3DFCE9AE2B331FF600D27A0B /* TimeRefresher.swift in Sources */,

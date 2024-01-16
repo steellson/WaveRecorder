@@ -36,12 +36,16 @@ final class RecordService: RecordServiceProtocol {
     private var audioRecorder: AVAudioRecorder!
     private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
     
+    private let urlBuilder: URLBuilder
     private let fileManager: FileManager
     
     init(
+        urlBuilder: URLBuilder,
         fileManager: FileManager
     ) {
+        self.urlBuilder = urlBuilder
         self.fileManager = fileManager
+        
         setupAudioRecorder()
     }
 }
@@ -138,7 +142,7 @@ extension RecordService {
         // Prepare
         let settings = setupSettings()
         let recordWillNamed = setupRecordName()
-        let storedURL = URLBuilder.buildURL(
+        let storedURL = urlBuilder.buildURL(
             forRecordWithName: recordWillNamed,
             andFormat: format.rawValue
         )

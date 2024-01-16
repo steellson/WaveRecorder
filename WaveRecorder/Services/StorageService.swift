@@ -51,12 +51,16 @@ final class StorageService: StorageServiceProtocol {
     private var container: ModelContainer?
     private var context: ModelContext?
     
+    private let urlBuilder: URLBuilder
     private let fileManager: FileManager
     
     init(
+        urlBuilder: URLBuilder,
         fileManager: FileManager
     ) {
+        self.urlBuilder = urlBuilder
         self.fileManager = fileManager
+        
         initialSetup()
     }
     
@@ -139,7 +143,7 @@ extension StorageService {
             context.delete(record)
             
             // Delete from file manager
-            let recordURL = URLBuilder.buildURL(
+            let recordURL = urlBuilder.buildURL(
                 forRecordWithName: record.name,
                 andFormat: record.format
             )
@@ -207,8 +211,8 @@ extension StorageService {
             }
             
             // Change file name on device and replace it in storage
-            let originPath = URLBuilder.buildURL(forRecordWithName: record.name, andFormat: record.format)
-            let destinationPath = URLBuilder.buildURL(forRecordWithName: name, andFormat: record.format)
+            let originPath = urlBuilder.buildURL(forRecordWithName: record.name, andFormat: record.format)
+            let destinationPath = urlBuilder.buildURL(forRecordWithName: name, andFormat: record.format)
             try FileManager.default.moveItem(at: originPath, to: destinationPath)
             
             context.delete(record)

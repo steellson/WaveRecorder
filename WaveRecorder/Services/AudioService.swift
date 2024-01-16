@@ -32,13 +32,16 @@ protocol AudioServiceRepresentative: AnyObject {
 
 final class AudioService: AudioServiceProtocol {
     
+    private let urlBuilder: URLBuilder
     private let fileManager: FileManager
     
     private var audioPlayer: AVAudioPlayer?
     
     init(
+        urlBuilder: URLBuilder,
         fileManager: FileManager
     ) {
+        self.urlBuilder = urlBuilder
         self.fileManager = fileManager
     }
 }
@@ -76,7 +79,7 @@ extension AudioService {
     //MARK: Play
     
     func play(record: Record, onTime time: Float) {
-        let recordURL = URLBuilder.buildURL(
+        let recordURL = urlBuilder.buildURL(
             forRecordWithName: record.name,
             andFormat: record.format
         )

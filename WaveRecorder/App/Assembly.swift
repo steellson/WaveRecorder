@@ -135,6 +135,7 @@ struct Helpers {
     let notificationCenter: NotificationCenter = NotificationCenter.default
     let formatter: Formatter = Formatter.instance
     let timeRefresher: TimeRefresherProtocol = TimeRefresher()
+    let urlBuilder: URLBuilderImpl = URLBuilderImpl()
 }
 
 

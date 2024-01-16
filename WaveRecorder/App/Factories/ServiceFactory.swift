@@ -40,9 +40,18 @@ final class ServiceFactory: ServiceFactoryProtocol {
 
     func createService(ofType type: ServiceType) -> Service {
         switch type {
-        case .audioService: AudioService(fileManager: helpers.fileManager)
-        case .recordService: RecordService(fileManager: helpers.fileManager)
-        case .storageService: StorageService(fileManager: helpers.fileManager)
+        case .audioService: AudioService(
+            urlBuilder: helpers.urlBuilder,
+            fileManager: helpers.fileManager
+        )
+        case .recordService: RecordService(
+            urlBuilder: helpers.urlBuilder,
+            fileManager: helpers.fileManager
+        )
+        case .storageService: StorageService(
+            urlBuilder: helpers.urlBuilder,
+            fileManager: helpers.fileManager
+        )
         }
     }
 }

@@ -7,9 +7,18 @@
 
 import Foundation
 
-final class URLBuilder {
+//MARK: - Protocol
+
+protocol URLBuilder: AnyObject {
+    func buildURL(forRecordWithName name: String, andFormat format: String) -> URL
+}
+
+
+//MARK: - Impl
+
+final class URLBuilderImpl: URLBuilder {
     
-    static func buildURL(
+    func buildURL(
         forRecordWithName name: String,
         andFormat format: String
     ) -> URL {
