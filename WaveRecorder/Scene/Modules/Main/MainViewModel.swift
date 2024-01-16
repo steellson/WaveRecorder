@@ -20,7 +20,18 @@ protocol Notifier: AnyObject {
     func removeNotification(withName name: NSNotification.Name, from: Any?)
 }
 
-protocol MainViewModelProtocol: InterfaceUpdatable, StorageServiceRepresentative, Notifier {            
+protocol RecordsTableViewRepresentative: AnyObject {
+    var numberOfRecords: Int { get }
+    
+    func uploadRecords()
+    func saveRecord(_ record: Record)
+    func getRecord(forIndexPath indexPath: IndexPath) -> Record
+    func rename(recordForIndexPath indexPath: IndexPath, newName name: String)
+    func search(withText text: String)
+    func delete(recordForIndexPath indexPath: IndexPath)
+}
+
+protocol MainViewModelProtocol: InterfaceUpdatable, RecordsTableViewRepresentative, Notifier {
     func makeRecordView() -> IsolatedViewModule
     func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol
 }

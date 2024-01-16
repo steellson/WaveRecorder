@@ -11,17 +11,12 @@ import OSLog
 
 
 
-//MARK: - Protocols
+//MARK: - Protocol
 
 protocol RecordServiceProtocol: AnyObject, Service {
     func startRecord()
     func stopRecord(completion: ((Record?) -> Void)?)
 }
-
-protocol RecordServiceRepresentative: AnyObject {
-    func record(isRecording: Bool)
-}
-
 
 
 //MARK: - Impl

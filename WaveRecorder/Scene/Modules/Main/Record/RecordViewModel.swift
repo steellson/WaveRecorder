@@ -11,7 +11,9 @@ import AVFoundation
 
 //MARK: - Protocol
 
-protocol RecordViewModelProtocol: RecordServiceRepresentative { }
+protocol RecordViewModelProtocol: AnyObject {
+    func record(isRecording: Bool)
+}
 
 
 //MARK: - Impl

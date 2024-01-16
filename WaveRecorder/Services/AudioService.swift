@@ -16,17 +16,6 @@ protocol AudioServiceProtocol: AnyObject, Service {
     func stop()
 }
 
-protocol AudioServiceRepresentative: AnyObject {
-    var progress: Float { get }
-    var duration: Float { get }
-    
-    func goBack()
-    func play(atTime time: Float, completion: @escaping () -> Void)
-    func stop(completion: @escaping () -> Void)
-    func goForward()
-    func deleteRecord()
-}
-
 
 //MARK: - Impl
 

@@ -39,6 +39,8 @@ final class Assembly: AssemblyProtocol {
     }
     
     
+    //MARK: Factories
+    
     private let helperFactory: HelperFactory = HelperFactoryImpl()
     private lazy var serviceFactory: ServiceFactory = ServiceFactoryImpl(helperFactory: helperFactory)
     
