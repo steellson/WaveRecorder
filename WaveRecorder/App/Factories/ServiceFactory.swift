@@ -12,7 +12,7 @@ import Foundation
 
 protocol Service: AnyObject { }
 
-protocol ServiceFactoryProtocol: AnyObject {
+protocol ServiceFactory: AnyObject {
     func createService(ofType type: ServiceType) -> Service
 }
 
@@ -28,29 +28,32 @@ enum ServiceType {
 
 //MARK: - Impl
 
-final class ServiceFactory: ServiceFactoryProtocol {
+final class ServiceFactoryImpl: ServiceFactory {
 
-    private let helpers: Helpers
+    private let helperFactory: HelperFactory
     
     init(
-        helpers: Helpers
+        helperFactory: HelperFactory
     ) {
-        self.helpers = helpers
+        self.helperFactory = helperFactory
     }
 
     func createService(ofType type: ServiceType) -> Service {
+        let urlBuilder = helperFactory.createHelper(ofType: .urlBuilder) as! URLBuilder
+        let fileManager = helperFactory.createHelper(ofType: .fileManager) as! FileManager
+    
         switch type {
-        case .audioService: AudioService(
-            urlBuilder: helpers.urlBuilder,
-            fileManager: helpers.fileManager
+        case .audioService: return AudioService(
+            urlBuilder: urlBuilder,
+            fileManager: fileManager
         )
-        case .recordService: RecordService(
-            urlBuilder: helpers.urlBuilder,
-            fileManager: helpers.fileManager
+        case .recordService: return RecordService(
+            urlBuilder: urlBuilder,
+            fileManager: fileManager
         )
-        case .storageService: StorageService(
-            urlBuilder: helpers.urlBuilder,
-            fileManager: helpers.fileManager
+        case .storageService: return StorageService(
+            urlBuilder: urlBuilder,
+            fileManager: fileManager
         )
         }
     }

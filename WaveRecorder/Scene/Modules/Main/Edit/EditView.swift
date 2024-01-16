@@ -92,7 +92,7 @@ final class EditView: UIView {
         UIView.animate(withDuration: 0.3) {
             self.titleLabelField.text = viewModel.recordName
             self.titleLabelField.isEnabled = viewModel.isEditing
-            self.dateLabel.text = Formatter.instance.formatDate(viewModel.recordedAt)
+            self.dateLabel.text = viewModel.recordedAt
             self.animateRenameButton(isEditingStarts: viewModel.isEditing)
         }
     }

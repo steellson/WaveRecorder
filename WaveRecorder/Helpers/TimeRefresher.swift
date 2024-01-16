@@ -11,9 +11,10 @@ import OSLog
 
 typealias TimeRefresherAction = () -> Void
 
+
 //MARK: - Protocol
 
-protocol TimeRefresherProtocol: AnyObject {
+protocol TimeRefresherProtocol: Helper {
     var isRunning: Bool { get }
     
     func register(_ action: @escaping TimeRefresherAction)

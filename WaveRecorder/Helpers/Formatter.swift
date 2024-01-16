@@ -7,14 +7,21 @@
 
 import Foundation
 
-final class Formatter {
-    
-    static let instance = Formatter()
-    
-    private let dateFormatter = DateFormatter()
 
+//MARK: - Protocol
+
+protocol FormatterProtocol: Helper {
+    func formatDate(_ date: Date) -> String
+    func formatDuration(_ duration: TimeInterval) -> String
+}
+
+
+//MARK: - Impl
+
+final class FormatterImpl: FormatterProtocol {
+        
+    private let dateFormatter = DateFormatter()
     
-    private init() {}
     
     func formatDate(_ date: Date) -> String {
         dateFormatter.dateFormat = "d MMM. YYYY hh:mm"

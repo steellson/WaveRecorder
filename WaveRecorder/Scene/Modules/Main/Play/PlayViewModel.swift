@@ -36,7 +36,7 @@ final class PlayViewModel: PlayViewModelProtocol {
     private let audioService: AudioServiceProtocol
     private let parentViewModel: MainCellViewModelProtocol
     private let timeRefresher: TimeRefresherProtocol
-    private let formatter: Formatter
+    private let formatter: FormatterImpl
 
     
     //MARK: Init
@@ -46,7 +46,7 @@ final class PlayViewModel: PlayViewModelProtocol {
         audioService: AudioServiceProtocol,
         parentViewModel: MainCellViewModelProtocol,
         timeRefresher: TimeRefresherProtocol,
-        formatter: Formatter
+        formatter: FormatterImpl
     ) {
         self.record = record
         self.audioService = audioService

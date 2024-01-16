@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		3D0FC3002B205B8700E10440 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0FC2FF2B205B8700E10440 /* StorageService.swift */; };
+		3D5665F32B56B32D0047A32B /* HelperFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5665F22B56B32D0047A32B /* HelperFactory.swift */; };
+		3D5665F52B56B8410047A32B /* FileManager+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5665F42B56B8410047A32B /* FileManager+Extension.swift */; };
+		3D5665F72B56B8700047A32B /* NotificationCenter+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5665F62B56B8700047A32B /* NotificationCenter+Extension.swift */; };
 		3D568FA72B4EDD900074ADB4 /* ServiceFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D568FA62B4EDD900074ADB4 /* ServiceFactory.swift */; };
 		3D682D9B2B1F297600067DFE /* RecordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D682D982B1F297600067DFE /* RecordViewModel.swift */; };
 		3D682D9C2B1F297600067DFE /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D682D992B1F297600067DFE /* MainViewModel.swift */; };
@@ -41,6 +44,9 @@
 
 /* Begin PBXFileReference section */
 		3D0FC2FF2B205B8700E10440 /* StorageService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
+		3D5665F22B56B32D0047A32B /* HelperFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperFactory.swift; sourceTree = "<group>"; };
+		3D5665F42B56B8410047A32B /* FileManager+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extension.swift"; sourceTree = "<group>"; };
+		3D5665F62B56B8700047A32B /* NotificationCenter+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationCenter+Extension.swift"; sourceTree = "<group>"; };
 		3D568FA62B4EDD900074ADB4 /* ServiceFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceFactory.swift; sourceTree = "<group>"; };
 		3D682D982B1F297600067DFE /* RecordViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordViewModel.swift; sourceTree = "<group>"; };
 		3D682D992B1F297600067DFE /* MainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
@@ -95,9 +101,28 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		3D5665F82B56B8770047A32B /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				3DEAFFB32B0F7F2A004CAE97 /* UIView+Extension.swift */,
+				3DEAFFC22B109B6D004CAE97 /* UINavigationController+Extension.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
+		3D5665F92B56B87F0047A32B /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				3D5665F42B56B8410047A32B /* FileManager+Extension.swift */,
+				3D5665F62B56B8700047A32B /* NotificationCenter+Extension.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		3D568FAA2B4EE71B0074ADB4 /* Factories */ = {
 			isa = PBXGroup;
 			children = (
+				3D5665F22B56B32D0047A32B /* HelperFactory.swift */,
 				3D568FA62B4EDD900074ADB4 /* ServiceFactory.swift */,
 			);
 			path = Factories;
@@ -235,8 +260,8 @@
 		3DEAFFB22B0F7F0B004CAE97 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				3DEAFFB32B0F7F2A004CAE97 /* UIView+Extension.swift */,
-				3DEAFFC22B109B6D004CAE97 /* UINavigationController+Extension.swift */,
+				3D5665F82B56B8770047A32B /* UIKit */,
+				3D5665F92B56B87F0047A32B /* Helpers */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -338,7 +363,9 @@
 				3DEAFFA92B0F6713004CAE97 /* Resources.swift in Sources */,
 				3DEAFFC32B109B6D004CAE97 /* UINavigationController+Extension.swift in Sources */,
 				3D7CB10D2B26E69000F5B91F /* AudioService.swift in Sources */,
+				3D5665F32B56B32D0047A32B /* HelperFactory.swift in Sources */,
 				3D0FC3002B205B8700E10440 /* StorageService.swift in Sources */,
+				3D5665F52B56B8410047A32B /* FileManager+Extension.swift in Sources */,
 				3D682DA42B1F29B000067DFE /* MainTableViewCell.swift in Sources */,
 				3DEAFFB42B0F7F2A004CAE97 /* UIView+Extension.swift in Sources */,
 				3DFCE9AE2B331FF600D27A0B /* TimeRefresher.swift in Sources */,
@@ -350,6 +377,7 @@
 				3D682DAB2B1F29D300067DFE /* PlayToolbarView.swift in Sources */,
 				3D682DA32B1F29B000067DFE /* EditView.swift in Sources */,
 				3D7CB1092B26E2ED00F5B91F /* RecordService.swift in Sources */,
+				3D5665F72B56B8700047A32B /* NotificationCenter+Extension.swift in Sources */,
 				3DEAFFAF2B0F766E004CAE97 /* Assembly.swift in Sources */,
 				3DFCE9CF2B35B68800D27A0B /* RecordWaveView.swift in Sources */,
 				3D682D9B2B1F297600067DFE /* RecordViewModel.swift in Sources */,

@@ -11,7 +11,7 @@ import Foundation
 
 protocol EditViewModelProtocol: AnyObject {
     var recordName: String { get }
-    var recordedAt: Date { get }
+    var recordedAt: String { get }
     var isEditing: Bool { get }
             
     func switchEditing()
@@ -28,8 +28,8 @@ final class EditViewModel: EditViewModelProtocol {
         record.name
     }
     
-    var recordedAt: Date {
-        record.date
+    var recordedAt: String {
+        formatter.formatDate(record.date)
     }
     
     private(set) var isEditing = false
@@ -37,13 +37,17 @@ final class EditViewModel: EditViewModelProtocol {
     private let record: Record
     private let parentViewModel: MainCellViewModelProtocol
     
+    private let formatter: FormatterProtocol
+    
     
     //MARK: Init
     
     init(
+        formatter: FormatterProtocol,
         parentViewModel: MainCellViewModelProtocol,
         record: Record
     ) {
+        self.formatter = formatter
         self.parentViewModel = parentViewModel
         self.record = record
     }

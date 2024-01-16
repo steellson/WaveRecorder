@@ -9,7 +9,7 @@ import Foundation
 
 //MARK: - Protocol
 
-protocol URLBuilder: AnyObject {
+protocol URLBuilder: Helper {
     func buildURL(forRecordWithName name: String, andFormat format: String) -> URL
 }
 

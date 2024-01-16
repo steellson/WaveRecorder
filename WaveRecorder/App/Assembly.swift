@@ -9,7 +9,10 @@ import Foundation
 import UIKit
 
 
-//MARK: - Protocol
+//MARK: - Protocols
+
+protocol IsolatedViewModule: UIView { }
+protocol IsolatedControllerModule: UIViewController { }
 
 protocol AssemblyProtocol: AnyObject {
     func get(module: Assembly.Module) -> IsolatedControllerModule
@@ -36,8 +39,8 @@ final class Assembly: AssemblyProtocol {
     }
     
     
-    private let helpers = Helpers()
-    private lazy var serviceFactory: ServiceFactoryProtocol = ServiceFactory(helpers: helpers)
+    private let helperFactory: HelperFactory = HelperFactoryImpl()
+    private lazy var serviceFactory: ServiceFactory = ServiceFactoryImpl(helperFactory: helperFactory)
     
     
     //MARK: Main View Model
@@ -46,7 +49,7 @@ final class Assembly: AssemblyProtocol {
         MainViewModel(
             assemblyBuilder: self,
             storageService: serviceFactory.createService(ofType: .storageService) as! StorageServiceProtocol,
-            notificationCenter: helpers.notificationCenter
+            notificationCenter: helperFactory.createHelper(ofType: .notificationCenter) as! NotificationCenter
         )
     }()
 }
@@ -111,6 +114,7 @@ private extension Assembly {
         
     func buildEditViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> EditViewModelProtocol {
         EditViewModel(
+            formatter: helperFactory.createHelper(ofType: .formatter) as! FormatterProtocol,
             parentViewModel: parentViewModel,
             record: record
         )
@@ -121,25 +125,8 @@ private extension Assembly {
             record: record,
             audioService: serviceFactory.createService(ofType: .audioService) as! AudioServiceProtocol,
             parentViewModel: parentViewModel,
-            timeRefresher: helpers.timeRefresher,
-            formatter: helpers.formatter
+            timeRefresher: helperFactory.createHelper(ofType: .timeRefresher) as! TimeRefresherProtocol,
+            formatter: helperFactory.createHelper(ofType: .formatter) as! FormatterImpl
         )
     }
 }
-
-
-//MARK: Helpers
-
-struct Helpers {
-    let fileManager: FileManager = FileManager.default
-    let notificationCenter: NotificationCenter = NotificationCenter.default
-    let formatter: Formatter = Formatter.instance
-    let timeRefresher: TimeRefresherProtocol = TimeRefresher()
-    let urlBuilder: URLBuilderImpl = URLBuilderImpl()
-}
-
-
-//MARK: - Isolated View
-
-protocol IsolatedViewModule: UIView { }
-protocol IsolatedControllerModule: UIViewController { }
