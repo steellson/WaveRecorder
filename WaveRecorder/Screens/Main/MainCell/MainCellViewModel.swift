@@ -25,7 +25,7 @@ protocol MainCellViewModelProtocol: AnyObject {
 final class MainCellViewModel: MainCellViewModelProtocol {
                
     private let indexPath: IndexPath
-    private let record: Record
+    private let record: AudioRecord
     private let parentViewModel: MainViewModelProtocol
     private let assemblyBuilder: AssemblyProtocol
     
@@ -39,7 +39,7 @@ final class MainCellViewModel: MainCellViewModelProtocol {
     
     init(
         indexPath: IndexPath,
-        record: Record,
+        record: AudioRecord,
         parentViewModel: MainViewModelProtocol,
         assemblyBuilder: AssemblyProtocol
     ) {
@@ -64,13 +64,13 @@ extension MainCellViewModel {
     //MARK: Rename
 
     func renameRecord(withNewName name: String) {
-        parentViewModel.rename(recordForIndexPath: indexPath, newName: name)
+        parentViewModel.rename(forIndexPath: indexPath, newName: name)
     }
     
     
     //MARK: Delete
     
     func deleteRecord() {
-        parentViewModel.delete(recordForIndexPath: indexPath)
+        parentViewModel.delete(forIndexPath: indexPath)
     }
 }

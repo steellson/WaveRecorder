@@ -1,8 +1,8 @@
 //
 //  Assembly.swift
-//  UNSPApp
+//  WaveRecorder
 //
-//  Created by Andrew Steellson on 21.11.2023.
+//  Created by Andrew Steellson.
 //
 
 import Foundation
@@ -18,9 +18,9 @@ protocol AssemblyProtocol: AnyObject {
     func get(module: Assembly.Module) -> IsolatedControllerModule
     func get(subModule: Assembly.SubModule) -> IsolatedViewModule
     
-    func getMainCellViewModel(withRecord record: Record, indexPath: IndexPath) -> MainCellViewModelProtocol
-    func getEditViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> EditViewModelProtocol
-    func getPlayViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> PlayViewModelProtocol
+    func getMainCellViewModel(withRecord record: AudioRecord, indexPath: IndexPath) -> MainCellViewModelProtocol
+    func getEditViewModel(withRecord record: AudioRecord, parentViewModel: MainCellViewModelProtocol) -> EditViewModelProtocol
+    func getPlayViewModel(withRecord record: AudioRecord, parentViewModel: MainCellViewModelProtocol) -> PlayViewModelProtocol
 }
 
 
@@ -39,18 +39,13 @@ final class Assembly: AssemblyProtocol {
     }
     
     
-    //MARK: Factories
-    
     private let helperFactory: HelperFactory = HelperFactoryImpl()
-    private lazy var serviceFactory: ServiceFactory = ServiceFactoryImpl(helperFactory: helperFactory)
-    
-    
-    //MARK: Main View Model
+    private let audioRepository: AudioRepository = AudioRepositoryImpl()
 
     private lazy var mainViewModel: MainViewModelProtocol = {
         MainViewModel(
             assemblyBuilder: self,
-            storageService: serviceFactory.createService(ofType: .storageService) as! StorageServiceProtocol,
+            audioRepository: audioRepository,
             notificationCenter: helperFactory.createHelper(ofType: .notificationCenter) as! NotificationCenter
         )
     }()
@@ -69,15 +64,15 @@ extension Assembly {
         build(subModule: subModule)
     }
     
-    func getMainCellViewModel(withRecord record: Record, indexPath: IndexPath) -> MainCellViewModelProtocol {
+    func getMainCellViewModel(withRecord record: AudioRecord, indexPath: IndexPath) -> MainCellViewModelProtocol {
         buildMainCellViewModel(withRecord: record, indexPath: indexPath)
     }
     
-    func getEditViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> EditViewModelProtocol {
+    func getEditViewModel(withRecord record: AudioRecord, parentViewModel: MainCellViewModelProtocol) -> EditViewModelProtocol {
         buildEditViewModel(withRecord: record, parentViewModel: parentViewModel)
     }
     
-    func getPlayViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> PlayViewModelProtocol {
+    func getPlayViewModel(withRecord record: AudioRecord, parentViewModel: MainCellViewModelProtocol) -> PlayViewModelProtocol {
         buildPlayViewModel(withRecord: record, parentViewModel: parentViewModel)
     }
 }
@@ -97,15 +92,16 @@ private extension Assembly {
     func build(subModule: SubModule) -> IsolatedViewModule {
         switch subModule {
         case .record:
+            let audioRecorder: AudioRecorder = AudioRecorderImpl()
             let viewModel: RecordViewModelProtocol = RecordViewModel(
                 parentViewModel: mainViewModel,
-                recordService: serviceFactory.createService(ofType: .recordService) as! RecordServiceProtocol
+                audioRecorder: audioRecorder
             )
             return RecordView(viewModel: viewModel)
         }
     }
     
-    func buildMainCellViewModel(withRecord record: Record, indexPath: IndexPath) -> MainCellViewModelProtocol {
+    func buildMainCellViewModel(withRecord record: AudioRecord, indexPath: IndexPath) -> MainCellViewModelProtocol {
         MainCellViewModel(
             indexPath: indexPath,
             record: record,
@@ -114,7 +110,7 @@ private extension Assembly {
         )
     }
         
-    func buildEditViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> EditViewModelProtocol {
+    func buildEditViewModel(withRecord record: AudioRecord, parentViewModel: MainCellViewModelProtocol) -> EditViewModelProtocol {
         EditViewModel(
             formatter: helperFactory.createHelper(ofType: .formatter) as! FormatterProtocol,
             parentViewModel: parentViewModel,
@@ -122,10 +118,11 @@ private extension Assembly {
         )
     }
     
-    func buildPlayViewModel(withRecord record: Record, parentViewModel: MainCellViewModelProtocol) -> PlayViewModelProtocol {
-        PlayViewModel(
+    func buildPlayViewModel(withRecord record: AudioRecord, parentViewModel: MainCellViewModelProtocol) -> PlayViewModelProtocol {
+        let audioPlayer: AudioPlayer = AudioPlayerImpl()
+        return PlayViewModel(
             record: record,
-            audioService: serviceFactory.createService(ofType: .audioService) as! AudioServiceProtocol,
+            audioPlayer: audioPlayer,
             parentViewModel: parentViewModel,
             timeRefresher: helperFactory.createHelper(ofType: .timeRefresher) as! TimeRefresherProtocol,
             formatter: helperFactory.createHelper(ofType: .formatter) as! FormatterImpl

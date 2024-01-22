@@ -34,7 +34,8 @@ final class EditViewModel: EditViewModelProtocol {
     
     private(set) var isEditing = false
     
-    private let record: Record
+    private var record: AudioRecord
+    
     private let parentViewModel: MainCellViewModelProtocol
     
     private let formatter: FormatterProtocol
@@ -45,7 +46,7 @@ final class EditViewModel: EditViewModelProtocol {
     init(
         formatter: FormatterProtocol,
         parentViewModel: MainCellViewModelProtocol,
-        record: Record
+        record: AudioRecord
     ) {
         self.formatter = formatter
         self.parentViewModel = parentViewModel
@@ -66,9 +67,17 @@ extension EditViewModel {
 
     func onEndEditing(withNewName newName: String) {
         isEditing = false
+        
         guard newName != record.name else { return }
-        parentViewModel.renameRecord(withNewName: newName)
-        record.name = String(unicodeScalarLiteral: newName)
+        
+        self.parentViewModel.renameRecord(withNewName: newName)
+        
+        self.record = AudioRecord(
+            name: newName,
+            format: record.format,
+            date: record.date,
+            duration: record.duration
+        )
     }
 }
 

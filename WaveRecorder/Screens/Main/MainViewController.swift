@@ -110,7 +110,7 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
     
     @objc
     private func editButtonDidTapped() {
-        guard viewModel.numberOfRecords != 0 else { return }
+        guard viewModel.numberOfItems != 0 else { return }
         
         DispatchQueue.main.async { [unowned self] in
             self.animateEditButton()
@@ -141,7 +141,7 @@ private extension MainViewController {
         editButton.tintColor = .black
         editButton.target = self
         editButton.action = #selector(editButtonDidTapped)
-        editButton.isHidden = viewModel.numberOfRecords == 0
+        editButton.isHidden = viewModel.numberOfItems == 0
     }
     
     func setupTitleLabel() {
@@ -287,7 +287,7 @@ private extension MainViewController {
 extension MainViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.numberOfRecords
+        viewModel.numberOfItems
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -326,7 +326,7 @@ extension MainViewController: UITableViewDelegate {
             style: .destructive, 
             title: "Kill",
             handler: { _, _, _ in
-                self.viewModel.delete(recordForIndexPath: indexPath)
+                self.viewModel.delete(forIndexPath: indexPath)
             }
         )])
     }
@@ -354,7 +354,7 @@ extension MainViewController: UISearchBarDelegate, UISearchTextFieldDelegate {
         textField.endEditing(true)
         textField.resignFirstResponder()
         
-        viewModel.uploadRecords()
+        viewModel.fetchAll()
         
         return false
     }

@@ -1,5 +1,5 @@
 //
-//  AudioService.swift
+//  AudioPlayer.swift
 //  WaveRecorder
 //
 //  Created by Andrew Steellson on 11.12.2023.
@@ -11,34 +11,30 @@ import OSLog
 
 //MARK: - Protocols
 
-protocol AudioServiceProtocol: AnyObject, Service {
-    func play(record: Record, onTime time: Float)
+protocol AudioPlayer: AnyObject {
+    func play(record: AudioRecord, onTime time: Float)
     func stop()
 }
 
 
 //MARK: - Impl
 
-final class AudioService: AudioServiceProtocol {
+final class AudioPlayerImpl: AudioPlayer {
     
-    private let urlBuilder: URLBuilder
-    private let fileManager: FileManager
+    private let audioPathManager: AudioPathManager
     
     private var audioPlayer: AVAudioPlayer?
     
-    init(
-        urlBuilder: URLBuilder,
-        fileManager: FileManager
-    ) {
-        self.urlBuilder = urlBuilder
-        self.fileManager = fileManager
+    
+    init() {
+        self.audioPathManager = AudioPathManagerImpl()
     }
 }
 
 
 //MARK: - Private
 
-private extension AudioService {
+private extension AudioPlayerImpl {
     
     func setupSettings() {
         guard let audioPlayer = self.audioPlayer else {
@@ -63,18 +59,18 @@ private extension AudioService {
 
 //MARK: - Public
 
-extension AudioService {
+extension AudioPlayerImpl {
     
     //MARK: Play
     
-    func play(record: Record, onTime time: Float) {
-        let recordURL = urlBuilder.buildURL(
+    func play(record: AudioRecord, onTime time: Float) {
+        let recordURL = audioPathManager.createURL(
             forRecordWithName: record.name,
-            andFormat: record.format
+            andFormat: record.format.rawValue
         )
         
         guard
-            fileManager.fileExists(atPath: recordURL.path(percentEncoded: false))
+            audioPathManager.isFileExist(recordURL)
         else {
             os_log("ERROR: File with name \(record.name) doesn't exist!")
             return

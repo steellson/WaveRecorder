@@ -24,7 +24,6 @@ enum HelperType {
     case notificationCenter
     case formatter
     case timeRefresher
-    case urlBuilder
 }
 
 
@@ -36,7 +35,6 @@ final class HelperFactoryImpl: HelperFactory {
     private let notificationCenter: NotificationCenter = NotificationCenter.default
     private let formatter: FormatterProtocol = FormatterImpl()
     private let timeRefresher: TimeRefresherProtocol = TimeRefresher()
-    private let urlBuilder: URLBuilder = URLBuilderImpl()
     
 
     func createHelper(ofType type: HelperType) -> Helper {
@@ -45,7 +43,6 @@ final class HelperFactoryImpl: HelperFactory {
         case .notificationCenter: return notificationCenter
         case .formatter: return formatter
         case .timeRefresher: return timeRefresher
-        case .urlBuilder: return urlBuilder
         }
     }
 }

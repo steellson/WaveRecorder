@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import AVFoundation
 
 
 //MARK: - Protocol
@@ -20,20 +19,20 @@ protocol RecordViewModelProtocol: AnyObject {
 
 final class RecordViewModel: RecordViewModelProtocol {
     
-    private var record: Record?
+    private var record: AudioRecord?
     
     private let parentViewModel: MainViewModelProtocol
-    private let recordService: RecordServiceProtocol
+    private let audioRecorder: AudioRecorder
     
     
     //MARK: Init
     
     init(
         parentViewModel: MainViewModelProtocol,
-        recordService: RecordServiceProtocol
+        audioRecorder: AudioRecorder
     ) {
         self.parentViewModel = parentViewModel
-        self.recordService = recordService
+        self.audioRecorder = audioRecorder
     }
 }
 
@@ -43,16 +42,13 @@ extension RecordViewModel {
     
     func record(isRecording: Bool) {
         if isRecording {
-            recordService.stopRecord { [unowned self] record in
-                DispatchQueue.main.async {
-                    guard let record else { return }
-                    self.record = record
-                    self.parentViewModel.shouldUpdateInterface?(false)
-                    self.parentViewModel.saveRecord(record)
-                }
+            audioRecorder.stopRecord { [unowned self] record in
+                guard let record else { return }
+                self.record = record
+                self.parentViewModel.shouldUpdateInterface?(false)
             }
         } else {
-            recordService.startRecord()
+            audioRecorder.startRecord()
             parentViewModel.shouldUpdateInterface?(true)
         }
     }

@@ -20,18 +20,16 @@ protocol Notifier: AnyObject {
     func removeNotification(withName name: NSNotification.Name, from: Any?)
 }
 
-protocol RecordsTableViewRepresentative: AnyObject {
-    var numberOfRecords: Int { get }
+protocol TableViewRepresentative: AnyObject {
+    var numberOfItems: Int { get }
     
-    func uploadRecords()
-    func saveRecord(_ record: Record)
-    func getRecord(forIndexPath indexPath: IndexPath) -> Record
-    func rename(recordForIndexPath indexPath: IndexPath, newName name: String)
+    func fetchAll()
+    func rename(forIndexPath indexPath: IndexPath, newName name: String)
     func search(withText text: String)
-    func delete(recordForIndexPath indexPath: IndexPath)
+    func delete(forIndexPath indexPath: IndexPath)
 }
 
-protocol MainViewModelProtocol: InterfaceUpdatable, RecordsTableViewRepresentative, Notifier {
+protocol MainViewModelProtocol: InterfaceUpdatable, TableViewRepresentative, Notifier {
     func makeRecordView() -> IsolatedViewModule
     func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol
 }
@@ -43,14 +41,14 @@ final class MainViewModel: MainViewModelProtocol {
     
     var shouldUpdateInterface: ((Bool) -> Void)?
     
-    var numberOfRecords: Int {
+    var numberOfItems: Int {
         records.count
     }
     
-    private var records: [Record] = []
+    private var records: [AudioRecord] = []
     
     private let assemblyBuilder: AssemblyProtocol
-    private let storageService: StorageServiceProtocol
+    private let audioRepository: AudioRepository
     private let notificationCenter: NotificationCenter
     
     
@@ -58,14 +56,14 @@ final class MainViewModel: MainViewModelProtocol {
     
     init(
         assemblyBuilder: AssemblyProtocol,
-        storageService: StorageServiceProtocol,
+        audioRepository: AudioRepository,
         notificationCenter: NotificationCenter
     ) {
         self.assemblyBuilder = assemblyBuilder
-        self.storageService = storageService
+        self.audioRepository = audioRepository
         self.notificationCenter = notificationCenter
         
-        uploadRecords()
+        fetchAll()
     }
     
     
@@ -86,8 +84,8 @@ extension MainViewModel {
     
     //MARK: Upload
     
-    func uploadRecords() {
-        storageService.getRecords { [unowned self] result in
+    func fetchAll() {
+        audioRepository.fetchRecords { [unowned self] result in
             switch result {
             case .success(let records):
                 self.records = records
@@ -99,34 +97,24 @@ extension MainViewModel {
     }
     
     
-    //MARK: Save
-    
-    func saveRecord(_ record: Record) {
-        storageService.save(record: record) { [unowned self] _ in
-            self.records.append(record)
-            self.uploadRecords()
-        }
-    }
-    
-    
-    //MARK: Get
-    
-    func getRecord(forIndexPath indexPath: IndexPath) -> Record {
-        records[indexPath.item]
-    }
-    
-    
     //MARK: Rename
     
-    func rename(recordForIndexPath indexPath: IndexPath, newName name: String) {
-        storageService.rename(
+    func rename(forIndexPath indexPath: IndexPath, newName name: String) {
+        audioRepository.rename(
             record: records[indexPath.item],
             newName: name
         ) { [unowned self] isRenamed in
             
             switch isRenamed {
             case .success:
-                self.records[indexPath.item].name = name
+                let oldRecord = self.records[indexPath.item]
+                let newRecord = AudioRecord(
+                    name: name,
+                    format: oldRecord.format,
+                    date: oldRecord.date,
+                    duration: oldRecord.duration
+                )
+                self.records[indexPath.item] = newRecord
             case .failure(let error):
                 os_log("\(R.Strings.Errors.cantRenameRecord.rawValue + " \(error)")")
             }
@@ -137,11 +125,11 @@ extension MainViewModel {
     
     func search(withText text: String) {
         guard !text.isEmpty else {
-            uploadRecords()
+            fetchAll()
             return
         }
         
-        storageService.searchRecords(withText: text) { [unowned self] result in
+        audioRepository.search(withText: text) { [unowned self] result in
             switch result {
             case .success(let records):
                 self.records = records
@@ -155,10 +143,10 @@ extension MainViewModel {
     
     //MARK: Delete
     
-    func delete(recordForIndexPath indexPath: IndexPath) {
+    func delete(forIndexPath indexPath: IndexPath) {
         let record = records[indexPath.item]
         
-        storageService.delete(record: record) { [unowned self] result in
+        audioRepository.delete(record: record) { [unowned self] result in
             switch result {
             case .success:
                 self.records.remove(at: indexPath.item)

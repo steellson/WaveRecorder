@@ -41,8 +41,8 @@ final class PlayViewModel: PlayViewModelProtocol {
     
     private var isPlaying = false
     
-    private let record: Record
-    private let audioService: AudioServiceProtocol
+    private let record: AudioRecord
+    private let audioPlayer: AudioPlayer
     private let parentViewModel: MainCellViewModelProtocol
     private let timeRefresher: TimeRefresherProtocol
     private let formatter: FormatterImpl
@@ -51,14 +51,14 @@ final class PlayViewModel: PlayViewModelProtocol {
     //MARK: Init
     
     init(
-        record: Record,
-        audioService: AudioServiceProtocol,
+        record: AudioRecord,
+        audioPlayer: AudioPlayer,
         parentViewModel: MainCellViewModelProtocol,
         timeRefresher: TimeRefresherProtocol,
         formatter: FormatterImpl
     ) {
         self.record = record
-        self.audioService = audioService
+        self.audioPlayer = audioPlayer
         self.parentViewModel = parentViewModel
         self.timeRefresher = timeRefresher
         self.formatter = formatter
@@ -84,7 +84,7 @@ extension PlayViewModel {
             return
         }
         
-        audioService.play(record: record, onTime: time)
+        audioPlayer.play(record: record, onTime: time)
         isPlaying = true
     
         timeRefresher.register { [weak self] in
@@ -100,7 +100,7 @@ extension PlayViewModel {
     //MARK: Stop
     
     func stop(completion: @escaping () -> Void) {
-        audioService.stop()
+        audioPlayer.stop()
         timeRefresher.stop()
         resetTime()
         isPlaying = false
@@ -161,7 +161,7 @@ private extension PlayViewModel {
             remainingTime -= step
             updateFormattedTime()
         } else {
-            audioService.stop()
+            audioPlayer.stop()
             resetTime()
             isPlaying = false
         }
