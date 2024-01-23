@@ -15,24 +15,29 @@ protocol InterfaceUpdatable: AnyObject {
     var shouldUpdateInterface: ((Bool) -> Void)? { get set }
 }
 
-protocol Notifier: AnyObject {
-    func activateNotification(withName name: NSNotification.Name, selector: Selector, from: Any?)
-    func removeNotification(withName name: NSNotification.Name, from: Any?)
-}
-
 protocol ParentViewModelProtocol: AnyObject {
     func makeRecordView() -> IsolatedViewModule
     func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> RecordCellViewModel
 }
 
-protocol MainViewModel: InterfaceUpdatable, ParentViewModelProtocol, Notifier {
+protocol Searcher: AnyObject {
+    func resetData()
+    func search(withText text: String)
+}
+
+protocol Editor: AnyObject {
+    func rename(forIndexPath indexPath: IndexPath, newName name: String)
+    func delete(forIndexPath indexPath: IndexPath)
+}
+
+protocol Notifier: AnyObject {
+    func activateNotification(withName name: NSNotification.Name, selector: Selector, from: Any?)
+    func removeNotification(withName name: NSNotification.Name, from: Any?)
+}
+
+protocol MainViewModel: InterfaceUpdatable, ParentViewModelProtocol, Searcher, Editor, Notifier {
     var numberOfItems: Int { get }
     var tableViewCellHeight: CGFloat { get }
-    
-    func fetchAll()
-    func rename(forIndexPath indexPath: IndexPath, newName name: String)
-    func search(withText text: String)
-    func delete(forIndexPath indexPath: IndexPath)
 }
 
 
@@ -84,9 +89,9 @@ final class MainViewModelImpl: MainViewModel {
 }
 
 
-extension MainViewModelImpl {
-    
-    //MARK: Upload
+//MARK: - Private
+
+private extension MainViewModelImpl {
     
     func fetchAll() {
         audioRepository.fetchRecords { [unowned self] result in
@@ -99,10 +104,40 @@ extension MainViewModelImpl {
             }
         }
     }
+}
+
+
+//MARK: - Searcher
+
+extension MainViewModelImpl {
+        
+    func resetData() {
+        fetchAll()
+    }
+
     
-    
-    //MARK: Rename
-    
+    func search(withText text: String) {
+        guard !text.isEmpty else {
+            fetchAll()
+            return
+        }
+        
+        audioRepository.search(withText: text) { [unowned self] result in
+            switch result {
+            case .success(let records):
+                self.records = records
+                self.shouldUpdateInterface?(false)
+            case .failure(let error):
+                os_log("\(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")")
+            }
+        }
+    }
+}
+
+//MARK: - Editor
+
+extension MainViewModelImpl {
+
     func rename(forIndexPath indexPath: IndexPath, newName name: String) {
         audioRepository.rename(
             record: records[indexPath.item],
@@ -124,30 +159,7 @@ extension MainViewModelImpl {
             }
         }
     }
-    
-    
-    //MARK: Search
-    
-    func search(withText text: String) {
-        guard !text.isEmpty else {
-            fetchAll()
-            return
-        }
-        
-        audioRepository.search(withText: text) { [unowned self] result in
-            switch result {
-            case .success(let records):
-                self.records = records
-                self.shouldUpdateInterface?(false)
-            case .failure(let error):
-                os_log("\(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")")
-            }
-        }
-    }
-    
-    
-    //MARK: Delete
-    
+
     func delete(forIndexPath indexPath: IndexPath) {
         let record = records[indexPath.item]
         
@@ -165,6 +177,7 @@ extension MainViewModelImpl {
         }
     }
 }
+
 
 //MARK: Notifier
 
