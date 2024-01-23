@@ -124,7 +124,6 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
 private extension MainViewController {
     
     func seutpNavigationBar() {
-        navigationController?.navigationBar.backgroundColor = R.Colors.primaryBackgroundColor
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
         navigationItem.rightBarButtonItem = editButton
         navigationItem.searchController = searchController

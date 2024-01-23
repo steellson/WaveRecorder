@@ -39,6 +39,7 @@
 		3DEAFFD22B15F54D004CAE97 /* Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD12B15F54D004CAE97 /* Formatter.swift */; };
 		3DFCE9AE2B331FF600D27A0B /* TimeRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */; };
 		3DFCE9CF2B35B68800D27A0B /* RecordWaveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFCE9CE2B35B68800D27A0B /* RecordWaveView.swift */; };
+		3DFEFF622B5FC67800954745 /* WRNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFEFF612B5FC67800954745 /* WRNavigationController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -76,6 +77,7 @@
 		3DEAFFD12B15F54D004CAE97 /* Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatter.swift; sourceTree = "<group>"; };
 		3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeRefresher.swift; sourceTree = "<group>"; };
 		3DFCE9CE2B35B68800D27A0B /* RecordWaveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordWaveView.swift; sourceTree = "<group>"; };
+		3DFEFF612B5FC67800954745 /* WRNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WRNavigationController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -219,6 +221,7 @@
 		3DFEFF5C2B5FBFDE00954745 /* UIComponents */ = {
 			isa = PBXGroup;
 			children = (
+				3DFEFF612B5FC67800954745 /* WRNavigationController.swift */,
 				3D682DA82B1F29D300067DFE /* PlayTolbarButton.swift */,
 				3D8589212B39AC8800F2D643 /* RecordVisualizerView.swift */,
 				3DFCE9CE2B35B68800D27A0B /* RecordWaveView.swift */,
@@ -338,6 +341,7 @@
 				3D8589222B39AC8900F2D643 /* RecordVisualizerView.swift in Sources */,
 				3D682DA52B1F29B000067DFE /* MainViewController.swift in Sources */,
 				3D682DAF2B1F29DA00067DFE /* RecordButtonView.swift in Sources */,
+				3DFEFF622B5FC67800954745 /* WRNavigationController.swift in Sources */,
 				3D297BFC2B57AEB7002D0F01 /* AudioRecord.swift in Sources */,
 				3D682DAB2B1F29D300067DFE /* PlayToolbarView.swift in Sources */,
 				3D682DA32B1F29B000067DFE /* EditView.swift in Sources */,
