@@ -15,7 +15,7 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
     
     private let editButton = UIBarButtonItem()
     private let titleLabel = UILabel()
-    private let searchController = UISearchController()
+    private let searchController = WRSearchController()
     private let tableView = UITableView()
     
     private lazy var recordView = viewModel.makeRecordView()
@@ -64,7 +64,7 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
         super.viewDidAppear(animated)
         setupEditButton()
         seutpNavigationBar()
-        setupNorifications()
+        activateNorifications()
     }
     
     override func viewDidLayoutSubviews() {
@@ -77,34 +77,6 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
         super.viewDidDisappear(animated)
         removeNotifications()
     }
-    
-    
-    //MARK: Animate
-    
-    private func animateEditButton() {
-        UIView.animate(withDuration: 0.3) {
-            self.tableView.isEditing.toggle()
-            
-            self.editButton.title = self.tableView.isEditing
-            ? R.Strings.Titles.stopEditButtonTitle.rawValue
-            : R.Strings.Titles.editButtonTitle.rawValue
-        }
-    }
-    
-    private func animateUpdatedLayout() {
-        UIView.animate(
-            withDuration: 0.2,
-            delay: 0,
-            usingSpringWithDamping: 1,
-            initialSpringVelocity: 1
-        ) {
-            DispatchQueue.main.async { [unowned self] in
-                self.setupEditButton()
-                self.tableView.reloadData()
-            }
-        }
-    }
-
     
     //MARK: Actions
     
@@ -152,17 +124,9 @@ private extension MainViewController {
     }
     
     func setupSearchController() {
-        searchController.searchBar.placeholder = R.Strings.Titles.searchTextFieldPlaceholder.rawValue
-        searchController.searchBar.tintColor = .black
-        searchController.searchBar.autocapitalizationType = .none
-        searchController.searchBar.autocorrectionType = .no
-        searchController.searchBar.searchBarStyle = .minimal
-        searchController.hidesNavigationBarDuringPresentation = false
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchResultsUpdater = self
-        searchController.searchBar.delegate = self
         searchController.searchBar.searchTextField.delegate = self
-        searchController.searchBar.setShowsCancelButton(false, animated: true)
+        searchController.searchBar.delegate = self
+        searchController.searchResultsUpdater = self
     }
     
     func setupTableView() {
@@ -209,11 +173,13 @@ private extension MainViewController {
             tableView.bottomAnchor.constraint(equalTo: recordView.topAnchor)
         ])
     }
+}
+
+//MARK: Notifications
+
+private extension MainViewController {
     
-    
-    //MARK: Notifications
-    
-    func setupNorifications() {
+    func activateNorifications() {
         viewModel.activateNotification(
             withName: UIResponder.keyboardWillHideNotification,
             selector: #selector(adjustForKeyboard),
@@ -235,7 +201,36 @@ private extension MainViewController {
             withName: UIResponder.keyboardWillChangeFrameNotification,
             from: self
         )
+    }
+}
 
+
+//MARK: Animation
+
+private extension MainViewController {
+    
+    func animateEditButton() {
+        UIView.animate(withDuration: 0.3) {
+            self.tableView.isEditing.toggle()
+            
+            self.editButton.title = self.tableView.isEditing
+            ? R.Strings.Titles.stopEditButtonTitle.rawValue
+            : R.Strings.Titles.editButtonTitle.rawValue
+        }
+    }
+    
+    func animateUpdatedLayout() {
+        UIView.animate(
+            withDuration: 0.2,
+            delay: 0,
+            usingSpringWithDamping: 1,
+            initialSpringVelocity: 1
+        ) {
+            DispatchQueue.main.async { [unowned self] in
+                self.setupEditButton()
+                self.tableView.reloadData()
+            }
+        }
     }
 }
 

@@ -40,6 +40,7 @@
 		3DFCE9AE2B331FF600D27A0B /* TimeRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */; };
 		3DFCE9CF2B35B68800D27A0B /* RecordWaveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFCE9CE2B35B68800D27A0B /* RecordWaveView.swift */; };
 		3DFEFF622B5FC67800954745 /* WRNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFEFF612B5FC67800954745 /* WRNavigationController.swift */; };
+		3DFEFF642B5FC8E800954745 /* WRSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFEFF632B5FC8E800954745 /* WRSearchController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +79,7 @@
 		3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeRefresher.swift; sourceTree = "<group>"; };
 		3DFCE9CE2B35B68800D27A0B /* RecordWaveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordWaveView.swift; sourceTree = "<group>"; };
 		3DFEFF612B5FC67800954745 /* WRNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WRNavigationController.swift; sourceTree = "<group>"; };
+		3DFEFF632B5FC8E800954745 /* WRSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WRSearchController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -221,11 +223,11 @@
 		3DFEFF5C2B5FBFDE00954745 /* UIComponents */ = {
 			isa = PBXGroup;
 			children = (
-				3DFEFF612B5FC67800954745 /* WRNavigationController.swift */,
 				3D682DA82B1F29D300067DFE /* PlayTolbarButton.swift */,
 				3D8589212B39AC8800F2D643 /* RecordVisualizerView.swift */,
 				3DFCE9CE2B35B68800D27A0B /* RecordWaveView.swift */,
 				3D682DAD2B1F29DA00067DFE /* RecordButtonView.swift */,
+				3DFEFF652B5FC8ED00954745 /* WRParts */,
 			);
 			path = UIComponents;
 			sourceTree = "<group>";
@@ -250,6 +252,15 @@
 				3D682D982B1F297600067DFE /* RecordBarViewModel.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		3DFEFF652B5FC8ED00954745 /* WRParts */ = {
+			isa = PBXGroup;
+			children = (
+				3DFEFF612B5FC67800954745 /* WRNavigationController.swift */,
+				3DFEFF632B5FC8E800954745 /* WRSearchController.swift */,
+			);
+			path = WRParts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -344,6 +355,7 @@
 				3DFEFF622B5FC67800954745 /* WRNavigationController.swift in Sources */,
 				3D297BFC2B57AEB7002D0F01 /* AudioRecord.swift in Sources */,
 				3D682DAB2B1F29D300067DFE /* PlayToolbarView.swift in Sources */,
+				3DFEFF642B5FC8E800954745 /* WRSearchController.swift in Sources */,
 				3D682DA32B1F29B000067DFE /* EditView.swift in Sources */,
 				3D7CB1092B26E2ED00F5B91F /* AudioRecorder.swift in Sources */,
 				3D5665F72B56B8700047A32B /* NotificationCenter+Extension.swift in Sources */,
