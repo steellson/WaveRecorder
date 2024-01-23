@@ -94,15 +94,22 @@ final class MainViewModelImpl: MainViewModel {
 private extension MainViewModelImpl {
     
     func fetchAll() {
-        audioRepository.fetchRecords { [unowned self] result in
-            switch result {
-            case .success(let records):
-                self.records = records
-                self.shouldUpdateInterface?(false)
-            case .failure(let error):
-                os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
-            }
-        }
+        records = [
+            AudioRecord(name: "1212", format: .aac, date: .now, duration: 222),
+            AudioRecord(name: "sdfe", format: .aac, date: .now, duration: 3)
+        ]
+        shouldUpdateInterface?(false)
+        
+        
+//        audioRepository.fetchRecords { [unowned self] result in
+//            switch result {
+//            case .success(let records):
+//                self.records = records
+//                self.shouldUpdateInterface?(false)
+//            case .failure(let error):
+//                os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
+//            }
+//        }
     }
 }
 

@@ -8,6 +8,7 @@
 import UIKit
 import OSLog
 
+
 //MARK: - Input
 
 struct WRTableViewInput {
@@ -24,6 +25,9 @@ final class WRTableView: UITableView {
     
     private var input: WRTableViewInput?
         
+    
+    //MARK: Lifecycle
+    
     override init(
         frame: CGRect,
         style: UITableView.Style
@@ -44,11 +48,12 @@ final class WRTableView: UITableView {
         setupSettings()
         setupDelegate()
     }
-    
-    func setup(withInput input: WRTableViewInput) {
+
+    func configure(withInput input: WRTableViewInput) {
         self.input = input
     }
 }
+
 
 //MARK: - Setup
 
@@ -73,6 +78,7 @@ private extension WRTableView {
         delegate = self
     }
 }
+
 
 //MARK: - Data Source
 
@@ -102,6 +108,7 @@ extension WRTableView: UITableViewDataSource {
         return cell
     }
 }
+
 
 //MARK: - Delegate
 

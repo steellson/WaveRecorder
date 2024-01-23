@@ -126,7 +126,7 @@ private extension MainViewController {
             fetchAllAction: viewModel.resetData,
             searchWithTextAction: viewModel.search
         )
-        searchController.setup(withInput: searchControllerInput)
+        searchController.configure(withInput: searchControllerInput)
     }
     
     func setupTableView() {
@@ -136,7 +136,7 @@ private extension MainViewController {
             makeViewModelForCellAction: viewModel.makeViewModelForCell,
             deleteAction: viewModel.delete
         )
-        tableView.setup(withInput: tableViewInput)
+        tableView.configure(withInput: tableViewInput)
         tableView.register(RecordCell.self, forCellReuseIdentifier: RecordCell.recordCellIdentifier)
     }
 

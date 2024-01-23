@@ -40,7 +40,7 @@ final class WRSearchController: UISearchController {
         setupDelegates()
     }
     
-    func setup(withInput input: WRSearchControllerInput) {
+    func configure(withInput input: WRSearchControllerInput) {
         self.input = input
     }
 }
