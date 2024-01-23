@@ -32,8 +32,6 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
         )
     }()
     
-    private var tableViewCellHeight: CGFloat = 200
-
     private let viewModel: MainViewModelProtocol
 
     
@@ -131,10 +129,14 @@ private extension MainViewController {
     }
     
     func setupTableView() {
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(RecordCell.self,
-                           forCellReuseIdentifier: RecordCell.recordCellIdentifier)
+        let tableViewInput = WRTableViewInput(
+            numberOfItems: viewModel.numberOfItems,
+            tableViewCellHeight: viewModel.tableViewCellHeight,
+            makeViewModelForCellAction: viewModel.makeViewModelForCell,
+            deleteAction: viewModel.delete
+        )
+        tableView.setup(withInput: tableViewInput)
+        tableView.register(RecordCell.self, forCellReuseIdentifier: RecordCell.recordCellIdentifier)
     }
 
     func setupRecordViewHeight() {
@@ -265,57 +267,6 @@ private extension MainViewController {
         }
         
         tableView.scrollIndicatorInsets = tableView.contentInset
-    }
-}
-
-
-//MARK: - DataSource
-
-extension MainViewController: UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.numberOfItems
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard 
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: RecordCell.recordCellIdentifier,
-                for: indexPath
-            ) as? RecordCell
-        else {
-            os_log("\(R.Strings.Errors.cantDequeReusableCell.rawValue)")
-            return UITableViewCell()
-        }
-
-        let cellViewModel = viewModel.makeViewModelForCell(forIndexPath: indexPath)
-        cell.configureCell(withViewModel: cellViewModel)
-        
-        return cell
-    }
-}
-
-
-//MARK: - TableView Delegate
-
-extension MainViewController: UITableViewDelegate {
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        tableViewCellHeight
-    }
-    
-    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        false
-    }
-
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        UISwipeActionsConfiguration(actions: [ UIContextualAction(
-            style: .destructive, 
-            title: "Kill",
-            handler: { _, _, _ in
-                self.viewModel.delete(forIndexPath: indexPath)
-            }
-        )])
     }
 }
 

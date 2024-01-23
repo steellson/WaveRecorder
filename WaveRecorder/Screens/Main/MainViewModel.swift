@@ -20,8 +20,9 @@ protocol Notifier: AnyObject {
     func removeNotification(withName name: NSNotification.Name, from: Any?)
 }
 
-protocol TableViewRepresentative: AnyObject {
+protocol SearchRepresentative: AnyObject {
     var numberOfItems: Int { get }
+    var tableViewCellHeight: CGFloat { get }
     
     func fetchAll()
     func rename(forIndexPath indexPath: IndexPath, newName name: String)
@@ -29,7 +30,7 @@ protocol TableViewRepresentative: AnyObject {
     func delete(forIndexPath indexPath: IndexPath)
 }
 
-protocol MainViewModelProtocol: InterfaceUpdatable, TableViewRepresentative, Notifier {
+protocol MainViewModelProtocol: InterfaceUpdatable, SearchRepresentative, Notifier {
     func makeRecordView() -> IsolatedViewModule
     func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> RecordCellViewModel
 }
@@ -44,6 +45,9 @@ final class MainViewModel: MainViewModelProtocol {
     var numberOfItems: Int {
         records.count
     }
+    
+    var tableViewCellHeight: CGFloat = 200
+
     
     private var records: [AudioRecord] = []
     
@@ -85,15 +89,21 @@ extension MainViewModel {
     //MARK: Upload
     
     func fetchAll() {
-        audioRepository.fetchRecords { [unowned self] result in
-            switch result {
-            case .success(let records):
-                self.records = records
-                self.shouldUpdateInterface?(false)
-            case .failure(let error):
-                os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
-            }
-        }
+        self.records = [
+            AudioRecord(name: "sdsd", format: .aac, date: .now, duration: 202),
+            AudioRecord(name: "111", format: .aac, date: .now, duration: 102)
+        ]
+        self.shouldUpdateInterface?(false)
+        
+//        audioRepository.fetchRecords { [unowned self] result in
+//            switch result {
+//            case .success(let records):
+//                self.records = records
+//                self.shouldUpdateInterface?(false)
+//            case .failure(let error):
+//                os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
+//            }
+//        }
     }
     
     
