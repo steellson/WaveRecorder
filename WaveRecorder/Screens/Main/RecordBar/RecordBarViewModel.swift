@@ -21,14 +21,14 @@ final class RecordBarViewModelImpl: RecordViewModel {
     
     private var record: AudioRecord?
     
-    private let parentViewModel: MainViewModelProtocol
+    private let parentViewModel: MainViewModel
     private let audioRecorder: AudioRecorder
     
     
     //MARK: Init
     
     init(
-        parentViewModel: MainViewModelProtocol,
+        parentViewModel: MainViewModel,
         audioRecorder: AudioRecorder
     ) {
         self.parentViewModel = parentViewModel

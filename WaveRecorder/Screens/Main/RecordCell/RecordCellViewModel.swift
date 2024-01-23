@@ -26,7 +26,7 @@ final class RecordCellViewModelImpl: RecordCellViewModel {
                
     private let indexPath: IndexPath
     private let record: AudioRecord
-    private let parentViewModel: MainViewModelProtocol
+    private let parentViewModel: MainViewModel
     private let assemblyBuilder: AssemblyProtocol
     
     enum ChildViewModelType {
@@ -40,7 +40,7 @@ final class RecordCellViewModelImpl: RecordCellViewModel {
     init(
         indexPath: IndexPath,
         record: AudioRecord,
-        parentViewModel: MainViewModelProtocol,
+        parentViewModel: MainViewModel,
         assemblyBuilder: AssemblyProtocol
     ) {
         self.indexPath = indexPath

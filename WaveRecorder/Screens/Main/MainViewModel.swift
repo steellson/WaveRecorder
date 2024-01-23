@@ -20,7 +20,12 @@ protocol Notifier: AnyObject {
     func removeNotification(withName name: NSNotification.Name, from: Any?)
 }
 
-protocol SearchRepresentative: AnyObject {
+protocol ParentViewModelProtocol: AnyObject {
+    func makeRecordView() -> IsolatedViewModule
+    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> RecordCellViewModel
+}
+
+protocol MainViewModel: InterfaceUpdatable, ParentViewModelProtocol, Notifier {
     var numberOfItems: Int { get }
     var tableViewCellHeight: CGFloat { get }
     
@@ -30,15 +35,10 @@ protocol SearchRepresentative: AnyObject {
     func delete(forIndexPath indexPath: IndexPath)
 }
 
-protocol MainViewModelProtocol: InterfaceUpdatable, SearchRepresentative, Notifier {
-    func makeRecordView() -> IsolatedViewModule
-    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> RecordCellViewModel
-}
-
 
 //MARK: - Impl
 
-final class MainViewModel: MainViewModelProtocol {
+final class MainViewModelImpl: MainViewModel {
     
     var shouldUpdateInterface: ((Bool) -> Void)?
     
@@ -84,26 +84,20 @@ final class MainViewModel: MainViewModelProtocol {
 }
 
 
-extension MainViewModel {
+extension MainViewModelImpl {
     
     //MARK: Upload
     
     func fetchAll() {
-        self.records = [
-            AudioRecord(name: "sdsd", format: .aac, date: .now, duration: 202),
-            AudioRecord(name: "111", format: .aac, date: .now, duration: 102)
-        ]
-        self.shouldUpdateInterface?(false)
-        
-//        audioRepository.fetchRecords { [unowned self] result in
-//            switch result {
-//            case .success(let records):
-//                self.records = records
-//                self.shouldUpdateInterface?(false)
-//            case .failure(let error):
-//                os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
-//            }
-//        }
+        audioRepository.fetchRecords { [unowned self] result in
+            switch result {
+            case .success(let records):
+                self.records = records
+                self.shouldUpdateInterface?(false)
+            case .failure(let error):
+                os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
+            }
+        }
     }
     
     
@@ -130,6 +124,7 @@ extension MainViewModel {
             }
         }
     }
+    
     
     //MARK: Search
     
@@ -173,7 +168,7 @@ extension MainViewModel {
 
 //MARK: Notifier
 
-extension MainViewModel {
+extension MainViewModelImpl {
     
     func activateNotification(withName
                               name: NSNotification.Name,
@@ -190,7 +185,6 @@ extension MainViewModel {
                                        selector: selector,
                                        name: name,
                                        object: nil)
-        
     }
     
     
@@ -207,6 +201,5 @@ extension MainViewModel {
         notificationCenter.removeObserver(recievedFrom,
                                           name: name,
                                           object: nil)
-        
     }
 }

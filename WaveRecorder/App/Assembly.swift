@@ -42,8 +42,8 @@ final class Assembly: AssemblyProtocol {
     private let helperFactory: HelperFactory = HelperFactoryImpl()
     private let audioRepository: AudioRepository = AudioRepositoryImpl()
 
-    private lazy var mainViewModel: MainViewModelProtocol = {
-        MainViewModel(
+    private lazy var mainViewModel: MainViewModel = {
+        MainViewModelImpl(
             assemblyBuilder: self,
             audioRepository: audioRepository,
             notificationCenter: helperFactory.createHelper(ofType: .notificationCenter) as! NotificationCenter

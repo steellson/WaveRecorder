@@ -17,9 +17,8 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
     private let titleLabel = UILabel()
     private let searchController = WRSearchController()
     private let tableView = WRTableView(frame: .zero, style: .plain)
-    
     private lazy var recordView = viewModel.makeRecordView()
-    private var recViewHeight = UIScreen.main.bounds.height * 0.15
+    
     private lazy var recViewHeightConstraint: NSLayoutConstraint = {
         NSLayoutConstraint(
             item: recordView,
@@ -28,17 +27,17 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
             toItem: nil,
             attribute: .notAnAttribute,
             multiplier: 1,
-            constant: recViewHeight
+            constant: UIScreen.main.bounds.height * 0.15
         )
     }()
     
-    private let viewModel: MainViewModelProtocol
+    private let viewModel: MainViewModel
 
     
     //MARK: Lifecycle
     
     init(
-        viewModel: MainViewModelProtocol
+        viewModel: MainViewModel
     ) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -123,9 +122,11 @@ private extension MainViewController {
     }
     
     func setupSearchController() {
-        searchController.searchBar.searchTextField.delegate = self
-        searchController.searchBar.delegate = self
-        searchController.searchResultsUpdater = self
+        let searchControllerInput = WRSearchControllerInput(
+            fetchAllAction: viewModel.fetchAll,
+            searchWithTextAction: viewModel.search
+        )
+        searchController.setup(withInput: searchControllerInput)
     }
     
     func setupTableView() {
@@ -267,47 +268,5 @@ private extension MainViewController {
         }
         
         tableView.scrollIndicatorInsets = tableView.contentInset
-    }
-}
-
-
-//MARK: - SearchBar+Field Delegate
-
-extension MainViewController: UISearchBarDelegate, UISearchTextFieldDelegate {
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard searchText.isEmpty else { return }
-        searchBar.resignFirstResponder()
-    }
-    
-    func textFieldShouldClear(_ textField: UITextField) -> Bool {
-        guard 
-            textField == searchController.searchBar.searchTextField
-        else {
-            os_log("\(R.Strings.Errors.wrongFieldResponder.rawValue)")
-            return false
-        }
-        
-        textField.text = ""
-        textField.endEditing(true)
-        textField.resignFirstResponder()
-        
-        viewModel.fetchAll()
-        
-        return false
-    }
-}
-
-
-//MARK: - Search Reslut Updating
-
-extension MainViewController: UISearchResultsUpdating {
-    
-    func updateSearchResults(for searchController: UISearchController) {
-        guard let searchText = searchController.searchBar.searchTextField.text else {
-            return
-        }
-        
-        viewModel.search(withText: searchText.trimmingCharacters(in: .illegalCharacters))
     }
 }
