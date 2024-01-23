@@ -42,7 +42,7 @@ final class PlayToolbarView: UIView {
     private let goForwardButton = PlayTolbarButton(type: .goForward)
     private let deleteButton = PlayTolbarButton(type: .delete)
     
-    private var viewModel: PlayViewModelProtocol?
+    private var viewModel: PlayToolbarViewModel?
     
     
     //MARK: Lifecycle
@@ -62,7 +62,7 @@ final class PlayToolbarView: UIView {
     
     //MARK: Public
     
-    func configure(withViewModel viewModel: PlayViewModelProtocol) {
+    func configure(withViewModel viewModel: PlayToolbarViewModel) {
         self.viewModel = viewModel
         self.setupSubviewsAnimated()
     }

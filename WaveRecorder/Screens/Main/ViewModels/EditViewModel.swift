@@ -36,7 +36,7 @@ final class EditViewModel: EditViewModelProtocol {
     
     private var record: AudioRecord
     
-    private let parentViewModel: MainCellViewModelProtocol
+    private let parentViewModel: RecordCellViewModel
     
     private let formatter: FormatterProtocol
     
@@ -45,7 +45,7 @@ final class EditViewModel: EditViewModelProtocol {
     
     init(
         formatter: FormatterProtocol,
-        parentViewModel: MainCellViewModelProtocol,
+        parentViewModel: RecordCellViewModel,
         record: AudioRecord
     ) {
         self.formatter = formatter

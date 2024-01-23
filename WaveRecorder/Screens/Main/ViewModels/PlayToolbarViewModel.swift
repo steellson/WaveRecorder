@@ -1,5 +1,5 @@
 //
-//  PlayViewModel.swift
+//  PlayToolbarViewModel.swift
 //  WaveRecorder
 //
 //  Created by Andrew Steellson on 15.12.2023.
@@ -11,7 +11,7 @@ import OSLog
 
 //MARK: - Protocol
 
-protocol PlayViewModelProtocol: AnyObject {
+protocol PlayToolbarViewModel: AnyObject {
     var progress: Float { get }
     var duration: Float { get }
     
@@ -28,7 +28,7 @@ protocol PlayViewModelProtocol: AnyObject {
 
 //MARK: - Impl
 
-final class PlayViewModel: PlayViewModelProtocol {
+final class PlayToolbarViewModelImpl: PlayToolbarViewModel {
         
     var progress: Float = 0.0
     var duration: Float { Float(record.duration ?? 0) }
@@ -43,7 +43,7 @@ final class PlayViewModel: PlayViewModelProtocol {
     
     private let record: AudioRecord
     private let audioPlayer: AudioPlayer
-    private let parentViewModel: MainCellViewModelProtocol
+    private let parentViewModel: RecordCellViewModel
     private let timeRefresher: TimeRefresherProtocol
     private let formatter: FormatterImpl
 
@@ -53,7 +53,7 @@ final class PlayViewModel: PlayViewModelProtocol {
     init(
         record: AudioRecord,
         audioPlayer: AudioPlayer,
-        parentViewModel: MainCellViewModelProtocol,
+        parentViewModel: RecordCellViewModel,
         timeRefresher: TimeRefresherProtocol,
         formatter: FormatterImpl
     ) {
@@ -67,7 +67,7 @@ final class PlayViewModel: PlayViewModelProtocol {
     }
 }
 
-extension PlayViewModel {
+extension PlayToolbarViewModelImpl {
     
     //MARK: Go back
     
@@ -123,7 +123,7 @@ extension PlayViewModel {
 }
 
 
-private extension PlayViewModel {
+private extension PlayToolbarViewModelImpl {
     
     enum FormatType {
         case date(Date)

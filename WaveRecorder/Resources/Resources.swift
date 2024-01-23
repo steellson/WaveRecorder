@@ -61,7 +61,7 @@ enum R {
         
         //MARK: Identity
         enum Identifiers: String {
-            case mainTableViewCellIdentifier = "MainTableViewCellIdentifier"
+            case recordCellIdentifier = "RecordCellIdentifier"
         }
     }
     

@@ -31,7 +31,7 @@ protocol TableViewRepresentative: AnyObject {
 
 protocol MainViewModelProtocol: InterfaceUpdatable, TableViewRepresentative, Notifier {
     func makeRecordView() -> IsolatedViewModule
-    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol
+    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> RecordCellViewModel
 }
 
 
@@ -71,7 +71,7 @@ final class MainViewModel: MainViewModelProtocol {
         assemblyBuilder.get(subModule: .record(parentVM: self))
     }
     
-    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol {
+    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> RecordCellViewModel {
         assemblyBuilder.getMainCellViewModel(
             withRecord: records[indexPath.item],
             indexPath: indexPath

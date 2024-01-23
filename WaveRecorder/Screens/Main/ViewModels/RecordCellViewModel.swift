@@ -1,5 +1,5 @@
 //
-//  MainCellViewModel.swift
+//  RecordCellViewModelImpl.swift
 //  WaveRecorder
 //
 //  Created by Andrew Steellson on 28.11.2023.
@@ -11,18 +11,18 @@ import AVFoundation
 
 //MARK: - Protocol
 
-protocol MainCellViewModelProtocol: AnyObject {
+protocol RecordCellViewModel: AnyObject {
     func renameRecord(withNewName: String)
     func deleteRecord()
     
     func makeEditViewModel() -> EditViewModelProtocol
-    func makePlayViewModel() -> PlayViewModelProtocol
+    func makePlayViewModel() -> PlayToolbarViewModel
 }
 
 
 //MARK: - Impl
 
-final class MainCellViewModel: MainCellViewModelProtocol {
+final class RecordCellViewModelImpl: RecordCellViewModel {
                
     private let indexPath: IndexPath
     private let record: AudioRecord
@@ -54,12 +54,12 @@ final class MainCellViewModel: MainCellViewModelProtocol {
         assemblyBuilder.getEditViewModel(withRecord: record, parentViewModel: self)
     }
     
-    func makePlayViewModel() -> PlayViewModelProtocol {
+    func makePlayViewModel() -> PlayToolbarViewModel {
         assemblyBuilder.getPlayViewModel(withRecord: record, parentViewModel: self)
     }
 }
 
-extension MainCellViewModel {
+extension RecordCellViewModelImpl {
     
     //MARK: Rename
 

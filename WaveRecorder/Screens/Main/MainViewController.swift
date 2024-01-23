@@ -177,8 +177,8 @@ private extension MainViewController {
         tableView.alwaysBounceVertical = true
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(MainTableViewCell.self,
-                           forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
+        tableView.register(RecordCell.self,
+                           forCellReuseIdentifier: RecordCell.recordCellIdentifier)
     }
 
     func setupRecordViewHeight() {
@@ -293,9 +293,9 @@ extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard 
             let cell = tableView.dequeueReusableCell(
-                withIdentifier: MainTableViewCell.mainTableViewCellIdentifier,
+                withIdentifier: RecordCell.recordCellIdentifier,
                 for: indexPath
-            ) as? MainTableViewCell
+            ) as? RecordCell
         else {
             os_log("\(R.Strings.Errors.cantDequeReusableCell.rawValue)")
             return UITableViewCell()
