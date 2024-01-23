@@ -40,6 +40,7 @@
 		3DFCE9CF2B35B68800D27A0B /* RecordWaveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFCE9CE2B35B68800D27A0B /* RecordWaveView.swift */; };
 		3DFEFF622B5FC67800954745 /* WRNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFEFF612B5FC67800954745 /* WRNavigationController.swift */; };
 		3DFEFF642B5FC8E800954745 /* WRSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFEFF632B5FC8E800954745 /* WRSearchController.swift */; };
+		3DFEFF6B2B5FD0A200954745 /* WRTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFEFF6A2B5FD0A200954745 /* WRTableView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +79,7 @@
 		3DFCE9CE2B35B68800D27A0B /* RecordWaveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordWaveView.swift; sourceTree = "<group>"; };
 		3DFEFF612B5FC67800954745 /* WRNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WRNavigationController.swift; sourceTree = "<group>"; };
 		3DFEFF632B5FC8E800954745 /* WRSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WRSearchController.swift; sourceTree = "<group>"; };
+		3DFEFF6A2B5FD0A200954745 /* WRTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WRTableView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -236,6 +238,7 @@
 			children = (
 				3DFEFF612B5FC67800954745 /* WRNavigationController.swift */,
 				3DFEFF632B5FC8E800954745 /* WRSearchController.swift */,
+				3DFEFF6A2B5FD0A200954745 /* WRTableView.swift */,
 			);
 			path = WRParts;
 			sourceTree = "<group>";
@@ -370,6 +373,7 @@
 				3DFEFF642B5FC8E800954745 /* WRSearchController.swift in Sources */,
 				3D682DA32B1F29B000067DFE /* EditView.swift in Sources */,
 				3D7CB1092B26E2ED00F5B91F /* AudioRecorder.swift in Sources */,
+				3DFEFF6B2B5FD0A200954745 /* WRTableView.swift in Sources */,
 				3D5665F72B56B8700047A32B /* NotificationCenter+Extension.swift in Sources */,
 				3DEAFFAF2B0F766E004CAE97 /* Assembly.swift in Sources */,
 				3DFCE9CF2B35B68800D27A0B /* RecordWaveView.swift in Sources */,

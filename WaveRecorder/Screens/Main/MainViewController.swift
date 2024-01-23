@@ -16,7 +16,7 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
     private let editButton = UIBarButtonItem()
     private let titleLabel = UILabel()
     private let searchController = WRSearchController()
-    private let tableView = UITableView()
+    private let tableView = WRTableView(frame: .zero, style: .plain)
     
     private lazy var recordView = viewModel.makeRecordView()
     private var recViewHeight = UIScreen.main.bounds.height * 0.15
@@ -78,6 +78,7 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
         removeNotifications()
     }
     
+    
     //MARK: Actions
     
     @objc
@@ -130,14 +131,6 @@ private extension MainViewController {
     }
     
     func setupTableView() {
-        tableView.backgroundColor = .white
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        tableView.layer.cornerRadius = 26
-        tableView.estimatedRowHeight = 160
-        tableView.keyboardDismissMode = .onDrag
-        tableView.showsVerticalScrollIndicator = false
-        tableView.alwaysBounceVertical = true
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(RecordCell.self,
