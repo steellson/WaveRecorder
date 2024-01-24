@@ -11,6 +11,7 @@ import Foundation
 //MARK: - Protocol
 
 protocol FormatterProtocol: Helper {
+    func formatName(_ name: String) -> String
     func formatDate(_ date: Date) -> String
     func formatDuration(_ duration: TimeInterval) -> String
 }
@@ -22,6 +23,12 @@ final class FormatterImpl: FormatterProtocol {
         
     private let dateFormatter = DateFormatter()
     
+    
+    //MARK: Methods
+    
+    func formatName(_ name: String) -> String {
+       name.components(separatedBy: ".").dropLast().first ?? name
+    }
     
     func formatDate(_ date: Date) -> String {
         dateFormatter.dateFormat = "d MMM. YYYY hh:mm"

@@ -132,7 +132,7 @@ extension AudioRepositoryImpl {
                 )
             }
         } catch {
-            os_log("")
+            os_log("ERROR: Cant fetch records!")
             throw AudioRepositoryError.cantFetchRecords
         }
     }

@@ -25,7 +25,7 @@ protocol EditViewModelProtocol: AnyObject {
 final class EditViewModel: EditViewModelProtocol {
         
     var recordName: String {
-        record.name
+        formatter.formatName(record.name)
     }
     
     var recordedAt: String {
