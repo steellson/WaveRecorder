@@ -97,7 +97,7 @@ private extension MainViewModelImpl {
         Task {
             do {
                 let records = try await audioRepository.fetchRecords()
-                self.records = records
+                self.records = records.sorted(by: { $0.name > $1.name })
                 self.shouldUpdateInterface?(false)
             } catch {
                 os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")

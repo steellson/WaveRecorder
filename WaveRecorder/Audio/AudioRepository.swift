@@ -35,72 +35,10 @@ enum AudioRepositoryError: Error {
 
 final class AudioRepositoryImpl: AudioRepository {
   
-    private let audioPathManager: AudioPathManager
+    private let audioMetadataManager: AudioMetadataManager
     
     init() {
-        self.audioPathManager = AudioPathManagerImpl()
-    }
-}
-
-
-//MARK: - Private
-
-private extension AudioRepositoryImpl {
-    
-    func loadListOfUrls() -> [URL] {
-        var list = audioPathManager.getStoredFilesList()
-        list.removeFirst() // Exclude .DS_Store
-        return list
-    }
-    
-    
-    func loadPrimaryAudioData(fromURLs urls: [URL]) -> [PrimaryAudioData] {
-        urls.map { url in
-            PrimaryAudioData(
-                name: url.lastPathComponent,
-                format: url.pathExtension
-            )
-        }
-    }
-    
-    
-    func loadSecondaryAudioData(fromAssets assets: [AVAsset]) async throws -> [SecondaryAudioData] {
-        do {
-            return try await assets.asyncMap { asset in
-                
-                let dateValue = try await asset.load(.creationDate)?.load(.value)
-                let durationValue = try await asset.load(.duration)
-                
-                guard let date = dateValue as? Date else {
-                    os_log("ERROR: Cant parse asset Date!")
-                    throw AudioRepositoryError.cantDecodeMetadata
-                }
-                
-                return SecondaryAudioData(
-                    date: date,
-                    duration: TimeInterval(floatLiteral: durationValue.seconds)
-                )
-            }
-        } catch {
-            os_log("ERROR: Something went wrong! Asset couldnt be parsed")
-            throw AudioRepositoryError.cantDecodeMetadata
-        }
-    }
-    
-    
-    func loadMetadataList() async throws -> [AudioMetadata] {
-        let urls = loadListOfUrls()
-        let assets = urls.compactMap { AVAsset(url: $0) }
-        
-        let primaryAudioData = loadPrimaryAudioData(fromURLs: urls)
-        let secondaryAudioData = try await loadSecondaryAudioData(fromAssets: assets)
-        
-        return assets.enumerated().compactMap { index, _ in
-            AudioMetadata(
-                primary: primaryAudioData[index],
-                secondary: secondaryAudioData[index]
-            )
-        }
+        self.audioMetadataManager = AudioMetadataManagerImpl()
     }
 }
 
@@ -111,7 +49,7 @@ extension AudioRepositoryImpl {
   
     func fetchRecords() async throws -> [AudioRecord] {
         do {
-            let metadata = try await loadMetadataList()
+            let metadata = try await audioMetadataManager.loadMetadataList()
             return try metadata.map {
                 
                 let format = $0.primary.format
