@@ -38,6 +38,7 @@
 		3DEAFFD22B15F54D004CAE97 /* Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD12B15F54D004CAE97 /* Formatter.swift */; };
 		3DFCE9AE2B331FF600D27A0B /* TimeRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */; };
 		3DFCE9CF2B35B68800D27A0B /* RecordWaveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFCE9CE2B35B68800D27A0B /* RecordWaveView.swift */; };
+		3DFDF5E32B614BEA0048A6A3 /* Sequence+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFDF5E22B614BEA0048A6A3 /* Sequence+Extension.swift */; };
 		3DFEFF622B5FC67800954745 /* WRNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFEFF612B5FC67800954745 /* WRNavigationController.swift */; };
 		3DFEFF642B5FC8E800954745 /* WRSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFEFF632B5FC8E800954745 /* WRSearchController.swift */; };
 		3DFEFF6B2B5FD0A200954745 /* WRTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFEFF6A2B5FD0A200954745 /* WRTableView.swift */; };
@@ -77,6 +78,7 @@
 		3DEAFFD12B15F54D004CAE97 /* Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatter.swift; sourceTree = "<group>"; };
 		3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeRefresher.swift; sourceTree = "<group>"; };
 		3DFCE9CE2B35B68800D27A0B /* RecordWaveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordWaveView.swift; sourceTree = "<group>"; };
+		3DFDF5E22B614BEA0048A6A3 /* Sequence+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+Extension.swift"; sourceTree = "<group>"; };
 		3DFEFF612B5FC67800954745 /* WRNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WRNavigationController.swift; sourceTree = "<group>"; };
 		3DFEFF632B5FC8E800954745 /* WRSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WRSearchController.swift; sourceTree = "<group>"; };
 		3DFEFF6A2B5FD0A200954745 /* WRTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WRTableView.swift; sourceTree = "<group>"; };
@@ -206,8 +208,9 @@
 		3DEAFFB22B0F7F0B004CAE97 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				3D5665F82B56B8770047A32B /* UIKit */,
+				3DFDF5E12B614BDF0048A6A3 /* Base */,
 				3D5665F92B56B87F0047A32B /* Helpers */,
+				3D5665F82B56B8770047A32B /* UIKit */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -219,6 +222,14 @@
 				3D297BFE2B57B09A002D0F01 /* Repo */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		3DFDF5E12B614BDF0048A6A3 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				3DFDF5E22B614BEA0048A6A3 /* Sequence+Extension.swift */,
+			);
+			path = Base;
 			sourceTree = "<group>";
 		};
 		3DFEFF5C2B5FBFDE00954745 /* UIComponents */ = {
@@ -368,6 +379,7 @@
 				3D682DA52B1F29B000067DFE /* MainViewController.swift in Sources */,
 				3D682DAF2B1F29DA00067DFE /* RecordButtonView.swift in Sources */,
 				3DFEFF622B5FC67800954745 /* WRNavigationController.swift in Sources */,
+				3DFDF5E32B614BEA0048A6A3 /* Sequence+Extension.swift in Sources */,
 				3D297BFC2B57AEB7002D0F01 /* AudioRecord.swift in Sources */,
 				3D682DAB2B1F29D300067DFE /* PlayToolbarView.swift in Sources */,
 				3DFEFF642B5FC8E800954745 /* WRSearchController.swift in Sources */,

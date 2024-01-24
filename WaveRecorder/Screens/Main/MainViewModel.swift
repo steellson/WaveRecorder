@@ -94,22 +94,15 @@ final class MainViewModelImpl: MainViewModel {
 private extension MainViewModelImpl {
     
     func fetchAll() {
-        records = [
-            AudioRecord(name: "1212", format: .aac, date: .now, duration: 222),
-            AudioRecord(name: "sdfe", format: .aac, date: .now, duration: 3)
-        ]
-        shouldUpdateInterface?(false)
-        
-        
-//        audioRepository.fetchRecords { [unowned self] result in
-//            switch result {
-//            case .success(let records):
-//                self.records = records
-//                self.shouldUpdateInterface?(false)
-//            case .failure(let error):
-//                os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
-//            }
-//        }
+        Task {
+            do {
+                let records = try await audioRepository.fetchRecords()
+                self.records = records
+                self.shouldUpdateInterface?(false)
+            } catch {
+                os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
+            }
+        }
     }
 }
 
@@ -128,31 +121,30 @@ extension MainViewModelImpl {
             fetchAll()
             return
         }
-        
-        audioRepository.search(withText: text) { [unowned self] result in
-            switch result {
-            case .success(let records):
+        Task {
+            do {
+                let records = try await audioRepository.search(withText: text)
                 self.records = records
                 self.shouldUpdateInterface?(false)
-            case .failure(let error):
+            } catch {
                 os_log("\(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")")
             }
         }
     }
 }
 
+
 //MARK: - Editor
 
 extension MainViewModelImpl {
 
     func rename(forIndexPath indexPath: IndexPath, newName name: String) {
-        audioRepository.rename(
-            record: records[indexPath.item],
-            newName: name
-        ) { [unowned self] isRenamed in
-            
-            switch isRenamed {
-            case .success:
+        Task {
+            do {
+                try await audioRepository.rename(
+                    record: records[indexPath.item],
+                    newName: name
+                )
                 let oldRecord = self.records[indexPath.item]
                 let newRecord = AudioRecord(
                     name: name,
@@ -161,24 +153,23 @@ extension MainViewModelImpl {
                     duration: oldRecord.duration
                 )
                 self.records[indexPath.item] = newRecord
-            case .failure(let error):
+            } catch {
                 os_log("\(R.Strings.Errors.cantRenameRecord.rawValue + " \(error)")")
             }
         }
     }
 
+    
     func delete(forIndexPath indexPath: IndexPath) {
         let record = records[indexPath.item]
-        
-        audioRepository.delete(record: record) { [unowned self] result in
-            switch result {
-            case .success:
+        Task {
+            do {
+                try await audioRepository.delete(record: record)
                 self.records.remove(at: indexPath.item)
                 self.shouldUpdateInterface?(false)
                 
                 os_log("\(R.Strings.Logs.recordDeleted.rawValue + record.name)")
-                
-            case .failure(let error):
+            } catch {
                 os_log("\(R.Strings.Errors.cantDeleteRecordWithName.rawValue + record.name + " \(error)")")
             }
         }
