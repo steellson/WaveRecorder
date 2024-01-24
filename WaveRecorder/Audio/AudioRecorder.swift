@@ -69,7 +69,7 @@ private extension AudioRecorderImpl {
     
     func setupSettings() -> [String: Any] {
         [
-            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVFormatIDKey: kAudioFormatMPEG4AAC,
             AVSampleRateKey: 44100,
             AVNumberOfChannelsKey: 2,
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
@@ -152,77 +152,11 @@ extension AudioRecorderImpl {
             os_log("ERROR: Couldnt reset audio session category after record. \(error)")
         }
         
-        // Set metadata
-        self.applyMetadata(toAudioRecord: self.record)
-        
         // Remove recorder
         self.audioRecorder = nil
         
         // Send record
         completion?(self.record)
-        
     }
 }
 
-
-//MARK: - Metadata
-
-private extension AudioRecorderImpl {
-    
-    typealias AudioMetadataValue = NSCopying & NSObjectProtocol
-    
-    func createMetadataItem(withKeyID keyID: AVMetadataIdentifier,
-                            value: AudioMetadataValue) -> AVMutableMetadataItem {
-        
-        let item = AVMutableMetadataItem()
-        item.identifier = keyID
-        item.value = value
-        
-        return item
-    }
-    
-    func createMetadataSet(forRecordModel recordModel: AudioRecord) -> [AVMutableMetadataItem] {
-        [
-            createMetadataItem(withKeyID: .id3MetadataTitleDescription, value: recordModel.name as AudioMetadataValue),
-            createMetadataItem(withKeyID: .id3MetadataAudioEncryption, value: recordModel.format.rawValue as AudioMetadataValue),
-            createMetadataItem(withKeyID: .id3MetadataDate, value: recordModel.date as AudioMetadataValue),
-            createMetadataItem(withKeyID: .id3MetadataLength, value: String(recordModel.duration ?? 0) as AudioMetadataValue)
-        ]
-    }
-    
-    func applyMetadata(toAudioRecord record: AudioRecord?) {
-        guard
-            let storedURL,
-            let record
-        else {
-            os_log("ATTENTION: Cannot set metadata to record! Stored URL is not found")
-            return
-        }
-     
-        let asset = AVAsset(url: storedURL)
-    
-        guard let exporter = AVAssetExportSession(
-                asset: asset,
-                presetName: AVAssetExportPresetPassthrough
-            )
-        else {
-            return
-        }
-        
-        exporter.metadata = createMetadataSet(forRecordModel: record)
-        exporter.outputURL = audioPathManager.createURL(forRecordWithName: "test1", andFormat: "m4a")
-        exporter.outputFileType = AVFileType.m4a
-        
-        exporter.exportAsynchronously {
-            
-            if exporter.status == .completed {
-                os_log("✅ Export completed with metadata: \(String(describing: exporter.metadata))")
-            } else if exporter.status == .failed {
-                os_log("❌ Export failed with error: \(exporter.error)")
-            } else {
-                os_log("❔ Unknown export error! Status: \(exporter.status.rawValue)")
-            }
-            
-        }
-    }
-}

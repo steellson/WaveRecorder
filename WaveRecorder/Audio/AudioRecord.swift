@@ -10,10 +10,10 @@ import Foundation
 
 //MARK: - Format
 
-enum AudioFormat: String {
+enum AudioFormat: String, CaseIterable {
     case m4a
     case mp3
-    case aac
+    case flac
 }
 
 
@@ -39,5 +39,23 @@ struct AudioRecord: Identifiable {
         self.date = date
         self.duration = duration
     }
+}
+
+
+//MARK: - Metadata
+
+struct PrimaryAudioData {
+    let name: String
+    let format: String
+}
+
+struct SecondaryAudioData {
+    let date: Date
+    let duration: TimeInterval
+}
+
+struct AudioMetadata {
+    let primary: PrimaryAudioData
+    let secondary: SecondaryAudioData
 }
 

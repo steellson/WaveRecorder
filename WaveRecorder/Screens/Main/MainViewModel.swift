@@ -15,35 +15,44 @@ protocol InterfaceUpdatable: AnyObject {
     var shouldUpdateInterface: ((Bool) -> Void)? { get set }
 }
 
+protocol ParentViewModelProtocol: AnyObject {
+    func makeRecordView() -> IsolatedViewModule
+    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> RecordCellViewModel
+}
+
+protocol Searcher: AnyObject {
+    func resetData()
+    func search(withText text: String)
+}
+
+protocol Editor: AnyObject {
+    func rename(forIndexPath indexPath: IndexPath, newName name: String)
+    func delete(forIndexPath indexPath: IndexPath)
+}
+
 protocol Notifier: AnyObject {
     func activateNotification(withName name: NSNotification.Name, selector: Selector, from: Any?)
     func removeNotification(withName name: NSNotification.Name, from: Any?)
 }
 
-protocol TableViewRepresentative: AnyObject {
+protocol MainViewModel: InterfaceUpdatable, ParentViewModelProtocol, Searcher, Editor, Notifier {
     var numberOfItems: Int { get }
-    
-    func fetchAll()
-    func rename(forIndexPath indexPath: IndexPath, newName name: String)
-    func search(withText text: String)
-    func delete(forIndexPath indexPath: IndexPath)
-}
-
-protocol MainViewModelProtocol: InterfaceUpdatable, TableViewRepresentative, Notifier {
-    func makeRecordView() -> IsolatedViewModule
-    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol
+    var tableViewCellHeight: CGFloat { get }
 }
 
 
 //MARK: - Impl
 
-final class MainViewModel: MainViewModelProtocol {
+final class MainViewModelImpl: MainViewModel {
     
     var shouldUpdateInterface: ((Bool) -> Void)?
     
     var numberOfItems: Int {
         records.count
     }
+    
+    var tableViewCellHeight: CGFloat = 200
+
     
     private var records: [AudioRecord] = []
     
@@ -71,7 +80,7 @@ final class MainViewModel: MainViewModelProtocol {
         assemblyBuilder.get(subModule: .record(parentVM: self))
     }
     
-    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> MainCellViewModelProtocol {
+    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> RecordCellViewModel {
         assemblyBuilder.getMainCellViewModel(
             withRecord: records[indexPath.item],
             indexPath: indexPath
@@ -80,33 +89,62 @@ final class MainViewModel: MainViewModelProtocol {
 }
 
 
-extension MainViewModel {
-    
-    //MARK: Upload
+//MARK: - Private
+
+private extension MainViewModelImpl {
     
     func fetchAll() {
-        audioRepository.fetchRecords { [unowned self] result in
-            switch result {
-            case .success(let records):
+        Task {
+            do {
+                let records = try await audioRepository.fetchRecords()
                 self.records = records
                 self.shouldUpdateInterface?(false)
-            case .failure(let error):
+            } catch {
                 os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
             }
         }
     }
+}
+
+
+//MARK: - Searcher
+
+extension MainViewModelImpl {
+        
+    func resetData() {
+        fetchAll()
+    }
+
     
-    
-    //MARK: Rename
-    
+    func search(withText text: String) {
+        guard !text.isEmpty else {
+            fetchAll()
+            return
+        }
+        Task {
+            do {
+                let records = try await audioRepository.search(withText: text)
+                self.records = records
+                self.shouldUpdateInterface?(false)
+            } catch {
+                os_log("\(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")")
+            }
+        }
+    }
+}
+
+
+//MARK: - Editor
+
+extension MainViewModelImpl {
+
     func rename(forIndexPath indexPath: IndexPath, newName name: String) {
-        audioRepository.rename(
-            record: records[indexPath.item],
-            newName: name
-        ) { [unowned self] isRenamed in
-            
-            switch isRenamed {
-            case .success:
+        Task {
+            do {
+                try await audioRepository.rename(
+                    record: records[indexPath.item],
+                    newName: name
+                )
                 let oldRecord = self.records[indexPath.item]
                 let newRecord = AudioRecord(
                     name: name,
@@ -115,55 +153,33 @@ extension MainViewModel {
                     duration: oldRecord.duration
                 )
                 self.records[indexPath.item] = newRecord
-            case .failure(let error):
+            } catch {
                 os_log("\(R.Strings.Errors.cantRenameRecord.rawValue + " \(error)")")
             }
         }
     }
-    
-    //MARK: Search
-    
-    func search(withText text: String) {
-        guard !text.isEmpty else {
-            fetchAll()
-            return
-        }
-        
-        audioRepository.search(withText: text) { [unowned self] result in
-            switch result {
-            case .success(let records):
-                self.records = records
-                self.shouldUpdateInterface?(false)
-            case .failure(let error):
-                os_log("\(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")")
-            }
-        }
-    }
-    
-    
-    //MARK: Delete
+
     
     func delete(forIndexPath indexPath: IndexPath) {
         let record = records[indexPath.item]
-        
-        audioRepository.delete(record: record) { [unowned self] result in
-            switch result {
-            case .success:
+        Task {
+            do {
+                try await audioRepository.delete(record: record)
                 self.records.remove(at: indexPath.item)
                 self.shouldUpdateInterface?(false)
                 
                 os_log("\(R.Strings.Logs.recordDeleted.rawValue + record.name)")
-                
-            case .failure(let error):
+            } catch {
                 os_log("\(R.Strings.Errors.cantDeleteRecordWithName.rawValue + record.name + " \(error)")")
             }
         }
     }
 }
 
+
 //MARK: Notifier
 
-extension MainViewModel {
+extension MainViewModelImpl {
     
     func activateNotification(withName
                               name: NSNotification.Name,
@@ -180,7 +196,6 @@ extension MainViewModel {
                                        selector: selector,
                                        name: name,
                                        object: nil)
-        
     }
     
     
@@ -197,6 +212,5 @@ extension MainViewModel {
         notificationCenter.removeObserver(recievedFrom,
                                           name: name,
                                           object: nil)
-        
     }
 }

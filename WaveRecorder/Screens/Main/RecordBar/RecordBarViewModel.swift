@@ -10,25 +10,25 @@ import Foundation
 
 //MARK: - Protocol
 
-protocol RecordViewModelProtocol: AnyObject {
+protocol RecordViewModel: AnyObject {
     func record(isRecording: Bool)
 }
 
 
 //MARK: - Impl
 
-final class RecordViewModel: RecordViewModelProtocol {
+final class RecordBarViewModelImpl: RecordViewModel {
     
     private var record: AudioRecord?
     
-    private let parentViewModel: MainViewModelProtocol
+    private let parentViewModel: MainViewModel
     private let audioRecorder: AudioRecorder
     
     
     //MARK: Init
     
     init(
-        parentViewModel: MainViewModelProtocol,
+        parentViewModel: MainViewModel,
         audioRecorder: AudioRecorder
     ) {
         self.parentViewModel = parentViewModel
@@ -36,7 +36,7 @@ final class RecordViewModel: RecordViewModelProtocol {
     }
 }
 
-extension RecordViewModel {
+extension RecordBarViewModelImpl {
     
     //MARK: Record
     

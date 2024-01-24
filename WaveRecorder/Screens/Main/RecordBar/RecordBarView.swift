@@ -1,5 +1,5 @@
 //
-//  RecordView.swift
+//  RecordBarView.swift
 //  WaveRecorder
 //
 //  Created by Andrew Steellson on 24.11.2023.
@@ -10,9 +10,9 @@ import UIKit
 
 //MARK: - Impl
 
-final class RecordView: UIView, IsolatedViewModule {
+final class RecordBarView: UIView, IsolatedViewModule {
     
-    private let viewModel: RecordViewModelProtocol
+    private let viewModel: RecordViewModel
     
     private let recordVisualizerView = RecordVisualizerView()
     private let recordWaveView = RecordWaveView()
@@ -24,7 +24,7 @@ final class RecordView: UIView, IsolatedViewModule {
     //MARK: Lifecycle
     
     init(
-        viewModel: RecordViewModelProtocol
+        viewModel: RecordViewModel
     ) {
         self.viewModel = viewModel
         super.init(frame: .zero)
@@ -46,7 +46,7 @@ final class RecordView: UIView, IsolatedViewModule {
 
 //MARK: - Setup
 
-private extension RecordView {
+private extension RecordBarView {
     
     func seutupContentView() {
         backgroundColor = R.Colors.primaryBackgroundColor
@@ -119,7 +119,7 @@ private extension RecordView {
 
 //MARK: - RoundedRecButtonView Delegate
 
-extension RecordView: RecordButtonViewDelegate {
+extension RecordBarView: RecordButtonViewDelegate {
     
     func recButtonDidTapped(_ isRecording: Bool) {
         viewModel.record(isRecording: isRecording)

@@ -1,5 +1,5 @@
 //
-//  MainTableViewCell.swift
+//  RecordCell.swift
 //  WaveRecorder
 //
 //  Created by Andrew Steellson on 23.11.2023.
@@ -10,17 +10,17 @@ import UIKit
 
 //MARK: - Impl
 
-final class MainTableViewCell:  UITableViewCell {
+final class RecordCell:  UITableViewCell {
     
-    static let mainTableViewCellIdentifier = R.Strings
+    static let recordCellIdentifier = R.Strings
         .Identifiers
-        .mainTableViewCellIdentifier
+        .recordCellIdentifier
         .rawValue
     
     
     //MARK: Variables
     
-    private var viewModel: MainCellViewModelProtocol!
+    private var viewModel: RecordCellViewModel!
     
     private let editView = EditView()
     private let playToolbar = PlayToolbarView()
@@ -47,7 +47,7 @@ final class MainTableViewCell:  UITableViewCell {
     
     //MARK: Methods
     
-    func configureCell(withViewModel viewModel: MainCellViewModelProtocol) {
+    func configureCell(withViewModel viewModel: RecordCellViewModel) {
         self.viewModel = viewModel
         self.editView.configure(withViewModel: viewModel.makeEditViewModel())
         self.playToolbar.configure(withViewModel: viewModel.makePlayViewModel())
@@ -57,7 +57,7 @@ final class MainTableViewCell:  UITableViewCell {
 
 //MARK: - Setup
 
-private extension MainTableViewCell {
+private extension RecordCell {
     
     func setupContentView() {
         selectionStyle = .gray

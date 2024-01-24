@@ -15,11 +15,10 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
     
     private let editButton = UIBarButtonItem()
     private let titleLabel = UILabel()
-    private let searchController = UISearchController()
-    private let tableView = UITableView()
-    
+    private let searchController = WRSearchController()
+    private let tableView = WRTableView(frame: .zero, style: .plain)
     private lazy var recordView = viewModel.makeRecordView()
-    private var recViewHeight = UIScreen.main.bounds.height * 0.15
+    
     private lazy var recViewHeightConstraint: NSLayoutConstraint = {
         NSLayoutConstraint(
             item: recordView,
@@ -28,19 +27,17 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
             toItem: nil,
             attribute: .notAnAttribute,
             multiplier: 1,
-            constant: recViewHeight
+            constant: UIScreen.main.bounds.height * 0.15
         )
     }()
     
-    private var tableViewCellHeight: CGFloat = 200
-
-    private let viewModel: MainViewModelProtocol
+    private let viewModel: MainViewModel
 
     
     //MARK: Lifecycle
     
     init(
-        viewModel: MainViewModelProtocol
+        viewModel: MainViewModel
     ) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -64,7 +61,7 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
         super.viewDidAppear(animated)
         setupEditButton()
         seutpNavigationBar()
-        setupNorifications()
+        activateNorifications()
     }
     
     override func viewDidLayoutSubviews() {
@@ -78,33 +75,6 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
         removeNotifications()
     }
     
-    
-    //MARK: Animate
-    
-    private func animateEditButton() {
-        UIView.animate(withDuration: 0.3) {
-            self.tableView.isEditing.toggle()
-            
-            self.editButton.title = self.tableView.isEditing
-            ? R.Strings.Titles.stopEditButtonTitle.rawValue
-            : R.Strings.Titles.editButtonTitle.rawValue
-        }
-    }
-    
-    private func animateUpdatedLayout() {
-        UIView.animate(
-            withDuration: 0.2,
-            delay: 0,
-            usingSpringWithDamping: 1,
-            initialSpringVelocity: 1
-        ) {
-            DispatchQueue.main.async { [unowned self] in
-                self.setupEditButton()
-                self.tableView.reloadData()
-            }
-        }
-    }
-
     
     //MARK: Actions
     
@@ -124,7 +94,6 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
 private extension MainViewController {
     
     func seutpNavigationBar() {
-        navigationController?.navigationBar.backgroundColor = R.Colors.primaryBackgroundColor
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
         navigationItem.rightBarButtonItem = editButton
         navigationItem.searchController = searchController
@@ -153,32 +122,22 @@ private extension MainViewController {
     }
     
     func setupSearchController() {
-        searchController.searchBar.placeholder = R.Strings.Titles.searchTextFieldPlaceholder.rawValue
-        searchController.searchBar.tintColor = .black
-        searchController.searchBar.autocapitalizationType = .none
-        searchController.searchBar.autocorrectionType = .no
-        searchController.searchBar.searchBarStyle = .minimal
-        searchController.hidesNavigationBarDuringPresentation = false
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchResultsUpdater = self
-        searchController.searchBar.delegate = self
-        searchController.searchBar.searchTextField.delegate = self
-        searchController.searchBar.setShowsCancelButton(false, animated: true)
+        let searchControllerInput = WRSearchControllerInput(
+            fetchAllAction: viewModel.resetData,
+            searchWithTextAction: viewModel.search
+        )
+        searchController.configure(withInput: searchControllerInput)
     }
     
     func setupTableView() {
-        tableView.backgroundColor = .white
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        tableView.layer.cornerRadius = 26
-        tableView.estimatedRowHeight = 160
-        tableView.keyboardDismissMode = .onDrag
-        tableView.showsVerticalScrollIndicator = false
-        tableView.alwaysBounceVertical = true
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(MainTableViewCell.self,
-                           forCellReuseIdentifier: MainTableViewCell.mainTableViewCellIdentifier)
+        let tableViewInput = WRTableViewInput(
+            numberOfItems: viewModel.numberOfItems,
+            tableViewCellHeight: viewModel.tableViewCellHeight,
+            makeViewModelForCellAction: viewModel.makeViewModelForCell,
+            deleteAction: viewModel.delete
+        )
+        tableView.configure(withInput: tableViewInput)
+        tableView.register(RecordCell.self, forCellReuseIdentifier: RecordCell.recordCellIdentifier)
     }
 
     func setupRecordViewHeight() {
@@ -210,11 +169,13 @@ private extension MainViewController {
             tableView.bottomAnchor.constraint(equalTo: recordView.topAnchor)
         ])
     }
+}
+
+//MARK: Notifications
+
+private extension MainViewController {
     
-    
-    //MARK: Notifications
-    
-    func setupNorifications() {
+    func activateNorifications() {
         viewModel.activateNotification(
             withName: UIResponder.keyboardWillHideNotification,
             selector: #selector(adjustForKeyboard),
@@ -236,7 +197,36 @@ private extension MainViewController {
             withName: UIResponder.keyboardWillChangeFrameNotification,
             from: self
         )
+    }
+}
 
+
+//MARK: Animation
+
+private extension MainViewController {
+    
+    func animateEditButton() {
+        UIView.animate(withDuration: 0.3) {
+            self.tableView.isEditing.toggle()
+            
+            self.editButton.title = self.tableView.isEditing
+            ? R.Strings.Titles.stopEditButtonTitle.rawValue
+            : R.Strings.Titles.editButtonTitle.rawValue
+        }
+    }
+    
+    func animateUpdatedLayout() {
+        UIView.animate(
+            withDuration: 0.2,
+            delay: 0,
+            usingSpringWithDamping: 1,
+            initialSpringVelocity: 1
+        ) {
+            DispatchQueue.main.async { [unowned self] in
+                self.setupEditButton()
+                self.tableView.reloadData()
+            }
+        }
     }
 }
 
@@ -278,98 +268,5 @@ private extension MainViewController {
         }
         
         tableView.scrollIndicatorInsets = tableView.contentInset
-    }
-}
-
-
-//MARK: - DataSource
-
-extension MainViewController: UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.numberOfItems
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard 
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: MainTableViewCell.mainTableViewCellIdentifier,
-                for: indexPath
-            ) as? MainTableViewCell
-        else {
-            os_log("\(R.Strings.Errors.cantDequeReusableCell.rawValue)")
-            return UITableViewCell()
-        }
-
-        let cellViewModel = viewModel.makeViewModelForCell(forIndexPath: indexPath)
-        cell.configureCell(withViewModel: cellViewModel)
-        
-        return cell
-    }
-}
-
-
-//MARK: - TableView Delegate
-
-extension MainViewController: UITableViewDelegate {
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        tableViewCellHeight
-    }
-    
-    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        false
-    }
-
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        UISwipeActionsConfiguration(actions: [ UIContextualAction(
-            style: .destructive, 
-            title: "Kill",
-            handler: { _, _, _ in
-                self.viewModel.delete(forIndexPath: indexPath)
-            }
-        )])
-    }
-}
-
-
-//MARK: - SearchBar+Field Delegate
-
-extension MainViewController: UISearchBarDelegate, UISearchTextFieldDelegate {
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard searchText.isEmpty else { return }
-        searchBar.resignFirstResponder()
-    }
-    
-    func textFieldShouldClear(_ textField: UITextField) -> Bool {
-        guard 
-            textField == searchController.searchBar.searchTextField
-        else {
-            os_log("\(R.Strings.Errors.wrongFieldResponder.rawValue)")
-            return false
-        }
-        
-        textField.text = ""
-        textField.endEditing(true)
-        textField.resignFirstResponder()
-        
-        viewModel.fetchAll()
-        
-        return false
-    }
-}
-
-
-//MARK: - Search Reslut Updating
-
-extension MainViewController: UISearchResultsUpdating {
-    
-    func updateSearchResults(for searchController: UISearchController) {
-        guard let searchText = searchController.searchBar.searchTextField.text else {
-            return
-        }
-        
-        viewModel.search(withText: searchText.trimmingCharacters(in: .illegalCharacters))
     }
 }
