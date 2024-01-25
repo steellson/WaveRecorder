@@ -21,13 +21,13 @@ protocol ParentViewModelProtocol: AnyObject {
 }
 
 protocol Searcher: AnyObject {
-    func resetData()
-    func search(withText text: String)
+    func resetData() async
+    func search(withText text: String) async
 }
 
 protocol Editor: AnyObject {
-    func rename(forIndexPath indexPath: IndexPath, newName name: String)
-    func delete(forIndexPath indexPath: IndexPath)
+    func rename(forIndexPath indexPath: IndexPath, newName name: String) async
+    func delete(forIndexPath indexPath: IndexPath) async
 }
 
 protocol Notifier: AnyObject {
@@ -72,7 +72,7 @@ final class MainViewModelImpl: MainViewModel {
         self.audioRepository = audioRepository
         self.notificationCenter = notificationCenter
         
-        fetchAll()
+        Task { await fetchAll() }
     }
     
     
@@ -93,15 +93,13 @@ final class MainViewModelImpl: MainViewModel {
 
 private extension MainViewModelImpl {
     
-    func fetchAll() {
-        Task {
-            do {
-                let records = try await audioRepository.fetchRecords()
-                self.records = records.sorted(by: { $0.name > $1.name })
-                self.shouldUpdateInterface?(false)
-            } catch {
-                os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
-            }
+    func fetchAll() async {
+        do {
+            let records = try await audioRepository.fetchRecords()
+            self.records = records.sorted(by: { $0.name > $1.name })
+            self.shouldUpdateInterface?(false)
+        } catch {
+            os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
         }
     }
 }
@@ -111,24 +109,22 @@ private extension MainViewModelImpl {
 
 extension MainViewModelImpl {
         
-    func resetData() {
-        fetchAll()
+    func resetData() async {
+        await fetchAll()
     }
 
     
-    func search(withText text: String) {
+    func search(withText text: String) async {
         guard !text.isEmpty else {
-            fetchAll()
+            await fetchAll()
             return
         }
-        Task {
-            do {
-                let records = try await audioRepository.search(withText: text)
-                self.records = records
-                self.shouldUpdateInterface?(false)
-            } catch {
-                os_log("\(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")")
-            }
+        do {
+            let records = try await audioRepository.search(withText: text)
+            self.records = records
+            self.shouldUpdateInterface?(false)
+        } catch {
+            os_log("\(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")")
         }
     }
 }
@@ -138,40 +134,36 @@ extension MainViewModelImpl {
 
 extension MainViewModelImpl {
 
-    func rename(forIndexPath indexPath: IndexPath, newName name: String) {
-        Task {
-            do {
-                try await audioRepository.rename(
-                    record: records[indexPath.item],
-                    newName: name
-                )
-                let oldRecord = self.records[indexPath.item]
-                let newRecord = AudioRecord(
-                    name: name,
-                    format: oldRecord.format,
-                    date: oldRecord.date,
-                    duration: oldRecord.duration
-                )
-                self.records[indexPath.item] = newRecord
-            } catch {
-                os_log("\(R.Strings.Errors.cantRenameRecord.rawValue + " \(error)")")
-            }
+    func rename(forIndexPath indexPath: IndexPath, newName name: String) async {
+        do {
+            try await audioRepository.rename(
+                record: records[indexPath.item],
+                newName: name
+            )
+            let oldRecord = self.records[indexPath.item]
+            let newRecord = AudioRecord(
+                name: name,
+                format: oldRecord.format,
+                date: oldRecord.date,
+                duration: oldRecord.duration
+            )
+            self.records[indexPath.item] = newRecord
+        } catch {
+            os_log("\(R.Strings.Errors.cantRenameRecord.rawValue + " \(error)")")
         }
     }
 
     
-    func delete(forIndexPath indexPath: IndexPath) {
+    func delete(forIndexPath indexPath: IndexPath) async {
         let record = records[indexPath.item]
-        Task {
-            do {
-                try await audioRepository.delete(record: record)
-                self.records.remove(at: indexPath.item)
-                self.shouldUpdateInterface?(false)
-                
-                os_log("\(R.Strings.Logs.recordDeleted.rawValue + record.name)")
-            } catch {
-                os_log("\(R.Strings.Errors.cantDeleteRecordWithName.rawValue + record.name + " \(error)")")
-            }
+        do {
+            try await audioRepository.delete(record: record)
+            self.records.remove(at: indexPath.item)
+            self.shouldUpdateInterface?(false)
+            
+            os_log("\(R.Strings.Logs.recordDeleted.rawValue + record.name)")
+        } catch {
+            os_log("\(R.Strings.Errors.cantDeleteRecordWithName.rawValue + record.name + " \(error)")")
         }
     }
 }

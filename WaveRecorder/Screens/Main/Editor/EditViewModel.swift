@@ -15,7 +15,7 @@ protocol EditViewModelProtocol: AnyObject {
     var isEditing: Bool { get }
             
     func switchEditing()
-    func onEndEditing(withNewName newName: String)
+    func onEndEditing(withNewName newName: String) async
 }
 
 
@@ -65,12 +65,12 @@ extension EditViewModel {
     
     //MARK: On end editing
 
-    func onEndEditing(withNewName newName: String) {
+    func onEndEditing(withNewName newName: String) async {
         isEditing = false
         
         guard newName != record.name else { return }
         
-        self.parentViewModel.renameRecord(withNewName: newName)
+        await parentViewModel.renameRecord(withNewName: newName)
         
         self.record = AudioRecord(
             name: newName,

@@ -15,7 +15,7 @@ struct WRTableViewInput {
     let numberOfItems: Int
     let tableViewCellHeight: CGFloat
     let makeViewModelForCellAction: (_ indexPath: IndexPath) -> RecordCellViewModel
-    let deleteAction: (_ indexPath: IndexPath) -> Void
+    let deleteAction: (_ indexPath: IndexPath) async -> Void
 }
 
 
@@ -135,7 +135,7 @@ extension WRTableView: UITableViewDelegate {
                     os_log("ERROR: Input isn't setted!")
                     return
                 }
-                input.deleteAction(indexPath)
+                Task { await input.deleteAction(indexPath) }
             }
         )])
     }

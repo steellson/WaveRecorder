@@ -12,8 +12,8 @@ import AVFoundation
 //MARK: - Protocol
 
 protocol RecordCellViewModel: AnyObject {
-    func renameRecord(withNewName: String)
-    func deleteRecord()
+    func renameRecord(withNewName: String) async
+    func deleteRecord() async
     
     func makeEditViewModel() -> EditViewModelProtocol
     func makePlayViewModel() -> PlayToolbarViewModel
@@ -63,14 +63,14 @@ extension RecordCellViewModelImpl {
     
     //MARK: Rename
 
-    func renameRecord(withNewName name: String) {
-        parentViewModel.rename(forIndexPath: indexPath, newName: name)
+    func renameRecord(withNewName name: String) async {
+        await parentViewModel.rename(forIndexPath: indexPath, newName: name)
     }
     
     
     //MARK: Delete
     
-    func deleteRecord() {
-        parentViewModel.delete(forIndexPath: indexPath)
+    func deleteRecord() async {
+        await parentViewModel.delete(forIndexPath: indexPath)
     }
 }

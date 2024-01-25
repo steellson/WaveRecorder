@@ -185,11 +185,12 @@ extension EditView: UITextFieldDelegate {
         else {
             return
         }
-        
-        viewModel.onEndEditing(withNewName: newName)
-        
-        animateTitleLabelField(isEditing: viewModel.isEditing)
-        animateRenameButton(isEditingStarts: viewModel.isEditing)
+        Task {
+            await viewModel.onEndEditing(withNewName: newName)
+            
+            animateTitleLabelField(isEditing: viewModel.isEditing)
+            animateRenameButton(isEditingStarts: viewModel.isEditing)
+        }
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -200,11 +201,12 @@ extension EditView: UITextFieldDelegate {
             return false
         }
         
-        viewModel.onEndEditing(withNewName: newName)
-        
-        animateTitleLabelField(isEditing: viewModel.isEditing)
-        animateRenameButton(isEditingStarts: viewModel.isEditing)
-
+        Task {
+            await viewModel.onEndEditing(withNewName: newName)
+            
+            animateTitleLabelField(isEditing: viewModel.isEditing)
+            animateRenameButton(isEditingStarts: viewModel.isEditing)
+        }
         return true
     }
 }

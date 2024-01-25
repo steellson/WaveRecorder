@@ -28,6 +28,7 @@ enum AudioRepositoryError: Error {
     case cantDecodeMetadata
     case cantRenameRecord
     case cantDeleteRecord
+    case cantHandleFormat
 }
 
 
@@ -43,6 +44,18 @@ final class AudioRepositoryImpl: AudioRepository {
 }
 
 
+//MARK: - Private
+
+private extension AudioRepositoryImpl {
+    
+    func handleStringFormat(_ format: String) -> AudioFormat {
+        let avalibleFormats = AudioFormat.allCases
+        let defaultFormat = AudioFormat.m4a
+        return avalibleFormats.first(where: { $0.rawValue == format }) ?? defaultFormat
+    }
+}
+
+
 //MARK: - Public
 
 extension AudioRepositoryImpl {
@@ -50,21 +63,10 @@ extension AudioRepositoryImpl {
     func fetchRecords() async throws -> [AudioRecord] {
         do {
             let metadata = try await audioMetadataManager.loadMetadataList()
-            return try metadata.map {
-                
-                let format = $0.primary.format
-                let avalibleFormats = AudioFormat.allCases
-                
-                guard
-                    let safeFormat = avalibleFormats.first(where: { $0.rawValue == format })
-                else {
-                    os_log("ERROR: Cant decode audio format!")
-                    throw AudioRepositoryError.cantDecodeMetadata
-                }
-                
-                return AudioRecord(
+            return metadata.map {
+                AudioRecord(
                     name: $0.primary.name,
-                    format: safeFormat,
+                    format: handleStringFormat($0.primary.format),
                     date: $0.secondary.date,
                     duration: $0.secondary.duration
                 )
@@ -77,7 +79,23 @@ extension AudioRepositoryImpl {
     
     
     func search(withText text: String) async throws -> [AudioRecord] {
-        []
+        do {
+            let metadata = try await audioMetadataManager.loadMetadataList()
+            let searched = metadata.compactMap {
+                $0.primary.name.components(separatedBy: ".").dropLast().joined().contains(text) ? $0 : nil
+            }
+            return searched.map {
+                AudioRecord(
+                    name: $0.primary.name,
+                    format: handleStringFormat($0.primary.format),
+                    date: $0.secondary.date,
+                    duration: $0.secondary.duration
+                )
+            }
+        } catch {
+            os_log("ERROR: Cant search and fetch records!")
+            throw AudioRepositoryError.cantFetchRecords
+        }
     }
     
     func rename(record: AudioRecord, newName: String) async throws {

@@ -125,7 +125,7 @@ final class PlayToolbarView: UIView {
     //MARK: Actions
     
     @objc
-    private func toolBarButtonDidTapped(_ sender: PlayTolbarButton) {
+    private func toolBarButtonDidTapped(_ sender: PlayTolbarButton) async {
         animateTappedButton(withSender: sender)
         
         guard let viewModel else {
@@ -139,7 +139,7 @@ final class PlayToolbarView: UIView {
         case .goForward:
             viewModel.goForward()
         case .delete:
-            viewModel.deleteRecord()
+            Task { await viewModel.deleteRecord() }
         case .play:
             viewModel.play(atTime: progressSlider.value, completion: animateProgress)
         case .stop:

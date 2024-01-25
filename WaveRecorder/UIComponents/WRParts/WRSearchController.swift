@@ -12,8 +12,8 @@ import OSLog
 //MARK: - Input
 
 struct WRSearchControllerInput {
-    var fetchAllAction: () -> Void
-    var searchWithTextAction: (String) -> Void
+    var fetchAllAction: () async -> Void
+    var searchWithTextAction: (String) async -> Void
 }
 
 
@@ -92,8 +92,9 @@ private extension WRSearchController {
             os_log("ERROR: Input isn't setted!")
             return
         }
-        
-        input.searchWithTextAction(text.trimmingCharacters(in: .illegalCharacters))
+        Task {
+            await input.searchWithTextAction(text.trimmingCharacters(in: .illegalCharacters))
+        }
     }
     
     func restoreResults() {
@@ -101,8 +102,9 @@ private extension WRSearchController {
             os_log("ERROR: Input isn't setted!")
             return
         }
-        
-        input.fetchAllAction()
+        Task {
+            await input.fetchAllAction()
+        }
     }
 }
 

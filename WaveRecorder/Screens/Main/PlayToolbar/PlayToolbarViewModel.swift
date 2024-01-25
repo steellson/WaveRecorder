@@ -22,7 +22,7 @@ protocol PlayToolbarViewModel: AnyObject {
     func play(atTime time: Float, completion: @escaping () -> Void)
     func stop(completion: @escaping () -> Void)
     func goForward()
-    func deleteRecord()
+    func deleteRecord() async
 }
 
 
@@ -117,8 +117,8 @@ extension PlayToolbarViewModelImpl {
     
     //MARK: Delete
     
-    func deleteRecord() {
-        parentViewModel.deleteRecord()
+    func deleteRecord() async {
+        await parentViewModel.deleteRecord()
     }
 }
 
