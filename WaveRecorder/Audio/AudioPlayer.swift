@@ -67,7 +67,7 @@ extension AudioPlayerImpl {
         let recordURL = audioPathManager.createURL(
             forRecordWithName: record.name,
             andFormat: record.format.rawValue
-        )
+        ).deletingPathExtension()
         
         guard
             audioPathManager.isFileExist(recordURL)
@@ -97,6 +97,7 @@ extension AudioPlayerImpl {
         
         DispatchQueue.main.async { [weak self] in
             self?.audioPlayer?.stop()
+            self?.audioPlayer = nil
         }
     }
 }
