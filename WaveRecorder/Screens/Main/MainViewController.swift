@@ -53,8 +53,14 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
         setupContentView()
         setupTitleLabel()
         setupSearchController()
-        setupTableView()
         hideKeyboardWhenTappedAround()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        setupTableView()
+        setupConstrtaints()
+        setupRecordViewHeight()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -62,12 +68,6 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
         setupEditButton()
         seutpNavigationBar()
         activateNorifications()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        setupRecordViewHeight()
-        setupConstrtaints()
     }
     
     override func viewDidDisappear(_ animated: Bool) {

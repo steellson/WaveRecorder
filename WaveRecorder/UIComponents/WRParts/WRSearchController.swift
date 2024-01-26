@@ -135,6 +135,7 @@ extension WRSearchController: UISearchResultsUpdating {
             os_log("ERROR: Couldnt recognize search field!")
             return
         }
+        
         updateResults(withText: searchText)
     }
 }

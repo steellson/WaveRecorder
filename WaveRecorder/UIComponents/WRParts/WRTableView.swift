@@ -85,11 +85,11 @@ private extension WRTableView {
 extension WRTableView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let input else {
-            os_log("ERROR: Input isn't setted!")
-            return 0
-        }
-        return input.numberOfItems
+//        guard let input else {
+//            os_log("ERROR: Input isn't setted!")
+//            return 0
+//        }
+        return input?.numberOfItems ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
