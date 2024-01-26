@@ -52,6 +52,7 @@ struct PrimaryAudioData {
 struct SecondaryAudioData {
     let date: Date
     let duration: TimeInterval
+    let url: URL
 }
 
 struct AudioMetadata {

@@ -16,6 +16,7 @@ protocol AudioPathManager: AnyObject {
     func createAudioRecordName() -> String
     func getStoredFilesList() -> [URL]
     func isFileExist(_ url: URL) -> Bool
+    func moveItem(fromURL: URL, toURL: URL) -> Bool
 }
 
 
@@ -54,9 +55,9 @@ final class AudioPathManagerImpl: AudioPathManager {
 }
 
 
-//MARK: - Public
-
 extension AudioPathManagerImpl {
+    
+    //MARK: Create
         
     func createURL(
         forRecordWithName name: String,
@@ -125,5 +126,19 @@ extension AudioPathManagerImpl {
     
     func isFileExist(_ url: URL) -> Bool {
         fileManager.fileExists(atPath: url.path(percentEncoded: false))
+    }
+    
+    
+    //MARK: Move
+    
+    func moveItem(fromURL: URL, toURL: URL) -> Bool {
+        try? fileManager.moveItem(at: fromURL, to: toURL)
+        guard 
+            fileManager.fileExists(atPath: toURL.path(percentEncoded: false))
+        else {
+            os_log("ERROR: Item cant be replaced")
+            return false
+        }
+        return true
     }
 }

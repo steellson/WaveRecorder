@@ -81,8 +81,8 @@ extension AudioRepositoryImpl {
     func search(withText text: String) async throws -> [AudioRecord] {
         do {
             let metadata = try await audioMetadataManager.loadMetadataList()
-            let searched = metadata.compactMap {
-                $0.primary.name.components(separatedBy: ".").dropLast().joined().contains(text) ? $0 : nil
+            let searched = metadata.filter {
+                $0.primary.name.components(separatedBy: ".").dropLast().joined().contains(text)
             }
             return searched.map {
                 AudioRecord(
@@ -99,7 +99,35 @@ extension AudioRepositoryImpl {
     }
     
     func rename(record: AudioRecord, newName: String) async throws {
-        
+        do {
+            let metadata = try await audioMetadataManager.loadMetadataList()
+            let searchedResults = metadata.filter { $0.primary.name == record.name }
+            
+            guard
+                !searchedResults.isEmpty,
+                !(searchedResults.count > 1),
+                let result = searchedResults.first
+            else {
+                os_log("ERROR: Cant rename record!")
+                throw AudioRepositoryError.cantRenameRecord
+            }
+  
+            let namePath = "\(newName).\(record.format.rawValue)"
+            let isRewrited = audioMetadataManager.rewrite(
+                url: result.secondary.url,
+                withNewPath: namePath
+            )
+            
+            guard isRewrited else {
+                os_log("ATTENTION: Record isn't renamed!")
+                throw AudioRepositoryError.cantRenameRecord
+            }
+            os_log("SUCCESS: Record renamed!")
+            
+        } catch {
+            os_log("ERROR: Cant rename records!")
+            throw AudioRepositoryError.cantFetchRecords
+        }
     }
     
     func delete(record: AudioRecord) async throws {

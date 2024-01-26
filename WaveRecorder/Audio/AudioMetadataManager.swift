@@ -13,6 +13,7 @@ import OSLog
 
 protocol AudioMetadataManager: AnyObject {
     func loadMetadataList() async throws -> [AudioMetadata]
+    func rewrite(url: URL, withNewPath newName: String) -> Bool
 }
 
 
@@ -33,11 +34,11 @@ final class AudioMetadataManagerImpl: AudioMetadataManager {
 private extension AudioMetadataManagerImpl {
     
     func loadListOfUrls() -> [URL] {
-        var list = audioPathManager.getStoredFilesList()
-        list.removeFirst() // Exclude .DS_Store
-        return list
+        let list = audioPathManager.getStoredFilesList()
+        let excluded = ".DS_Store"
+        let filtered = list.filter { !($0.lastPathComponent == excluded) }
+        return filtered
     }
-    
     
     func loadPrimaryAudioData(fromURLs urls: [URL]) -> [PrimaryAudioData] {
         urls.map { url in
@@ -50,11 +51,12 @@ private extension AudioMetadataManagerImpl {
     
     func loadSecondaryAudioData(fromAssets assets: [AVAsset]) async throws -> [SecondaryAudioData] {
         do {
-            return try await assets.asyncMap { asset in
+            return try await assets.enumerated().asyncMap { index, asset in
                 
                 let dateValue = try await asset.load(.creationDate)?.load(.value)
                 let durationValue = try await asset.load(.duration)
-                
+                let url = loadListOfUrls()[index]
+      
                 guard let date = dateValue as? Date else {
                     os_log("ERROR: Cant parse asset Date!")
                     throw AudioRepositoryError.cantDecodeMetadata
@@ -62,7 +64,8 @@ private extension AudioMetadataManagerImpl {
                 
                 return SecondaryAudioData(
                     date: date,
-                    duration: TimeInterval(floatLiteral: durationValue.seconds)
+                    duration: TimeInterval(floatLiteral: durationValue.seconds),
+                    url: url
                 )
             }
         } catch {
@@ -90,5 +93,12 @@ extension AudioMetadataManagerImpl {
                 secondary: secondaryAudioData[index]
             )
         }
+    }
+    
+    func rewrite(url: URL, withNewPath newName: String) -> Bool {
+        audioPathManager.moveItem(
+            fromURL: url,
+            toURL: url.deletingLastPathComponent().appendingPathComponent(newName)
+        )
     }
 }
