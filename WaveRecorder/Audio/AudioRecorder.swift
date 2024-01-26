@@ -14,8 +14,20 @@ import OSLog
 //MARK: - Protocol
 
 protocol AudioRecorder: AnyObject {
-    func startRecord()
-    func stopRecord(completion: ((AudioRecord?) -> Void)?)
+    func startRecord() async throws
+    func stopRecord() async throws -> AudioRecord?
+}
+
+
+//MARK: - Error
+
+enum AudioRecorderError: Error {
+    case audioPermissionIsNotAllowed
+    case cantSetupAudioRecorder
+    case cantInitializeAudioRecorder
+    case cantStartRecordAudio
+    case cantStopAudioRecording
+    case cantResetAudioSessionCategoryAfterRecord
 }
 
 
@@ -37,7 +49,11 @@ final class AudioRecorderImpl: AudioRecorder {
     init() {
         self.audioPathManager = AudioPathManagerImpl()
         
-        setupAudioRecorder()
+        do {
+            try setupAudioRecorder()
+        } catch {
+            os_log("ERROR: Cant setup audio recorder. \(error)")
+        }
     }
 }
 
@@ -46,7 +62,7 @@ final class AudioRecorderImpl: AudioRecorder {
 
 private extension AudioRecorderImpl {
     
-    func setupAudioRecorder() {
+    func setupAudioRecorder() throws {
         do {
             try audioSession.setCategory(.playAndRecord, mode: .default)
             AVAudioApplication.requestRecordPermission() { allowed in
@@ -64,6 +80,7 @@ private extension AudioRecorderImpl {
             }
         } catch {
             os_log("ERROR: Cant setup audio recorder. \(error)")
+            throw AudioRecorderError.cantSetupAudioRecorder
         }
     }
     
@@ -84,13 +101,13 @@ extension AudioRecorderImpl {
     
     //MARK: Start
     
-    func startRecord() {
+    func startRecord() async throws {
         // Check permissions
         guard
             isAudioRecordingAllowed
         else {
             os_log("ERROR: Cant start recording because it is not allowed!")
-            return
+            throw AudioRecorderError.audioPermissionIsNotAllowed
         }
         
         guard audioRecorder == nil else { return }
@@ -114,7 +131,11 @@ extension AudioRecorderImpl {
             self.audioRecorder.prepareToRecord()
             self.audioRecorder.record()
             
-            os_log(">>> RECORD STARTED!")
+            if audioRecorder.isRecording {
+                os_log(">>> RECORD STARTED!")
+            } else {
+                throw AudioRecorderError.cantStartRecordAudio
+            }
             
             let record = AudioRecord(
                 name: recordWillNamed,
@@ -125,8 +146,8 @@ extension AudioRecorderImpl {
             self.record = record
             
         } catch {
-            self.stopRecord(completion: nil)
             os_log("ERROR: Cant initialize audio recorder")
+            throw AudioRecorderError.cantInitializeAudioRecorder
         }
         
     }
@@ -134,8 +155,8 @@ extension AudioRecorderImpl {
     
     //MARK: Stop
     
-    func stopRecord(completion: ((AudioRecord?) -> Void)?) {
-        guard audioRecorder != nil else { return }
+    func stopRecord() async throws -> AudioRecord? {
+        guard audioRecorder != nil else { return nil }
         
         // Set duration
         let duration = self.audioRecorder.currentTime
@@ -143,20 +164,26 @@ extension AudioRecorderImpl {
         
         // Stop recording
         self.audioRecorder.stop()
-        os_log(">>> RECORD FINISHED!")
+        
+        if !self.audioRecorder.isRecording {
+            os_log(">>> RECORD FINISHED!")
+        } else {
+            throw AudioRecorderError.cantStopAudioRecording
+        }
         
         // Reset category back
         do {
             try self.audioSession.setCategory(.playback)
         } catch {
             os_log("ERROR: Couldnt reset audio session category after record. \(error)")
+            throw AudioRecorderError.cantResetAudioSessionCategoryAfterRecord
         }
         
         // Remove recorder
         self.audioRecorder = nil
         
         // Send record
-        completion?(self.record)
+        return self.record
     }
 }
 

@@ -82,7 +82,7 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
     private func editButtonDidTapped() {
         guard viewModel.numberOfItems != 0 else { return }
         
-        DispatchQueue.main.async { [unowned self] in
+        Task {
             self.animateEditButton()
         }
     }
@@ -222,7 +222,7 @@ private extension MainViewController {
             usingSpringWithDamping: 1,
             initialSpringVelocity: 1
         ) {
-            DispatchQueue.main.async { [unowned self] in
+            Task {
                 self.setupEditButton()
                 self.tableView.reloadData()
             }

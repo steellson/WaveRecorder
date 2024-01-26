@@ -12,7 +12,7 @@ import OSLog
 //MARK: - Protocols
 
 protocol InterfaceUpdatable: AnyObject {
-    var shouldUpdateInterface: ((Bool) -> Void)? { get set }
+    var shouldUpdateInterface: ((Bool) async -> Void)? { get set }
 }
 
 protocol ParentViewModelProtocol: AnyObject {
@@ -45,7 +45,7 @@ protocol MainViewModel: InterfaceUpdatable, ParentViewModelProtocol, Searcher, E
 
 final class MainViewModelImpl: MainViewModel {
     
-    var shouldUpdateInterface: ((Bool) -> Void)?
+    var shouldUpdateInterface: ((Bool) async -> Void)?
     
     var numberOfItems: Int {
         records.count
@@ -97,7 +97,8 @@ private extension MainViewModelImpl {
         do {
             let records = try await audioRepository.fetchRecords()
             self.records = records.sorted(by: { $0.name > $1.name })
-            self.shouldUpdateInterface?(false)
+            
+            await self.shouldUpdateInterface?(false)
         } catch {
             os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
         }
@@ -122,7 +123,8 @@ extension MainViewModelImpl {
         do {
             let records = try await audioRepository.search(withText: text)
             self.records = records
-            self.shouldUpdateInterface?(false)
+            
+            await self.shouldUpdateInterface?(false)
         } catch {
             os_log("\(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")")
         }
@@ -159,8 +161,8 @@ extension MainViewModelImpl {
         do {
             try await audioRepository.delete(record: record)
             self.records.remove(at: indexPath.item)
-            self.shouldUpdateInterface?(false)
             
+            await self.shouldUpdateInterface?(false)
             os_log("\(R.Strings.Logs.recordDeleted.rawValue + record.name)")
         } catch {
             os_log("\(R.Strings.Errors.cantDeleteRecordWithName.rawValue + record.name + " \(error)")")

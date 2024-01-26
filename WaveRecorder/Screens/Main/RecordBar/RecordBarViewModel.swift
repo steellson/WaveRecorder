@@ -6,12 +6,13 @@
 //
 
 import Foundation
+import OSLog
 
 
 //MARK: - Protocol
 
 protocol RecordViewModel: AnyObject {
-    func record(isRecording: Bool)
+    func record(isRecording: Bool) async
 }
 
 
@@ -36,20 +37,40 @@ final class RecordBarViewModelImpl: RecordViewModel {
     }
 }
 
+
+//MARK: - Private
+
+private extension RecordBarViewModelImpl {
+    
+    func startRecord() async {
+        guard let recorded = try? await audioRecorder.stopRecord() else {
+            os_log("ERROR: Cant stop recording")
+            return
+        }
+        
+        self.record = recorded
+        await self.parentViewModel.shouldUpdateInterface?(false)
+    }
+    
+    
+    func stopRecord() async {
+        guard let _ = try? await audioRecorder.startRecord() else {
+            os_log("ERROR: Cant start recording")
+            return
+        }
+        
+        await self.parentViewModel.shouldUpdateInterface?(true)
+    }
+}
+
+
+//MARK: Public
+
 extension RecordBarViewModelImpl {
     
-    //MARK: Record
-    
-    func record(isRecording: Bool) {
-        if isRecording {
-            audioRecorder.stopRecord { [unowned self] record in
-                guard let record else { return }
-                self.record = record
-                self.parentViewModel.shouldUpdateInterface?(false)
-            }
-        } else {
-            audioRecorder.startRecord()
-            parentViewModel.shouldUpdateInterface?(true)
-        }
+    func record(isRecording: Bool) async {
+        !isRecording
+        ? await stopRecord()
+        : await startRecord()
     }
 }
