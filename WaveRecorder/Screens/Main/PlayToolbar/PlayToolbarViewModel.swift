@@ -84,27 +84,41 @@ extension PlayToolbarViewModelImpl {
             return
         }
         
-        audioPlayer.play(record: record, onTime: time)
-        isPlaying = true
-    
-        timeRefresher.register { [weak self] in
-            self?.updateTime(withValue: time)
-            completion()
+        Task {
+            do {
+                try await audioPlayer.play(record: record, onTime: time)
+                isPlaying = true
+                
+                timeRefresher.register { [weak self] in
+                    self?.updateTime(withValue: time)
+                    completion()
+                }
+                
+                setTimeWithDifference(startTime: time)
+                timeRefresher.start()
+            } catch {
+                os_log("ERROR: Cant play audio! \(error)")
+                return
+            }
         }
-        
-        setTimeWithDifference(startTime: time)
-        timeRefresher.start()
     }
     
     
     //MARK: Stop
     
     func stop(completion: @escaping () -> Void) {
-        audioPlayer.stop()
-        timeRefresher.stop()
-        resetTime()
-        isPlaying = false
-        completion()
+        Task {
+            do {
+                try await audioPlayer.stop()
+                timeRefresher.stop()
+                resetTime()
+                isPlaying = false
+                completion()
+            } catch {
+                os_log("ERROR: Cant stop audio! \(error)")
+                return
+            }
+        }
     }
     
     
@@ -161,9 +175,10 @@ private extension PlayToolbarViewModelImpl {
             remainingTime -= step
             updateFormattedTime()
         } else {
-            audioPlayer.stop()
-            resetTime()
-            isPlaying = false
+            stop {
+                self.resetTime()
+                self.isPlaying = false
+            }
         }
     }
     

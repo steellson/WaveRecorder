@@ -68,9 +68,11 @@ final class PlayToolbarView: UIView {
     }
     
     func reset() {
-        UIView.animate(withDuration: 0.2, delay: 0.1) {
-            self.progressSlider.value = 0
-            self.animateLabels()
+        Task {
+            UIView.animate(withDuration: 0.2, delay: 0.1) {
+                self.progressSlider.value = 0
+                self.animateLabels()
+            }
         }
     }
     

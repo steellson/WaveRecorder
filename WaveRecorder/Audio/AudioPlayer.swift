@@ -12,8 +12,19 @@ import OSLog
 //MARK: - Protocols
 
 protocol AudioPlayer: AnyObject {
-    func play(record: AudioRecord, onTime time: Float)
-    func stop()
+    func play(record: AudioRecord, onTime time: Float) async throws
+    func stop() async throws
+}
+
+
+//MARK: - Errors
+
+enum AudioPlayerError: Error {
+    case audioPlayerIsNotSettedYet
+    case audioPlayerCantBeInstantiated
+    case audioCantStartPlaying
+    case audioIsNotPlayinngNow
+    case cantSetupAudioPlayer
 }
 
 
@@ -36,23 +47,33 @@ final class AudioPlayerImpl: AudioPlayer {
 
 private extension AudioPlayerImpl {
     
-    func setupSettings() {
+    func setupSettings() throws {
         guard let audioPlayer = self.audioPlayer else {
             os_log("ERROR: AudioPlayer is not setted yet!")
-            return
+            throw AudioPlayerError.audioPlayerIsNotSettedYet
         }
         
         audioPlayer.isMeteringEnabled = true
         audioPlayer.numberOfLoops = 0
     }
     
-    func startPlay(atTime time: Float, fromURL url: URL) {
-        setupSettings()
-        audioPlayer?.prepareToPlay()
-        audioPlayer?.currentTime = TimeInterval(time)
-        audioPlayer?.play()
-        
-        os_log(">> Start playing audio with URL: \(url)")
+    func startPlay(atTime time: Float, fromURL url: URL) throws {
+        do {
+            try setupSettings()
+            
+            guard let audioPlayer else {
+                os_log("ERROR: AudioPlayer cannot be setted!")
+                throw AudioPlayerError.cantSetupAudioPlayer
+            }
+            
+            audioPlayer.prepareToPlay()
+            audioPlayer.currentTime = TimeInterval(time)
+            audioPlayer.play()
+            
+        } catch {
+            os_log("ERROR: Cant set settings to audio player!")
+            throw AudioPlayerError.cantSetupAudioPlayer
+        }
     }
 }
 
@@ -63,7 +84,7 @@ extension AudioPlayerImpl {
     
     //MARK: Play
     
-    func play(record: AudioRecord, onTime time: Float) {
+    func play(record: AudioRecord, onTime time: Float) async throws {
         let recordURL = audioPathManager.createURL(
             forRecordWithName: record.name,
             andFormat: record.format.rawValue
@@ -76,28 +97,40 @@ extension AudioPlayerImpl {
             return
         }
         
-        DispatchQueue.global().async { [unowned self] in
+        Task {
             do {
-                self.audioPlayer = try AVAudioPlayer(contentsOf: recordURL)
-                self.startPlay(atTime: time, fromURL: recordURL)
+                let audioPlayer = try AVAudioPlayer(contentsOf: recordURL)
+                self.audioPlayer = audioPlayer
+                
+                try startPlay(atTime: time, fromURL: recordURL)
+                
+                guard audioPlayer.isPlaying else {
+                    os_log(">> Cant start playing audio with URL: \(recordURL)")
+                    throw AudioPlayerError.audioCantStartPlaying
+                }
+                os_log(">> Start playing audio with URL: \(recordURL)")
+                
             } catch {
-                os_log("ERROR: AudioPlayer could not be instantiated \(error)")
+                os_log("ERROR: AudioPlayer could not be instantiated! \(error)")
+                throw AudioPlayerError.audioPlayerCantBeInstantiated
             }
+    
         }
     }
 
     
     //MARK: Pause
     
-    func stop() {
-        guard self.audioPlayer != nil else {
-            os_log("ERROR: AudioPlayer is not setted yet!")
-            return
-        }
-        
-        DispatchQueue.main.async { [weak self] in
-            self?.audioPlayer?.stop()
-            self?.audioPlayer = nil
+    func stop() async throws {
+        Task {
+            if let player = self.audioPlayer, player.isPlaying {
+                self.audioPlayer?.stop()
+                os_log("SUCCESS: Audio stopped!")
+                self.audioPlayer = nil
+            } else {
+                os_log("ERROR: Audio is not stopped because its not playing now!")
+                throw AudioPlayerError.audioIsNotPlayinngNow
+            }
         }
     }
 }
