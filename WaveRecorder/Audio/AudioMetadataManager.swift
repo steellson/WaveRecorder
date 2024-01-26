@@ -14,6 +14,7 @@ import OSLog
 protocol AudioMetadataManager: AnyObject {
     func loadMetadataList() async throws -> [AudioMetadata]
     func rewrite(url: URL, withNewPath newName: String) -> Bool
+    func destroyFile(withURL url: URL) -> Bool
 }
 
 
@@ -100,5 +101,9 @@ extension AudioMetadataManagerImpl {
             fromURL: url,
             toURL: url.deletingLastPathComponent().appendingPathComponent(newName)
         )
+    }
+    
+    func destroyFile(withURL url: URL) -> Bool {
+        audioPathManager.removeItem(withURL: url)
     }
 }

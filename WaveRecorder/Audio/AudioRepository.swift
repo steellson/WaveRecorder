@@ -131,6 +131,30 @@ extension AudioRepositoryImpl {
     }
     
     func delete(record: AudioRecord) async throws {
-        
+        do {
+            let metadata = try await audioMetadataManager.loadMetadataList()
+            let searchedResults = metadata.filter { $0.primary.name == record.name }
+            
+            guard
+                !searchedResults.isEmpty,
+                !(searchedResults.count > 1),
+                let result = searchedResults.first
+            else {
+                os_log("ERROR: Cant delete record!")
+                throw AudioRepositoryError.cantDeleteRecord
+            }
+            
+            let isDeleted = audioMetadataManager.destroyFile(withURL: result.secondary.url)
+            guard isDeleted else {
+                os_log("ATTENTION: Record isn't deleted!")
+                throw AudioRepositoryError.cantDeleteRecord
+            }
+            
+            os_log("SUCCESS: Record deleted!")
+            
+        } catch {
+            os_log("ERROR: Cant delete record!")
+            throw AudioRepositoryError.cantFetchRecords
+        }
     }
 }

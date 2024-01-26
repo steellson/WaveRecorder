@@ -17,6 +17,7 @@ protocol AudioPathManager: AnyObject {
     func getStoredFilesList() -> [URL]
     func isFileExist(_ url: URL) -> Bool
     func moveItem(fromURL: URL, toURL: URL) -> Bool
+    func removeItem(withURL url: URL) -> Bool
 }
 
 
@@ -137,6 +138,20 @@ extension AudioPathManagerImpl {
             fileManager.fileExists(atPath: toURL.path(percentEncoded: false))
         else {
             os_log("ERROR: Item cant be replaced")
+            return false
+        }
+        return true
+    }
+    
+    
+    //MARK: Remove
+    
+    func removeItem(withURL url: URL) -> Bool {
+        try? fileManager.removeItem(at: url)
+        guard
+            !fileManager.fileExists(atPath: url.path(percentEncoded: false))
+        else {
+            os_log("ERROR: Item cant be deleted")
             return false
         }
         return true
