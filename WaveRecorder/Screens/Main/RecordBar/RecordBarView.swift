@@ -122,18 +122,17 @@ private extension RecordBarView {
 extension RecordBarView: RecordButtonViewDelegate {
     
     func recButtonDidTapped(_ isRecording: Bool) {
-        
         Task {
             await viewModel.record(isRecording: isRecording)
+            
+            if !isRecording {
+                setupRecordVisualizerView()
+                setupRecordWaveView()
+            } else {
+                resetAnimatedViews()
+            }
+            
+            layoutIfNeeded()
         }
-        
-        if !isRecording {
-            setupRecordVisualizerView()
-            setupRecordWaveView()
-        } else {
-            resetAnimatedViews()
-        }
-        
-        layoutIfNeeded()
     }
 }

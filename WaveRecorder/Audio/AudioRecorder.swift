@@ -122,34 +122,35 @@ extension AudioRecorderImpl {
         self.storedURL = storedURL
         
         // Process
-        do {
-            try self.audioSession.setActive(true)
-            try self.audioSession.setCategory(.record)
-            
-            self.audioRecorder = try AVAudioRecorder(url: storedURL, settings: settings)
-            self.audioRecorder.isMeteringEnabled = true
-            self.audioRecorder.prepareToRecord()
-            self.audioRecorder.record()
-            
-            if audioRecorder.isRecording {
-                os_log(">>> RECORD STARTED!")
-            } else {
-                throw AudioRecorderError.cantStartRecordAudio
+        Task {
+            do {
+                try self.audioSession.setActive(true)
+                try self.audioSession.setCategory(.record)
+                
+                self.audioRecorder = try AVAudioRecorder(url: storedURL, settings: settings)
+                self.audioRecorder.isMeteringEnabled = true
+                self.audioRecorder.prepareToRecord()
+                self.audioRecorder.record()
+                
+                if audioRecorder.isRecording {
+                    os_log(">>> RECORD STARTED!")
+                } else {
+                    throw AudioRecorderError.cantStartRecordAudio
+                }
+                
+                let record = AudioRecord(
+                    name: recordWillNamed,
+                    format: self.format,
+                    date: .now,
+                    duration: nil
+                )
+                self.record = record
+                
+            } catch {
+                os_log("ERROR: Cant initialize audio recorder")
+                throw AudioRecorderError.cantInitializeAudioRecorder
             }
-            
-            let record = AudioRecord(
-                name: recordWillNamed,
-                format: self.format,
-                date: .now,
-                duration: nil
-            )
-            self.record = record
-            
-        } catch {
-            os_log("ERROR: Cant initialize audio recorder")
-            throw AudioRecorderError.cantInitializeAudioRecorder
         }
-        
     }
     
     
@@ -157,33 +158,35 @@ extension AudioRecorderImpl {
     
     func stopRecord() async throws -> AudioRecord? {
         guard audioRecorder != nil else { return nil }
-        
-        // Set duration
-        let duration = self.audioRecorder.currentTime
-        self.record?.duration = duration
-        
-        // Stop recording
-        self.audioRecorder.stop()
-        
-        if !self.audioRecorder.isRecording {
-            os_log(">>> RECORD FINISHED!")
-        } else {
-            throw AudioRecorderError.cantStopAudioRecording
-        }
-        
-        // Reset category back
-        do {
-            try self.audioSession.setCategory(.playback)
-        } catch {
-            os_log("ERROR: Couldnt reset audio session category after record. \(error)")
-            throw AudioRecorderError.cantResetAudioSessionCategoryAfterRecord
-        }
-        
-        // Remove recorder
-        self.audioRecorder = nil
-        
-        // Send record
-        return self.record
+        return try? await Task {
+            
+            // Set duration
+            let duration = self.audioRecorder.currentTime
+            self.record?.duration = duration
+            
+            // Stop recording
+            self.audioRecorder.stop()
+            
+            if !self.audioRecorder.isRecording {
+                os_log(">>> RECORD FINISHED!")
+            } else {
+                throw AudioRecorderError.cantStopAudioRecording
+            }
+            
+            // Reset category back
+            do {
+                try self.audioSession.setCategory(.playback)
+            } catch {
+                os_log("ERROR: Couldnt reset audio session category after record. \(error)")
+                throw AudioRecorderError.cantResetAudioSessionCategoryAfterRecord
+            }
+            
+            // Remove recorder
+            self.audioRecorder = nil
+            
+            // Send record
+            return self.record
+        }.value
     }
 }
 
