@@ -125,7 +125,7 @@ final class PlayToolbarView: UIView {
     //MARK: Actions
     
     @objc
-    private func toolBarButtonDidTapped(_ sender: PlayTolbarButton) async {
+    private func toolBarButtonDidTapped(_ sender: PlayTolbarButton) {
         animateTappedButton(withSender: sender)
         
         guard let viewModel else {

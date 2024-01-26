@@ -49,6 +49,7 @@ private extension RecordBarViewModelImpl {
         }
         
         self.record = recorded
+        await self.parentViewModel.resetData()
         await self.parentViewModel.shouldUpdateInterface?(false)
     }
     
@@ -59,6 +60,7 @@ private extension RecordBarViewModelImpl {
             return
         }
         
+        await self.parentViewModel.resetData()
         await self.parentViewModel.shouldUpdateInterface?(true)
     }
 }

@@ -47,9 +47,7 @@ final class MainViewModelImpl: MainViewModel {
     
     var shouldUpdateInterface: ((Bool) async -> Void)?
     
-    var numberOfItems: Int {
-        records.count
-    }
+    var numberOfItems: Int = 0
     
     var tableViewCellHeight: CGFloat = 200
 
@@ -97,6 +95,7 @@ private extension MainViewModelImpl {
         do {
             let records = try await audioRepository.fetchRecords()
             self.records = records.sorted(by: { $0.name > $1.name })
+            self.numberOfItems = records.count
             
             await self.shouldUpdateInterface?(false)
         } catch {
@@ -124,7 +123,7 @@ extension MainViewModelImpl {
             let records = try await audioRepository.search(withText: text)
             self.records = records
             
-            await self.shouldUpdateInterface?(false)
+            await self.fetchAll()
         } catch {
             os_log("\(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")")
         }
@@ -162,7 +161,7 @@ extension MainViewModelImpl {
             try await audioRepository.delete(record: record)
             self.records.remove(at: indexPath.item)
             
-            await self.shouldUpdateInterface?(false)
+            await self.fetchAll()
             os_log("\(R.Strings.Logs.recordDeleted.rawValue + record.name)")
         } catch {
             os_log("\(R.Strings.Errors.cantDeleteRecordWithName.rawValue + record.name + " \(error)")")
