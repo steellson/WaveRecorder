@@ -48,7 +48,7 @@ extension TimeRefresher {
     func start() {
         guard action != nil else {
             return
-        }
+        } 
         stop()
         isRunning = true
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { (timer) in
@@ -71,7 +71,7 @@ extension TimeRefresher {
 
 private extension TimeRefresher {
     
-    private func tick() {
+    func tick() {
         guard let action = action else {
             stop()
             os_log("ERROR: TimeRefresher action is not registered!")

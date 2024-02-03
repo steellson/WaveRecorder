@@ -19,8 +19,8 @@ protocol PlayToolbarViewModel: AnyObject {
     var remainingTimeFormatted: String { get }
     
     func goBack()
-    func play(atTime time: Float, completion: @escaping () -> Void)
-    func stop(completion: @escaping () -> Void)
+    func play(atTime time: Float, withAnimation animation: @escaping () -> Void) async
+    func stop() async
     func goForward()
     func deleteRecord() async
 }
@@ -78,46 +78,41 @@ extension PlayToolbarViewModelImpl {
     
     //MARK: Play
     
-    func play(atTime time: Float, completion: @escaping () -> Void) {
+    func play(atTime time: Float, withAnimation animation: @escaping () -> Void) async {
         guard !isPlaying else {
             os_log("\(R.Strings.Errors.audioIsAlreadyPlaying.rawValue)")
             return
         }
         
-        Task {
-            do {
-                try await audioPlayer.play(record: record, onTime: time)
-                isPlaying = true
-                
-                timeRefresher.register { [weak self] in
-                    self?.updateTime(withValue: time)
-                    completion()
-                }
-                
-                setTimeWithDifference(startTime: time)
-                timeRefresher.start()
-            } catch {
-                os_log("ERROR: Cant play audio! \(error)")
-                return
+        do {
+            try await audioPlayer.play(record: record, onTime: time)
+            isPlaying = true
+            
+            timeRefresher.register {
+                self.updateTime(withValue: time)
+                animation()
             }
+            
+            setTimeWithDifference(startTime: time)
+            timeRefresher.start()
+        } catch {
+            os_log("ERROR: Cant play audio! \(error)")
+            return
         }
     }
     
     
     //MARK: Stop
     
-    func stop(completion: @escaping () -> Void) {
-        Task {
-            do {
-                try await audioPlayer.stop()
-                timeRefresher.stop()
-                resetTime()
-                isPlaying = false
-                completion()
-            } catch {
-                os_log("ERROR: Cant stop audio! \(error)")
-                return
-            }
+    func stop() async {
+        do {
+            try await audioPlayer.stop()
+            timeRefresher.stop()
+            resetTime()
+            isPlaying = false
+        } catch {
+            os_log("ERROR: Cant stop audio! \(error)")
+            return
         }
     }
     
@@ -169,13 +164,14 @@ private extension PlayToolbarViewModelImpl {
     func updateTime(withValue value: Float) {
         let step: Float = 0.1
         
-        if elapsedTime <= duration {
-            progress += step
-            elapsedTime += step
-            remainingTime -= step
-            updateFormattedTime()
-        } else {
-            stop {
+        Task {
+            if elapsedTime <= duration {
+                progress += step
+                elapsedTime += step
+                remainingTime -= step
+                updateFormattedTime()
+            } else {
+                await stop()
                 self.resetTime()
                 self.isPlaying = false
             }
