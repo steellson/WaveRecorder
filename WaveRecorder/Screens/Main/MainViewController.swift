@@ -7,6 +7,7 @@
 
 import OSLog
 import UIKit
+import WRParts
 import WRResources
 
 
@@ -17,7 +18,7 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
     private let editButton = UIBarButtonItem()
     private let titleLabel = UILabel()
     private let searchController = WRSearchController()
-    private let tableView = WRTableView(frame: .zero, style: .plain)
+    private let tableView = MainTableView(frame: .zero, style: .plain)
     private lazy var recordView = viewModel.makeRecordView()
     
     private lazy var recViewHeightConstraint: NSLayoutConstraint = {
@@ -131,7 +132,7 @@ private extension MainViewController {
     }
     
     func setupTableView() {
-        let tableViewInput = WRTableViewInput(
+        let tableViewInput = MainTableViewInput(
             numberOfItems: viewModel.numberOfItems,
             tableViewCellHeight: viewModel.tableViewCellHeight,
             makeEditViewModelAction: viewModel.makeEditViewModel,
@@ -139,7 +140,7 @@ private extension MainViewController {
             deleteAction: viewModel.delete
         )
         tableView.configure(withInput: tableViewInput)
-        tableView.register(WRTableViewCell.self, forCellReuseIdentifier: WRTableViewCell.cellIdentifier)
+        tableView.register(MainTableViewCell.self, forCellReuseIdentifier: MainTableViewCell.cellIdentifier)
     }
 
     func setupRecordViewHeight() {
