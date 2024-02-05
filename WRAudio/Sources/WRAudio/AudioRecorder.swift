@@ -13,7 +13,7 @@ import OSLog
 
 //MARK: - Protocol
 
-protocol AudioRecorder: AnyObject {
+public protocol AudioRecorder: AnyObject {
     func startRecord() async throws
     func stopRecord() async throws -> AudioRecord?
 }
@@ -21,7 +21,7 @@ protocol AudioRecorder: AnyObject {
 
 //MARK: - Error
 
-enum AudioRecorderError: Error {
+public enum AudioRecorderError: Error {
     case audioPermissionIsNotAllowed
     case cantSetupAudioRecorder
     case cantInitializeAudioRecorder
@@ -33,7 +33,7 @@ enum AudioRecorderError: Error {
 
 //MARK: - Impl
 
-final class AudioRecorderImpl: AudioRecorder {
+final public class AudioRecorderImpl: AudioRecorder {
     
     private var isAudioRecordingAllowed = false
     
@@ -46,7 +46,7 @@ final class AudioRecorderImpl: AudioRecorder {
     
     private let audioPathManager: AudioPathManager
     
-    init() {
+    public init() {
         self.audioPathManager = AudioPathManagerImpl()
         
         do {
@@ -97,7 +97,7 @@ private extension AudioRecorderImpl {
 
 //MARK: - Public
 
-extension AudioRecorderImpl {
+public extension AudioRecorderImpl {
     
     //MARK: Start
     

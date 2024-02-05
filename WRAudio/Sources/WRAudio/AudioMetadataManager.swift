@@ -20,11 +20,11 @@ protocol AudioMetadataManager: AnyObject {
 
 //MARK: - Impl
 
-final class AudioMetadataManagerImpl: AudioMetadataManager {
+final public class AudioMetadataManagerImpl: AudioMetadataManager {
     
     private let audioPathManager: AudioPathManager
     
-    init() {
+    public init() {
         self.audioPathManager = AudioPathManagerImpl()
     }
 }
@@ -96,14 +96,14 @@ extension AudioMetadataManagerImpl {
         }
     }
     
-    func rewrite(url: URL, withNewPath newName: String) -> Bool {
+    public func rewrite(url: URL, withNewPath newName: String) -> Bool {
         audioPathManager.moveItem(
             fromURL: url,
             toURL: url.deletingLastPathComponent().appendingPathComponent(newName)
         )
     }
     
-    func destroyFile(withURL url: URL) -> Bool {
+    public func destroyFile(withURL url: URL) -> Bool {
         audioPathManager.removeItem(withURL: url)
     }
 }

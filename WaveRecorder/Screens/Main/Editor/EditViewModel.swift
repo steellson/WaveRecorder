@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import WRAudio
+
 
 //MARK: - Protocols
 

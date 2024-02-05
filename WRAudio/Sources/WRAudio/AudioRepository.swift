@@ -11,7 +11,7 @@ import OSLog
 
 //MARK: - Protocol
 
-protocol AudioRepository: AnyObject {
+public protocol AudioRepository: AnyObject {
     func fetchRecords() async throws -> [AudioRecord]
     func search(withText text: String) async throws -> [AudioRecord]
     func rename(record: AudioRecord, newName: String) async throws
@@ -21,7 +21,7 @@ protocol AudioRepository: AnyObject {
 
 //MARK: - Error
 
-enum AudioRepositoryError: Error {
+public enum AudioRepositoryError: Error {
     case cantFetchRecords
     case cantFetchRecord
     case cantDecodeRecord
@@ -34,11 +34,11 @@ enum AudioRepositoryError: Error {
 
 //MARK: - Impl
 
-final class AudioRepositoryImpl: AudioRepository {
+final public class AudioRepositoryImpl: AudioRepository {
   
     private let audioMetadataManager: AudioMetadataManager
     
-    init() {
+    public init() {
         self.audioMetadataManager = AudioMetadataManagerImpl()
     }
 }
@@ -58,7 +58,7 @@ private extension AudioRepositoryImpl {
 
 //MARK: - Public
 
-extension AudioRepositoryImpl {
+public extension AudioRepositoryImpl {
   
     func fetchRecords() async throws -> [AudioRecord] {
         do {

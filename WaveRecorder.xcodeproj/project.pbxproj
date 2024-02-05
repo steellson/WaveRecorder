@@ -3,12 +3,10 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3D297BFC2B57AEB7002D0F01 /* AudioRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D297BFB2B57AEB7002D0F01 /* AudioRecord.swift */; };
-		3D297C002B57BD68002D0F01 /* AudioRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D297BFF2B57BD68002D0F01 /* AudioRepository.swift */; };
 		3D5665F32B56B32D0047A32B /* HelperFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5665F22B56B32D0047A32B /* HelperFactory.swift */; };
 		3D5665F52B56B8410047A32B /* FileManager+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5665F42B56B8410047A32B /* FileManager+Extension.swift */; };
 		3D5665F72B56B8700047A32B /* NotificationCenter+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5665F62B56B8700047A32B /* NotificationCenter+Extension.swift */; };
@@ -18,9 +16,6 @@
 		3D682DA52B1F29B000067DFE /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D682DA22B1F29B000067DFE /* MainViewController.swift */; };
 		3D682DAB2B1F29D300067DFE /* PlayToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D682DA92B1F29D300067DFE /* PlayToolbarView.swift */; };
 		3D682DAE2B1F29DA00067DFE /* RecordBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D682DAC2B1F29DA00067DFE /* RecordBarView.swift */; };
-		3D7CB1092B26E2ED00F5B91F /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7CB1082B26E2ED00F5B91F /* AudioRecorder.swift */; };
-		3D7CB10D2B26E69000F5B91F /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7CB10C2B26E69000F5B91F /* AudioPlayer.swift */; };
-		3D7CB10F2B26F2A500F5B91F /* AudioPathManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7CB10E2B26F2A500F5B91F /* AudioPathManager.swift */; };
 		3D7CB1252B2C557A00F5B91F /* PlayToolbarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7CB1242B2C557A00F5B91F /* PlayToolbarViewModel.swift */; };
 		3D7CB1282B2C6FB900F5B91F /* EditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7CB1272B2C6FB900F5B91F /* EditViewModel.swift */; };
 		3DD02D8F2B70251200E49AFC /* RecordsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD02D8D2B70251200E49AFC /* RecordsTableViewCell.swift */; };
@@ -34,19 +29,16 @@
 		3DD02DBC2B70CCC200E49AFC /* WRSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD02DBA2B70CCC200E49AFC /* WRSearchController.swift */; };
 		3DD02DBF2B70CCEF00E49AFC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3DD02DBD2B70CCEF00E49AFC /* Assets.xcassets */; };
 		3DD02DC02B70CCEF00E49AFC /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD02DBE2B70CCEF00E49AFC /* Resources.swift */; };
+		3DD02DCB2B70DC8000E49AFC /* WRAudio in Frameworks */ = {isa = PBXBuildFile; productRef = 3DD02DCA2B70DC8000E49AFC /* WRAudio */; };
 		3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF8E2B0F65F3004CAE97 /* AppDelegate.swift */; };
 		3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF902B0F65F3004CAE97 /* SceneDelegate.swift */; };
 		3DEAFF9B2B0F65F4004CAE97 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3DEAFF992B0F65F4004CAE97 /* LaunchScreen.storyboard */; };
 		3DEAFFAF2B0F766E004CAE97 /* Assembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFAE2B0F766E004CAE97 /* Assembly.swift */; };
 		3DEAFFD22B15F54D004CAE97 /* Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD12B15F54D004CAE97 /* Formatter.swift */; };
 		3DFCE9AE2B331FF600D27A0B /* TimeRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */; };
-		3DFDF5E32B614BEA0048A6A3 /* Sequence+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFDF5E22B614BEA0048A6A3 /* Sequence+Extension.swift */; };
-		3DFDF5E52B6153760048A6A3 /* AudioMetadataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFDF5E42B6153760048A6A3 /* AudioMetadataManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3D297BFB2B57AEB7002D0F01 /* AudioRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecord.swift; sourceTree = "<group>"; };
-		3D297BFF2B57BD68002D0F01 /* AudioRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRepository.swift; sourceTree = "<group>"; };
 		3D5665F22B56B32D0047A32B /* HelperFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperFactory.swift; sourceTree = "<group>"; };
 		3D5665F42B56B8410047A32B /* FileManager+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extension.swift"; sourceTree = "<group>"; };
 		3D5665F62B56B8700047A32B /* NotificationCenter+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationCenter+Extension.swift"; sourceTree = "<group>"; };
@@ -56,9 +48,6 @@
 		3D682DA22B1F29B000067DFE /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		3D682DA92B1F29D300067DFE /* PlayToolbarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayToolbarView.swift; sourceTree = "<group>"; };
 		3D682DAC2B1F29DA00067DFE /* RecordBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordBarView.swift; sourceTree = "<group>"; };
-		3D7CB1082B26E2ED00F5B91F /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
-		3D7CB10C2B26E69000F5B91F /* AudioPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
-		3D7CB10E2B26F2A500F5B91F /* AudioPathManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPathManager.swift; sourceTree = "<group>"; };
 		3D7CB1242B2C557A00F5B91F /* PlayToolbarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayToolbarViewModel.swift; sourceTree = "<group>"; };
 		3D7CB1272B2C6FB900F5B91F /* EditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewModel.swift; sourceTree = "<group>"; };
 		3DD02D8D2B70251200E49AFC /* RecordsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RecordsTableViewCell.swift; path = ../../../../../../../../.Trash/RecordsTableViewCell.swift; sourceTree = "<group>"; };
@@ -80,8 +69,6 @@
 		3DEAFFAE2B0F766E004CAE97 /* Assembly.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Assembly.swift; sourceTree = "<group>"; };
 		3DEAFFD12B15F54D004CAE97 /* Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatter.swift; sourceTree = "<group>"; };
 		3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeRefresher.swift; sourceTree = "<group>"; };
-		3DFDF5E22B614BEA0048A6A3 /* Sequence+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+Extension.swift"; sourceTree = "<group>"; };
-		3DFDF5E42B6153760048A6A3 /* AudioMetadataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioMetadataManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,25 +76,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3DD02DCB2B70DC8000E49AFC /* WRAudio in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3D297BFA2B57AE94002D0F01 /* Audio */ = {
-			isa = PBXGroup;
-			children = (
-				3D7CB10C2B26E69000F5B91F /* AudioPlayer.swift */,
-				3D7CB1082B26E2ED00F5B91F /* AudioRecorder.swift */,
-				3D297BFF2B57BD68002D0F01 /* AudioRepository.swift */,
-				3D7CB10E2B26F2A500F5B91F /* AudioPathManager.swift */,
-				3DFDF5E42B6153760048A6A3 /* AudioMetadataManager.swift */,
-				3D297BFB2B57AEB7002D0F01 /* AudioRecord.swift */,
-			);
-			path = Audio;
-			sourceTree = "<group>";
-		};
 		3D297BFE2B57B09A002D0F01 /* Repo */ = {
 			isa = PBXGroup;
 			children = (
@@ -115,15 +90,6 @@
 				3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */,
 			);
 			path = Repo;
-			sourceTree = "<group>";
-		};
-		3D5665F92B56B87F0047A32B /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				3D5665F42B56B8410047A32B /* FileManager+Extension.swift */,
-				3D5665F62B56B8700047A32B /* NotificationCenter+Extension.swift */,
-			);
-			path = Helpers;
 			sourceTree = "<group>";
 		};
 		3D7CB1202B2C545900F5B91F /* Main */ = {
@@ -199,7 +165,6 @@
 			children = (
 				3DEAFF9C2B0F65F4004CAE97 /* Info.plist */,
 				3DEAFFA22B0F6669004CAE97 /* App */,
-				3D297BFA2B57AE94002D0F01 /* Audio */,
 				3DEAFFB22B0F7F0B004CAE97 /* Extensions */,
 				3DEAFFD02B15F53D004CAE97 /* Helpers */,
 				3DEAFFA62B0F66B9004CAE97 /* Screens */,
@@ -232,8 +197,8 @@
 		3DEAFFB22B0F7F0B004CAE97 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				3DFDF5E12B614BDF0048A6A3 /* Base */,
-				3D5665F92B56B87F0047A32B /* Helpers */,
+				3D5665F42B56B8410047A32B /* FileManager+Extension.swift */,
+				3D5665F62B56B8700047A32B /* NotificationCenter+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -245,14 +210,6 @@
 				3D297BFE2B57B09A002D0F01 /* Repo */,
 			);
 			path = Helpers;
-			sourceTree = "<group>";
-		};
-		3DFDF5E12B614BDF0048A6A3 /* Base */ = {
-			isa = PBXGroup;
-			children = (
-				3DFDF5E22B614BEA0048A6A3 /* Sequence+Extension.swift */,
-			);
-			path = Base;
 			sourceTree = "<group>";
 		};
 		3DFEFF672B5FCE6500954745 /* Editor */ = {
@@ -299,6 +256,7 @@
 			);
 			name = WaveRecorder;
 			packageProductDependencies = (
+				3DD02DCA2B70DC8000E49AFC /* WRAudio */,
 			);
 			productName = WaveRecorder;
 			productReference = 3DEAFF8B2B0F65F3004CAE97 /* WaveRecorder.app */;
@@ -329,6 +287,7 @@
 			);
 			mainGroup = 3DEAFF822B0F65F3004CAE97;
 			packageReferences = (
+				3DD02DC92B70DC8000E49AFC /* XCLocalSwiftPackageReference "WRAudio" */,
 			);
 			productRefGroup = 3DEAFF8C2B0F65F3004CAE97 /* Products */;
 			projectDirPath = "";
@@ -359,8 +318,6 @@
 				3D7CB1282B2C6FB900F5B91F /* EditViewModel.swift in Sources */,
 				3DEAFFD22B15F54D004CAE97 /* Formatter.swift in Sources */,
 				3D7CB1252B2C557A00F5B91F /* PlayToolbarViewModel.swift in Sources */,
-				3D7CB10F2B26F2A500F5B91F /* AudioPathManager.swift in Sources */,
-				3D7CB10D2B26E69000F5B91F /* AudioPlayer.swift in Sources */,
 				3DD02DB62B70CCB300E49AFC /* RecordVisualizerView.swift in Sources */,
 				3D5665F32B56B32D0047A32B /* HelperFactory.swift in Sources */,
 				3DD02DB82B70CCB300E49AFC /* PlayTolbarButton.swift in Sources */,
@@ -368,7 +325,6 @@
 				3DD02DC02B70CCEF00E49AFC /* Resources.swift in Sources */,
 				3D5665F52B56B8410047A32B /* FileManager+Extension.swift in Sources */,
 				3DD02DB52B70CCB300E49AFC /* UIView+Extension.swift in Sources */,
-				3D297C002B57BD68002D0F01 /* AudioRepository.swift in Sources */,
 				3DFCE9AE2B331FF600D27A0B /* TimeRefresher.swift in Sources */,
 				3D682DAE2B1F29DA00067DFE /* RecordBarView.swift in Sources */,
 				3DD02DBC2B70CCC200E49AFC /* WRSearchController.swift in Sources */,
@@ -377,18 +333,14 @@
 				3DD02D902B70251200E49AFC /* RecordsTableView.swift in Sources */,
 				3D682DA52B1F29B000067DFE /* MainViewController.swift in Sources */,
 				3DD02DB72B70CCB300E49AFC /* RecordButtonView.swift in Sources */,
-				3DFDF5E32B614BEA0048A6A3 /* Sequence+Extension.swift in Sources */,
-				3D297BFC2B57AEB7002D0F01 /* AudioRecord.swift in Sources */,
 				3D682DAB2B1F29D300067DFE /* PlayToolbarView.swift in Sources */,
 				3D682DA32B1F29B000067DFE /* EditView.swift in Sources */,
-				3D7CB1092B26E2ED00F5B91F /* AudioRecorder.swift in Sources */,
 				3D5665F72B56B8700047A32B /* NotificationCenter+Extension.swift in Sources */,
 				3DEAFFAF2B0F766E004CAE97 /* Assembly.swift in Sources */,
 				3D682D9B2B1F297600067DFE /* RecordBarViewModel.swift in Sources */,
 				3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */,
 				3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */,
 				3D682D9C2B1F297600067DFE /* MainViewModel.swift in Sources */,
-				3DFDF5E52B6153760048A6A3 /* AudioMetadataManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -537,11 +489,11 @@
 				INFOPLIST_FILE = WaveRecorder/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WRecorder;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app need access for microphone if you want to record audio";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -570,11 +522,11 @@
 				INFOPLIST_FILE = WaveRecorder/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WRecorder;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app need access for microphone if you want to record audio";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -613,6 +565,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		3DD02DC92B70DC8000E49AFC /* XCLocalSwiftPackageReference "WRAudio" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = WRAudio;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3DD02DCA2B70DC8000E49AFC /* WRAudio */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WRAudio;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3DEAFF832B0F65F3004CAE97 /* Project object */;
 }

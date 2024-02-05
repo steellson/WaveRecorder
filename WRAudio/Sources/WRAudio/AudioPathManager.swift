@@ -11,7 +11,7 @@ import OSLog
 
 //MARK: - Protocol
 
-protocol AudioPathManager: AnyObject {
+public protocol AudioPathManager: AnyObject {
     func createURL(forRecordWithName name: String, andFormat format: String) -> URL
     func createAudioRecordName() -> String
     func getStoredFilesList() -> [URL]
@@ -23,14 +23,14 @@ protocol AudioPathManager: AnyObject {
 
 //MARK: - Impl
 
-final class AudioPathManagerImpl: AudioPathManager {
+final public class AudioPathManagerImpl: AudioPathManager {
     
     private let storedFolderName = "WRRecords"
     
     private let fileManager: FileManager
     
     
-    init() {
+    public init() {
         self.fileManager = FileManager.default
         
         createStoredFolder()
@@ -56,7 +56,7 @@ final class AudioPathManagerImpl: AudioPathManager {
 }
 
 
-extension AudioPathManagerImpl {
+public extension AudioPathManagerImpl {
     
     //MARK: Create
         

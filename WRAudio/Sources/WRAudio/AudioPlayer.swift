@@ -11,7 +11,7 @@ import OSLog
 
 //MARK: - Protocols
 
-protocol AudioPlayer: AnyObject {
+public protocol AudioPlayer: AnyObject {
     func play(record: AudioRecord, onTime time: Float) async throws
     func stop() async throws
 }
@@ -19,7 +19,7 @@ protocol AudioPlayer: AnyObject {
 
 //MARK: - Errors
 
-enum AudioPlayerError: Error {
+public enum AudioPlayerError: Error {
     case audioPlayerIsNotSettedYet
     case audioPlayerCantBeInstantiated
     case audioCantStartPlaying
@@ -30,14 +30,14 @@ enum AudioPlayerError: Error {
 
 //MARK: - Impl
 
-final class AudioPlayerImpl: AudioPlayer {
+final public class AudioPlayerImpl: AudioPlayer {
     
     private let audioPathManager: AudioPathManager
     
     private var audioPlayer: AVAudioPlayer?
     
     
-    init() {
+    public init() {
         self.audioPathManager = AudioPathManagerImpl()
     }
 }
@@ -80,7 +80,7 @@ private extension AudioPlayerImpl {
 
 //MARK: - Public
 
-extension AudioPlayerImpl {
+public extension AudioPlayerImpl {
     
     //MARK: Play
     
