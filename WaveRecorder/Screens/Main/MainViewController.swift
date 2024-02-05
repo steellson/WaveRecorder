@@ -13,17 +13,17 @@ import WRResources
 
 //MARK: - Impl
 
-final class MainViewController: UIViewController, IsolatedControllerModule {
+final class MainViewController: UIViewController {
     
     private let editButton = UIBarButtonItem()
     private let titleLabel = UILabel()
     private let searchController = WRSearchController()
     private let tableView = MainTableView(frame: .zero, style: .plain)
-    private lazy var recordView = viewModel.makeRecordView()
+    private lazy var recordBarView = viewModel.makeRecordBar()
     
     private lazy var recViewHeightConstraint: NSLayoutConstraint = {
         NSLayoutConstraint(
-            item: recordView,
+            item: recordBarView,
             attribute: .height,
             relatedBy: .equal,
             toItem: nil,
@@ -103,7 +103,7 @@ private extension MainViewController {
     
     func setupContentView() {
         view.backgroundColor = RColors.primaryBackgroundColor
-        view.addNewSubview(recordView)
+        view.addNewSubview(recordBarView)
         view.addNewSubview(tableView)
     }
     
@@ -132,20 +132,13 @@ private extension MainViewController {
     }
     
     func setupTableView() {
-        let tableViewInput = MainTableViewInput(
-            numberOfItems: viewModel.numberOfItems,
-            tableViewCellHeight: viewModel.tableViewCellHeight,
-            makeEditViewModelAction: viewModel.makeEditViewModel,
-            makePlayToolbarViewModelAction: viewModel.makePlayToolbarViewModel,
-            deleteAction: viewModel.delete
-        )
-        tableView.configure(withInput: tableViewInput)
+        tableView.configure(withViewModel: viewModel)
         tableView.register(MainTableViewCell.self, forCellReuseIdentifier: MainTableViewCell.cellIdentifier)
     }
 
     func setupRecordViewHeight() {
         viewModel.shouldUpdateInterface = { [weak self] isRecording in
-            
+             
             self?.recViewHeightConstraint.constant = isRecording
             ? UIScreen.main.bounds.height * 0.25
             : UIScreen.main.bounds.height * 0.15
@@ -162,14 +155,14 @@ private extension MainViewController {
             
         NSLayoutConstraint.activate([
             recViewHeightConstraint,
-            recordView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            recordView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            recordView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            recordBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            recordBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            recordBarView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             tableView.topAnchor.constraint(equalTo: navBar.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: recordView.topAnchor)
+            tableView.bottomAnchor.constraint(equalTo: recordBarView.topAnchor)
         ])
     }
 }

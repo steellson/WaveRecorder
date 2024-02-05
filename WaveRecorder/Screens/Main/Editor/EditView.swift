@@ -12,6 +12,8 @@ import WRResources
 //MARK: - Impl
 
 final class EditView: UIView {
+    
+    private let viewModel: EditViewModel
         
     //MARK: Variables
     
@@ -44,56 +46,41 @@ final class EditView: UIView {
         button.addTarget(self, action: #selector(renameButtonDidTapped), for: .touchUpInside)
         return button
     }()
-    
-    private var viewModel: EditViewModel?
-    
+        
     
     //MARK: Lifecycle
     
-    override init(frame: CGRect) {
+    init(
+        viewModel: EditViewModel
+    ) {
+        self.viewModel = viewModel
         super.init(frame: .zero)
         
         setupContentView()
         setupConstraints()
+        setupSubviewsAnimated()
+
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-    //MARK: Public
-
-    func configure(withViewModel viewModel: EditViewModel) {
-        self.viewModel = viewModel
-        self.setupSubviewsAnimated()
-    }
-    
-    func reset() {
-        guard let viewModel else {
-            os_log("\(RErrors.editViewModelIsNotSetted)")
-            return
-        }
-        
+    deinit {
         titleLabelField.text = ""
         dateLabel.text = ""
         animateRenameButton(isEditingStarts: viewModel.isEditing)
     }
+
     
-    
-    //MARK: Private
+    //MARK: Animation
     
     private func setupSubviewsAnimated() {
-        guard let viewModel else {
-            os_log("\(RErrors.editViewModelIsNotSetted)")
-            return
-        }
-        
         UIView.animate(withDuration: 0.3) {
-            self.titleLabelField.text = viewModel.recordName
-            self.titleLabelField.isEnabled = viewModel.isEditing
-            self.dateLabel.text = viewModel.recordedAt
-            self.animateRenameButton(isEditingStarts: viewModel.isEditing)
+            self.titleLabelField.text = self.viewModel.recordName
+            self.titleLabelField.isEnabled = self.viewModel.isEditing
+            self.dateLabel.text = self.viewModel.recordedAt
+            self.animateRenameButton(isEditingStarts: self.viewModel.isEditing)
         }
     }
     
@@ -128,11 +115,6 @@ final class EditView: UIView {
     
     @objc
     private func renameButtonDidTapped() {
-        guard let viewModel else {
-            os_log("\(RErrors.editViewModelIsNotSetted)")
-            return
-        }
-        
         viewModel.switchEditing()
         
         animateTitleLabelField(isEditing: viewModel.isEditing)
@@ -179,12 +161,8 @@ private extension EditView {
 extension EditView: UITextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        guard 
-            let newName = textField.text,
-            let viewModel
-        else {
-            return
-        }
+        guard let newName = textField.text else { return }
+        
         Task {
             await viewModel.onEndEditing(withNewName: newName)
             
@@ -194,12 +172,7 @@ extension EditView: UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        guard
-            let newName = textField.text,
-            let viewModel
-        else {
-            return false
-        }
+        guard let newName = textField.text else { return false }
         
         Task {
             await viewModel.onEndEditing(withNewName: newName)
@@ -207,6 +180,7 @@ extension EditView: UITextFieldDelegate {
             animateTitleLabelField(isEditing: viewModel.isEditing)
             animateRenameButton(isEditingStarts: viewModel.isEditing)
         }
+        
         return true
     }
 }

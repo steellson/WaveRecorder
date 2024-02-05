@@ -6,7 +6,9 @@
 //
 
 import UIKit
+import OSLog
 import WRResources
+
 
 //MARK: - Impl
 
@@ -17,37 +19,22 @@ final public class MainTableViewCell:  UITableViewCell {
     
     //MARK: Variables
     
-    private let editView = EditView()
-    private let playToolbar = PlayToolbarView()
-    
-    
-    //MARK: Lifecycle
-    
-    override public init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupContentView()
-        setupConstraints()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    
-    override public func prepareForReuse() {
-        super.prepareForReuse()
-        resetChilds()
-    }
+    private var editView: EditView?
+    private var playToolbar: PlayToolbarView?
     
     
     //MARK: Methods
     
      func configureCellWith(
-        editViewModel: EditViewModel,
-        playToolbarViewModel: PlayToolbarViewModel
+        editView: EditView,
+        playToolbarView: PlayToolbarView
     ) {
-        self.editView.configure(withViewModel: editViewModel)
-        self.playToolbar.configure(withViewModel: playToolbarViewModel)
+        self.editView = editView
+        self.playToolbar = playToolbarView
+        
+        setupContentView()
+        setupConstraints()
+        layoutIfNeeded()
     }
 }
 
@@ -60,6 +47,19 @@ private extension MainTableViewCell {
         selectionStyle = .gray
         contentView.clipsToBounds = true
         contentView.backgroundColor = RColors.secondaryBackgroundColor
+        
+        setupSubviews()
+    }
+    
+    func setupSubviews() {
+        guard
+            let editView,
+            let playToolbar
+        else {
+            os_log("\(RErrors.cellIsNotConfigured)")
+            return
+        }
+        
         contentView.addNewSubview(editView)
         contentView.addNewSubview(playToolbar)
     }
@@ -68,6 +68,14 @@ private extension MainTableViewCell {
     //MARK: Constriants
 
     func setupConstraints() {
+        guard
+            let editView,
+            let playToolbar
+        else {
+            os_log("\(RErrors.cellIsNotConfigured)")
+            return
+        }
+        
         NSLayoutConstraint.activate([
             editView.topAnchor.constraint(equalTo: contentView.topAnchor),
             editView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -79,10 +87,5 @@ private extension MainTableViewCell {
             playToolbar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             playToolbar.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
-    }
-    
-    func resetChilds() {
-        editView.reset()
-        playToolbar.reset()
     }
 }

@@ -15,6 +15,8 @@ import WRResources
 //MARK: - Impl
 
 final class PlayToolbarView: UIView {
+    
+    private let viewModel: PlayToolbarViewModel
                 
     //MARK: Variables
     
@@ -44,17 +46,19 @@ final class PlayToolbarView: UIView {
     private let stopButton = PlayTolbarButton(type: .stop)
     private let goForwardButton = PlayTolbarButton(type: .goForward)
     private let deleteButton = PlayTolbarButton(type: .delete)
-    
-    private var viewModel: PlayToolbarViewModel?
-    
+        
     
     //MARK: Lifecycle
     
-    override init(frame: CGRect) {
+    init(
+        viewModel: PlayToolbarViewModel
+    ) {
+        self.viewModel = viewModel
         super.init(frame: .zero)
         
         setupContentView()
         setupConstraints()
+        setupSubviewsAnimated()
         setTargets()
     }
     
@@ -62,13 +66,10 @@ final class PlayToolbarView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit { reset() }
+    
     
     //MARK: Public
-    
-    func configure(withViewModel viewModel: PlayToolbarViewModel) {
-        self.viewModel = viewModel
-        self.setupSubviewsAnimated()
-    }
     
     func reset() {
         Task {
@@ -83,14 +84,9 @@ final class PlayToolbarView: UIView {
     //MARK: Private
     
     private func animateLabels() {
-        guard let viewModel else {
-            os_log("\(RErrors.playViewModelIsNotSetted)")
-            return
-        }
-        
         UIView.animate(withDuration: 0.1) {
-            self.startTimeLabel.text = viewModel.elapsedTimeFormatted
-            self.endTimeLabel.text = viewModel.remainingTimeFormatted
+            self.startTimeLabel.text = self.viewModel.elapsedTimeFormatted
+            self.endTimeLabel.text = self.viewModel.remainingTimeFormatted
             self.layoutIfNeeded()
         }
     }
@@ -98,7 +94,7 @@ final class PlayToolbarView: UIView {
     private func setupSubviewsAnimated() {
         UIView.animate(withDuration: 0.5) {
             self.progressSlider.value = 0
-            self.progressSlider.maximumValue = self.viewModel?.duration ?? 0
+            self.progressSlider.maximumValue = self.viewModel.duration
             self.animateLabels()
         }
     }
@@ -132,12 +128,7 @@ final class PlayToolbarView: UIView {
     @objc
     private func toolBarButtonDidTapped(_ sender: PlayTolbarButton, animation: () -> Void) {
         animateTappedButton(withSender: sender)
-        
-        guard let viewModel else {
-            os_log("\(RErrors.playViewModelIsNotSetted)")
-            return
-        }
-        
+
         Task {
             switch sender.type {
             case .goBack: viewModel.goBack()

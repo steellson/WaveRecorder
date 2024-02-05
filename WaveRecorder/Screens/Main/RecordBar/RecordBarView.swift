@@ -11,7 +11,7 @@ import WRResources
 
 //MARK: - Impl
 
-final class RecordBarView: UIView, IsolatedViewModule {
+final class RecordBarView: UIView {
     
     private let viewModel: RecordViewModel
     

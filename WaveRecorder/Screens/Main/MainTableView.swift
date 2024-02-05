@@ -9,27 +9,17 @@ import UIKit
 import OSLog
 import WRResources
 
-//MARK: - Input
-
-public struct MainTableViewInput {
-    let numberOfItems: Int
-    let tableViewCellHeight: CGFloat
-    let makeEditViewModelAction: (_ indexPath: IndexPath) -> EditViewModel
-    let makePlayToolbarViewModelAction: (_ indexPath: IndexPath) -> PlayToolbarViewModel
-    let deleteAction: (_ indexPath: IndexPath) async -> Void
-}
-
 
 //MARK: - Impl
 
-final public class MainTableView: UITableView {
+final class MainTableView: UITableView {
     
-    private var input: MainTableViewInput?
+    private var viewModel: MainViewModel?
         
     
     //MARK: Lifecycle
     
-    override public init(
+    override init(
         frame: CGRect,
         style: UITableView.Style
     ) {
@@ -50,8 +40,8 @@ final public class MainTableView: UITableView {
         setupDelegate()
     }
 
-    public func configure(withInput input: MainTableViewInput) {
-        self.input = input
+    func configure(withViewModel viewModel: MainViewModel) {
+        self.viewModel = viewModel
     }
 }
 
@@ -85,24 +75,24 @@ private extension MainTableView {
 
 extension MainTableView: UITableViewDataSource {
     
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-         input?.numberOfItems ?? 0
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+         viewModel?.numberOfItems ?? 0
     }
     
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard
             let cell = dequeueReusableCell(
                 withIdentifier: MainTableViewCell.cellIdentifier,
                 for: indexPath) as? MainTableViewCell,
-            let input
+            let viewModel
         else {
             os_log("\(RErrors.cantDequeReusableCell)")
             return UITableViewCell()
         }
         
         cell.configureCellWith(
-            editViewModel: input.makeEditViewModelAction(indexPath),
-            playToolbarViewModel: input.makePlayToolbarViewModelAction(indexPath)
+            editView: viewModel.makeEditView(indexPath: indexPath),
+            playToolbarView: viewModel.makePlayToolbarView(indexPath: indexPath)
         )
         
         return cell
@@ -114,28 +104,30 @@ extension MainTableView: UITableViewDataSource {
 
 extension MainTableView: UITableViewDelegate {
     
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let input else {
-            os_log("ERROR: Input isn't setted!")
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard let viewModel else {
+            os_log("ERROR: ViewModel isn't setted!")
             return 0.0
         }
-        return input.tableViewCellHeight
+        return viewModel.tableViewCellHeight
     }
     
-    public func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         false
     }
 
-    public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         UISwipeActionsConfiguration(actions: [ UIContextualAction(
             style: .destructive,
             title: "Kill",
             handler: { _, _, _ in
-                guard let input = self.input else {
-                    os_log("ERROR: Input isn't setted!")
+                guard let viewModel = self.viewModel else {
+                    os_log("ERROR: ViewModel isn't setted!")
                     return
                 }
-                Task { await input.deleteAction(indexPath) }
+                Task {
+                    await viewModel.delete(forIndexPath: indexPath)
+                }
             }
         )])
     }

@@ -15,8 +15,8 @@ public final class WRNavigationController: UINavigationController {
     
     //MARK: Init
     
-    override public init(rootViewController: UIViewController) {
-        super.init(rootViewController: rootViewController)
+    public init() {
+        super.init(nibName: nil, bundle: nil)
         setupAppereance()
     }
     

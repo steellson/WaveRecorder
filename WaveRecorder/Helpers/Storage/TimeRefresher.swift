@@ -14,7 +14,7 @@ typealias TimeRefresherAction = () -> Void
 
 //MARK: - Protocol
 
-protocol TimeRefresherProtocol: Helper {
+protocol TimeRefresherProtocol: AnyObject {
     var isRunning: Bool { get }
     
     func register(_ action: @escaping TimeRefresherAction)

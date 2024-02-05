@@ -17,12 +17,6 @@ protocol InterfaceUpdatable: AnyObject {
     var shouldUpdateInterface: ((Bool) async -> Void)? { get set }
 }
 
-protocol ParentViewModelProtocol: AnyObject {
-    func makeRecordView() -> IsolatedViewModule
-    func makeEditViewModel(_ indexPath: IndexPath) -> EditViewModel
-    func makePlayToolbarViewModel(_ indexPath: IndexPath) -> PlayToolbarViewModel
-}
-
 protocol Searcher: AnyObject {
     func resetData() async
     func search(withText text: String) async
@@ -38,9 +32,15 @@ protocol Notifier: AnyObject {
     func removeNotification(withName name: NSNotification.Name, from: Any?)
 }
 
-protocol MainViewModel: InterfaceUpdatable, ParentViewModelProtocol, Searcher, Editor, Notifier {
+protocol MainTableViewModel: AnyObject {
     var numberOfItems: Int { get }
     var tableViewCellHeight: CGFloat { get }
+}
+
+protocol MainViewModel: InterfaceUpdatable, Searcher, Editor, Notifier, MainTableViewModel {
+    func makeRecordBar() -> RecordBarView
+    func makeEditView(indexPath: IndexPath) -> EditView
+    func makePlayToolbarView(indexPath: IndexPath) -> PlayToolbarView
 }
 
 
@@ -57,49 +57,61 @@ final class MainViewModelImpl: MainViewModel {
     
     private var records: [AudioRecord] = []
     
-    private let assemblyBuilder: AssemblyProtocol
     private let audioRepository: AudioRepository
     private let notificationCenter: NotificationCenter
+    private let coordinator: Coordinator
     
     
     //MARK: Init
     
     init(
-        assemblyBuilder: AssemblyProtocol,
         audioRepository: AudioRepository,
-        notificationCenter: NotificationCenter
+        notificationCenter: NotificationCenter,
+        coordinator: Coordinator
     ) {
-        self.assemblyBuilder = assemblyBuilder
         self.audioRepository = audioRepository
         self.notificationCenter = notificationCenter
+        self.coordinator = coordinator
         
         Task { await fetchAll() }
     }
     
     
-    func makeRecordView() -> IsolatedViewModule {
-        assemblyBuilder.get(subModule: .record(parentVM: self))
+    //MARK: Make childs
+    
+    func makeRecordBar() -> RecordBarView {
+        let recordViewModel: RecordViewModel = RecordBarViewModelImpl(parentViewModel: self)
+        let recordBarView = RecordBarView(viewModel: recordViewModel)
+        return recordBarView
     }
     
-    func makeEditViewModel(_ indexPath: IndexPath) -> EditViewModel {
-        assemblyBuilder.getEditViewModel(
-            withRecord: records[indexPath.item],
+    func makeEditView(indexPath: IndexPath) -> EditView {
+        let editViewModel: EditViewModel = EditViewModelImpl(
+            record: records[indexPath.row],
             indexPath: indexPath,
+            formatter: HelpersStorage.formatter,
             parentViewModel: self
         )
+        let editView = EditView(viewModel: editViewModel)
+        return editView
     }
     
-    func makePlayToolbarViewModel(_ indexPath: IndexPath) -> PlayToolbarViewModel {
-        assemblyBuilder.getPlayToolbarViewModel(
-            withRecord: records[indexPath.item],
+    func makePlayToolbarView(indexPath: IndexPath) -> PlayToolbarView {
+        let playToolbarViewModel: PlayToolbarViewModel = PlayToolbarViewModelImpl(
+            record: records[indexPath.row],
             indexPath: indexPath,
+            audioPlayer: AudioPlayerImpl(),
+            timeRefresher: HelpersStorage.timeRefresher,
+            formatter: HelpersStorage.formatter,
             parentViewModel: self
         )
+        let playToolbarView = PlayToolbarView(viewModel: playToolbarViewModel)
+        return playToolbarView
     }
 }
 
 
-//MARK: - Private
+//MARK: - Updating data (Private)
 
 private extension MainViewModelImpl {
     
@@ -172,8 +184,9 @@ extension MainViewModelImpl {
         do {
             try await audioRepository.delete(record: record)
             self.records.remove(at: indexPath.item)
-            
+    
             await self.fetchAll()
+            
             os_log("\(RLogs.recordDeleted + record.name)")
         } catch {
             os_log("\(RErrors.cantDeleteRecordWithName + record.name + " \(error)")")

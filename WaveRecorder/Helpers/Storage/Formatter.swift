@@ -10,7 +10,7 @@ import Foundation
 
 //MARK: - Protocol
 
-protocol FormatterProtocol: Helper {
+protocol FormatterProtocol: AnyObject {
     func formatName(_ name: String) -> String
     func formatDate(_ date: Date) -> String
     func formatDuration(_ duration: TimeInterval) -> String

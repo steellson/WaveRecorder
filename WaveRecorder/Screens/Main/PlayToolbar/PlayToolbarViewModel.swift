@@ -46,9 +46,10 @@ final class PlayToolbarViewModelImpl: PlayToolbarViewModel {
     private let record: AudioRecord
     private let indexPath: IndexPath
     private let audioPlayer: AudioPlayer
-    private let parentViewModel: MainViewModel
     private let timeRefresher: TimeRefresherProtocol
-    private let formatter: FormatterImpl
+    private let formatter: FormatterProtocol
+    
+    private let parentViewModel: MainViewModel
 
     
     //MARK: Init
@@ -57,16 +58,16 @@ final class PlayToolbarViewModelImpl: PlayToolbarViewModel {
         record: AudioRecord,
         indexPath: IndexPath,
         audioPlayer: AudioPlayer,
-        parentViewModel: MainViewModel,
         timeRefresher: TimeRefresherProtocol,
-        formatter: FormatterImpl
+        formatter: FormatterProtocol,
+        parentViewModel: MainViewModel
     ) {
         self.record = record
         self.indexPath = indexPath
         self.audioPlayer = audioPlayer
-        self.parentViewModel = parentViewModel
         self.timeRefresher = timeRefresher
         self.formatter = formatter
+        self.parentViewModel = parentViewModel
         
         resetTime()
     }

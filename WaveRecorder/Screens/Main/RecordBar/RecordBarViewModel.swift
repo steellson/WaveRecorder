@@ -23,18 +23,16 @@ final class RecordBarViewModelImpl: RecordViewModel {
     
     private var record: AudioRecord?
     
+    private let audioRecorder: AudioRecorder = AudioRecorderImpl()
     private let parentViewModel: MainViewModel
-    private let audioRecorder: AudioRecorder
     
     
     //MARK: Init
     
     init(
-        parentViewModel: MainViewModel,
-        audioRecorder: AudioRecorder
+        parentViewModel: MainViewModel
     ) {
         self.parentViewModel = parentViewModel
-        self.audioRecorder = audioRecorder
     }
 }
 
