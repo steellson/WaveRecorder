@@ -1,5 +1,5 @@
 //
-//  RecordsTableView.swift
+//  WRTableView.swift
 //  WaveRecorder
 //
 //  Created by Andrew Steellson on 23.01.2024.
@@ -11,7 +11,7 @@ import WRResources
 
 //MARK: - Input
 
-struct RecordsTableViewInput {
+public struct WRTableViewInput {
     let numberOfItems: Int
     let tableViewCellHeight: CGFloat
     let makeEditViewModelAction: (_ indexPath: IndexPath) -> EditViewModel
@@ -22,14 +22,14 @@ struct RecordsTableViewInput {
 
 //MARK: - Impl
 
-final class RecordsTableView: UITableView {
+final public class WRTableView: UITableView {
     
-    private var input: RecordsTableViewInput?
+    private var input: WRTableViewInput?
         
     
     //MARK: Lifecycle
     
-    override init(
+    override public init(
         frame: CGRect,
         style: UITableView.Style
     ) {
@@ -50,7 +50,7 @@ final class RecordsTableView: UITableView {
         setupDelegate()
     }
 
-    func configure(withInput input: RecordsTableViewInput) {
+    public func configure(withInput input: WRTableViewInput) {
         self.input = input
     }
 }
@@ -58,7 +58,7 @@ final class RecordsTableView: UITableView {
 
 //MARK: - Setup
 
-private extension RecordsTableView {
+private extension WRTableView {
     
     func seutupAppereance() {
        backgroundColor = .white
@@ -83,17 +83,17 @@ private extension RecordsTableView {
 
 //MARK: - Data Source
 
-extension RecordsTableView: UITableViewDataSource {
+extension WRTableView: UITableViewDataSource {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
          input?.numberOfItems ?? 0
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard
             let cell = dequeueReusableCell(
-                withIdentifier: RecordsTableViewCell.cellIdentifier,
-                for: indexPath) as? RecordsTableViewCell,
+                withIdentifier: WRTableViewCell.cellIdentifier,
+                for: indexPath) as? WRTableViewCell,
             let input
         else {
             os_log("\(RErrors.cantDequeReusableCell)")
@@ -112,9 +112,9 @@ extension RecordsTableView: UITableViewDataSource {
 
 //MARK: - Delegate
 
-extension RecordsTableView: UITableViewDelegate {
+extension WRTableView: UITableViewDelegate {
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         guard let input else {
             os_log("ERROR: Input isn't setted!")
             return 0.0
@@ -122,11 +122,11 @@ extension RecordsTableView: UITableViewDelegate {
         return input.tableViewCellHeight
     }
     
-    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+    public func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         false
     }
 
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         UISwipeActionsConfiguration(actions: [ UIContextualAction(
             style: .destructive,
             title: "Kill",

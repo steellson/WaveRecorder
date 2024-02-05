@@ -1,5 +1,5 @@
 //
-//  RecordsTableViewCell.swift
+//  WRTableViewCell.swift
 //  WaveRecorder
 //
 //  Created by Andrew Steellson on 23.11.2023.
@@ -10,7 +10,7 @@ import WRResources
 
 //MARK: - Impl
 
-final class RecordsTableViewCell:  UITableViewCell {
+final public class WRTableViewCell:  UITableViewCell {
     
     static let cellIdentifier = RIdentifiers.cellIdentifier
     
@@ -23,7 +23,7 @@ final class RecordsTableViewCell:  UITableViewCell {
     
     //MARK: Lifecycle
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    override public init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupContentView()
         setupConstraints()
@@ -34,7 +34,7 @@ final class RecordsTableViewCell:  UITableViewCell {
     }
     
     
-    override func prepareForReuse() {
+    override public func prepareForReuse() {
         super.prepareForReuse()
         resetChilds()
     }
@@ -42,7 +42,7 @@ final class RecordsTableViewCell:  UITableViewCell {
     
     //MARK: Methods
     
-    func configureCellWith(
+     func configureCellWith(
         editViewModel: EditViewModel,
         playToolbarViewModel: PlayToolbarViewModel
     ) {
@@ -54,7 +54,7 @@ final class RecordsTableViewCell:  UITableViewCell {
 
 //MARK: - Setup
 
-private extension RecordsTableViewCell {
+private extension WRTableViewCell {
     
     func setupContentView() {
         selectionStyle = .gray
