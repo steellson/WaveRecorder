@@ -8,7 +8,6 @@
 import UIKit
 import OSLog
 
-
 //MARK: - Impl
 
 final class EditView: UIView {
@@ -18,7 +17,7 @@ final class EditView: UIView {
     private lazy var titleLabelField: UITextField = {
         let field = UITextField()
         field.font = .systemFont(ofSize: 18, weight: .semibold)
-        field.backgroundColor = R.Colors.secondaryBackgroundColor
+        field.backgroundColor = RColors.secondaryBackgroundColor
         field.autocapitalizationType = .none
         field.autocorrectionType = .no
         field.keyboardType = .asciiCapable
@@ -33,7 +32,7 @@ final class EditView: UIView {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .light)
         label.textAlignment = .left
-        label.backgroundColor = R.Colors.secondaryBackgroundColor
+        label.backgroundColor = RColors.secondaryBackgroundColor
         return label
     }()
     
@@ -45,7 +44,7 @@ final class EditView: UIView {
         return button
     }()
     
-    private var viewModel: EditViewModelProtocol?
+    private var viewModel: EditViewModel?
     
     
     //MARK: Lifecycle
@@ -64,14 +63,14 @@ final class EditView: UIView {
     
     //MARK: Public
 
-    func configure(withViewModel viewModel: EditViewModelProtocol) {
+    func configure(withViewModel viewModel: EditViewModel) {
         self.viewModel = viewModel
         self.setupSubviewsAnimated()
     }
     
     func reset() {
         guard let viewModel else {
-            os_log("\(R.Strings.Errors.editViewModelIsNotSetted.rawValue)")
+            os_log("\(RErrors.editViewModelIsNotSetted)")
             return
         }
         
@@ -85,7 +84,7 @@ final class EditView: UIView {
     
     private func setupSubviewsAnimated() {
         guard let viewModel else {
-            os_log("\(R.Strings.Errors.editViewModelIsNotSetted.rawValue)")
+            os_log("\(RErrors.editViewModelIsNotSetted)")
             return
         }
         
@@ -115,10 +114,10 @@ final class EditView: UIView {
         UIView.animate(withDuration: 0.2) {
             if isEditing {
                 self.titleLabelField.becomeFirstResponder()
-                self.titleLabelField.backgroundColor = R.Colors.primaryBackgroundColor.withAlphaComponent(0.3)
+                self.titleLabelField.backgroundColor = RColors.primaryBackgroundColor.withAlphaComponent(0.3)
             } else {
                 self.titleLabelField.resignFirstResponder()
-                self.titleLabelField.backgroundColor = R.Colors.secondaryBackgroundColor
+                self.titleLabelField.backgroundColor = RColors.secondaryBackgroundColor
             }
         }
     }
@@ -129,7 +128,7 @@ final class EditView: UIView {
     @objc
     private func renameButtonDidTapped() {
         guard let viewModel else {
-            os_log("\(R.Strings.Errors.editViewModelIsNotSetted.rawValue)")
+            os_log("\(RErrors.editViewModelIsNotSetted)")
             return
         }
         

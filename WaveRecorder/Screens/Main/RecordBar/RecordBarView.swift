@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 //MARK: - Impl
 
 final class RecordBarView: UIView, IsolatedViewModule {
@@ -49,7 +48,7 @@ final class RecordBarView: UIView, IsolatedViewModule {
 private extension RecordBarView {
     
     func seutupContentView() {
-        backgroundColor = R.Colors.primaryBackgroundColor
+        backgroundColor = RColors.primaryBackgroundColor
         addNewSubview(recordButtonView)
     }
     
@@ -58,7 +57,7 @@ private extension RecordBarView {
             numbreOfColumns: 20,
             duration: 0.5,
             rate: 0.2,
-            color: R.Colors.secondaryBackgroundColor.withAlphaComponent(0.3)
+            color: RColors.secondaryBackgroundColor.withAlphaComponent(0.3)
         )
         recordVisualizerView.clipsToBounds = true
         addNewSubview(recordVisualizerView)

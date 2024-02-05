@@ -11,16 +11,16 @@ import UIKit
 
 //MARK: - Protocol
 
-protocol RecordButtonViewDelegate: AnyObject {
+public protocol RecordButtonViewDelegate: AnyObject {
     func recButtonDidTapped(_ isRecording: Bool)
 }
 
 
 //MARK: - Impl
 
-final class RecordButtonView: UIView {
+final public class RecordButtonView: UIView {
     
-    weak var delegate: RecordButtonViewDelegate?
+    public weak var delegate: RecordButtonViewDelegate?
     
     //MARK: Variables
     
@@ -38,7 +38,7 @@ final class RecordButtonView: UIView {
     
     //MARK: - Lifecycle
     
-    init(
+    public init(
         radius: CGFloat
     ) {
         self.radius = radius
@@ -51,7 +51,7 @@ final class RecordButtonView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         setupButtonAppearence()
         setupRoundedLayer()

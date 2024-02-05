@@ -8,7 +8,6 @@
 import OSLog
 import UIKit
 
-
 //MARK: - Impl
 
 final class MainViewController: UIViewController, IsolatedControllerModule {
@@ -16,7 +15,7 @@ final class MainViewController: UIViewController, IsolatedControllerModule {
     private let editButton = UIBarButtonItem()
     private let titleLabel = UILabel()
     private let searchController = WRSearchController()
-    private let tableView = WRTableView(frame: .zero, style: .plain)
+    private let tableView = RecordsTableView(frame: .zero, style: .plain)
     private lazy var recordView = viewModel.makeRecordView()
     
     private lazy var recViewHeightConstraint: NSLayoutConstraint = {
@@ -100,13 +99,13 @@ private extension MainViewController {
     }
     
     func setupContentView() {
-        view.backgroundColor = R.Colors.primaryBackgroundColor
+        view.backgroundColor = RColors.primaryBackgroundColor
         view.addNewSubview(recordView)
         view.addNewSubview(tableView)
     }
     
     func setupEditButton() {
-        editButton.title = R.Strings.Titles.editButtonTitle.rawValue
+        editButton.title = RTitles.editButtonTitle
         editButton.tintColor = .black
         editButton.target = self
         editButton.action = #selector(editButtonDidTapped)
@@ -114,9 +113,9 @@ private extension MainViewController {
     }
     
     func setupTitleLabel() {
-        titleLabel.text = R.Strings.Titles.navigationTitleMain.rawValue
+        titleLabel.text = RTitles.navigationTitleMain
         titleLabel.textColor = .black
-        titleLabel.backgroundColor = R.Colors.primaryBackgroundColor
+        titleLabel.backgroundColor = RColors.primaryBackgroundColor
         titleLabel.font = .systemFont(ofSize: 26, weight: .bold)
         titleLabel.textAlignment = .left
     }
@@ -130,14 +129,15 @@ private extension MainViewController {
     }
     
     func setupTableView() {
-        let tableViewInput = WRTableViewInput(
+        let tableViewInput = RecordsTableViewInput(
             numberOfItems: viewModel.numberOfItems,
             tableViewCellHeight: viewModel.tableViewCellHeight,
-            makeViewModelForCellAction: viewModel.makeViewModelForCell,
+            makeEditViewModelAction: viewModel.makeEditViewModel,
+            makePlayToolbarViewModellAction: viewModel.makePlayToolbarViewModel,
             deleteAction: viewModel.delete
         )
         tableView.configure(withInput: tableViewInput)
-        tableView.register(RecordCell.self, forCellReuseIdentifier: RecordCell.recordCellIdentifier)
+        tableView.register(RecordsTableViewCell.self, forCellReuseIdentifier: RecordsTableViewCell.cellIdentifier)
     }
 
     func setupRecordViewHeight() {
@@ -210,8 +210,8 @@ private extension MainViewController {
             self.tableView.isEditing.toggle()
             
             self.editButton.title = self.tableView.isEditing
-            ? R.Strings.Titles.stopEditButtonTitle.rawValue
-            : R.Strings.Titles.editButtonTitle.rawValue
+            ? RTitles.stopEditButtonTitle
+            : RTitles.editButtonTitle
         }
     }
     

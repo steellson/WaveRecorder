@@ -17,7 +17,8 @@ protocol InterfaceUpdatable: AnyObject {
 
 protocol ParentViewModelProtocol: AnyObject {
     func makeRecordView() -> IsolatedViewModule
-    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> RecordCellViewModel
+    func makeEditViewModel(_ indexPath: IndexPath) -> EditViewModel
+    func makePlayToolbarViewModel(_ indexPath: IndexPath) -> PlayToolbarViewModel
 }
 
 protocol Searcher: AnyObject {
@@ -78,10 +79,19 @@ final class MainViewModelImpl: MainViewModel {
         assemblyBuilder.get(subModule: .record(parentVM: self))
     }
     
-    func makeViewModelForCell(forIndexPath indexPath: IndexPath) -> RecordCellViewModel {
-        assemblyBuilder.getMainCellViewModel(
+    func makeEditViewModel(_ indexPath: IndexPath) -> EditViewModel {
+        assemblyBuilder.getEditViewModel(
             withRecord: records[indexPath.item],
-            indexPath: indexPath
+            indexPath: indexPath,
+            parentViewModel: self
+        )
+    }
+    
+    func makePlayToolbarViewModel(_ indexPath: IndexPath) -> PlayToolbarViewModel {
+        assemblyBuilder.getPlayToolbarViewModel(
+            withRecord: records[indexPath.item],
+            indexPath: indexPath,
+            parentViewModel: self
         )
     }
 }
@@ -99,7 +109,7 @@ private extension MainViewModelImpl {
             
             await self.shouldUpdateInterface?(false)
         } catch {
-            os_log("\(R.Strings.Errors.cantGetRecordsFromStorage.rawValue + " \(error)")")
+            os_log("\(RErrors.cantGetRecordsFromStorage + " \(error)")")
         }
     }
 }
@@ -125,7 +135,7 @@ extension MainViewModelImpl {
             
             await self.fetchAll()
         } catch {
-            os_log("\(R.Strings.Errors.cantSearchRecordsWithText.rawValue + text + " \(error)")")
+            os_log("\(RErrors.cantSearchRecordsWithText + text + " \(error)")")
         }
     }
 }
@@ -150,7 +160,7 @@ extension MainViewModelImpl {
             )
             self.records[indexPath.item] = newRecord
         } catch {
-            os_log("\(R.Strings.Errors.cantRenameRecord.rawValue + " \(error)")")
+            os_log("\(RErrors.cantRenameRecord + " \(error)")")
         }
     }
 
@@ -162,9 +172,9 @@ extension MainViewModelImpl {
             self.records.remove(at: indexPath.item)
             
             await self.fetchAll()
-            os_log("\(R.Strings.Logs.recordDeleted.rawValue + record.name)")
+            os_log("\(RLogs.recordDeleted + record.name)")
         } catch {
-            os_log("\(R.Strings.Errors.cantDeleteRecordWithName.rawValue + record.name + " \(error)")")
+            os_log("\(RErrors.cantDeleteRecordWithName + record.name + " \(error)")")
         }
     }
 }
@@ -181,7 +191,7 @@ extension MainViewModelImpl {
         guard 
             let recievedFrom = from
         else {
-            os_log("\(R.Strings.Errors.notificationCouldntBeActivated.rawValue)")
+            os_log("\(RErrors.notificationCouldntBeActivated)")
             return
         }
         
@@ -198,7 +208,7 @@ extension MainViewModelImpl {
         guard 
             let recievedFrom = from
         else {
-            os_log("\(R.Strings.Errors.notificationCouldntBeRemoved.rawValue)")
+            os_log("\(RErrors.notificationCouldntBeRemoved)")
             return
         }
         

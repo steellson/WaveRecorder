@@ -7,13 +7,14 @@
 
 import UIKit
 
+
 //MARK: - Impl
 
-final class WRNavigationController: UINavigationController {
+public final class WRNavigationController: UINavigationController {
     
     //MARK: Init
     
-    override init(rootViewController: UIViewController) {
+    override public init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
         setupAppereance()
     }
@@ -29,6 +30,6 @@ final class WRNavigationController: UINavigationController {
 private extension WRNavigationController {
     
     func setupAppereance() {
-        navigationBar.backgroundColor = R.Colors.primaryBackgroundColor
+        navigationBar.backgroundColor = RColors.primaryBackgroundColor
     }
 }

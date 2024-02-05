@@ -9,7 +9,7 @@ import UIKit
 
 //MARK: - Type
 
-enum PlayToolbarButtonType {
+public enum PlayToolbarButtonType {
     case goBack
     case play
     case stop
@@ -20,11 +20,13 @@ enum PlayToolbarButtonType {
 
 //MARK: - Impl
 
-final class PlayTolbarButton: UIButton {
+@available(iOS 13.0, *)
+public final class PlayTolbarButton: UIButton {
     
-    var type: PlayToolbarButtonType
+    public var type: PlayToolbarButtonType
     
-    init(
+    
+    public init(
         type: PlayToolbarButtonType
     ) {
         self.type = type

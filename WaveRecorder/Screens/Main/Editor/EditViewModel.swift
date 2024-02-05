@@ -9,7 +9,7 @@ import Foundation
 
 //MARK: - Protocols
 
-protocol EditViewModelProtocol: AnyObject {
+protocol EditViewModel: AnyObject {
     var recordName: String { get }
     var recordedAt: String { get }
     var isEditing: Bool { get }
@@ -22,7 +22,7 @@ protocol EditViewModelProtocol: AnyObject {
 
 //MARK: - Impl
 
-final class EditViewModel: EditViewModelProtocol {
+final class EditViewModelImpl: EditViewModel {
         
     var recordName: String {
         formatter.formatName(record.name)
@@ -35,8 +35,9 @@ final class EditViewModel: EditViewModelProtocol {
     private(set) var isEditing = false
     
     private var record: AudioRecord
+    private let indexPath: IndexPath
     
-    private let parentViewModel: RecordCellViewModel
+    private let parentViewModel: MainViewModel
     
     private let formatter: FormatterProtocol
     
@@ -44,17 +45,19 @@ final class EditViewModel: EditViewModelProtocol {
     //MARK: Init
     
     init(
+        record: AudioRecord,
+        indexPath: IndexPath,
         formatter: FormatterProtocol,
-        parentViewModel: RecordCellViewModel,
-        record: AudioRecord
+        parentViewModel: MainViewModel
     ) {
+        self.record = record
+        self.indexPath = indexPath
         self.formatter = formatter
         self.parentViewModel = parentViewModel
-        self.record = record
     }
 }
 
-extension EditViewModel {
+extension EditViewModelImpl {
     
     //MARK: Switch editing state
     
@@ -70,7 +73,7 @@ extension EditViewModel {
         
         guard newName != record.name else { return }
         
-        await parentViewModel.renameRecord(withNewName: newName)
+        await parentViewModel.rename(forIndexPath: indexPath, newName: newName)
         
         self.record = AudioRecord(
             name: newName,

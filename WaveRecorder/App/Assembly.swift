@@ -17,10 +17,9 @@ protocol IsolatedControllerModule: UIViewController { }
 protocol AssemblyProtocol: AnyObject {
     func get(module: Assembly.Module) -> IsolatedControllerModule
     func get(subModule: Assembly.SubModule) -> IsolatedViewModule
-    
-    func getMainCellViewModel(withRecord record: AudioRecord, indexPath: IndexPath) -> RecordCellViewModel
-    func getEditViewModel(withRecord record: AudioRecord, parentViewModel: RecordCellViewModel) -> EditViewModelProtocol
-    func getPlayViewModel(withRecord record: AudioRecord, parentViewModel: RecordCellViewModel) -> PlayToolbarViewModel
+
+    func getEditViewModel(withRecord record: AudioRecord, indexPath: IndexPath, parentViewModel: MainViewModel) -> EditViewModel
+    func getPlayToolbarViewModel(withRecord record: AudioRecord, indexPath: IndexPath, parentViewModel: MainViewModel) -> PlayToolbarViewModel
 }
 
 
@@ -64,16 +63,12 @@ extension Assembly {
         build(subModule: subModule)
     }
     
-    func getMainCellViewModel(withRecord record: AudioRecord, indexPath: IndexPath) -> RecordCellViewModel {
-        buildMainCellViewModel(withRecord: record, indexPath: indexPath)
+    func getEditViewModel(withRecord record: AudioRecord, indexPath: IndexPath, parentViewModel: MainViewModel) -> EditViewModel {
+        buildEditViewModel(withRecord: record, indexPath: indexPath, parentViewModel: parentViewModel)
     }
     
-    func getEditViewModel(withRecord record: AudioRecord, parentViewModel: RecordCellViewModel) -> EditViewModelProtocol {
-        buildEditViewModel(withRecord: record, parentViewModel: parentViewModel)
-    }
-    
-    func getPlayViewModel(withRecord record: AudioRecord, parentViewModel: RecordCellViewModel) -> PlayToolbarViewModel {
-        buildPlayViewModel(withRecord: record, parentViewModel: parentViewModel)
+    func getPlayToolbarViewModel(withRecord record: AudioRecord, indexPath: IndexPath, parentViewModel: MainViewModel) -> PlayToolbarViewModel {
+        buildPlayViewModel(withRecord: record, indexPath: indexPath, parentViewModel: parentViewModel)
     }
 }
 
@@ -100,28 +95,21 @@ private extension Assembly {
             return RecordBarView(viewModel: viewModel)
         }
     }
-    
-    func buildMainCellViewModel(withRecord record: AudioRecord, indexPath: IndexPath) -> RecordCellViewModel {
-        RecordCellViewModelImpl(
-            indexPath: indexPath,
-            record: record,
-            parentViewModel: mainViewModel,
-            assemblyBuilder: self
-        )
-    }
         
-    func buildEditViewModel(withRecord record: AudioRecord, parentViewModel: RecordCellViewModel) -> EditViewModelProtocol {
-        EditViewModel(
+    func buildEditViewModel(withRecord record: AudioRecord, indexPath: IndexPath, parentViewModel: MainViewModel) -> EditViewModel {
+        EditViewModelImpl(
+            record: record,
+            indexPath: indexPath,
             formatter: helperFactory.createHelper(ofType: .formatter) as! FormatterProtocol,
-            parentViewModel: parentViewModel,
-            record: record
+            parentViewModel: parentViewModel
         )
     }
     
-    func buildPlayViewModel(withRecord record: AudioRecord, parentViewModel: RecordCellViewModel) -> PlayToolbarViewModel {
+    func buildPlayViewModel(withRecord record: AudioRecord, indexPath: IndexPath, parentViewModel: MainViewModel) -> PlayToolbarViewModel {
         let audioPlayer: AudioPlayer = AudioPlayerImpl()
         return PlayToolbarViewModelImpl(
             record: record,
+            indexPath: indexPath,
             audioPlayer: audioPlayer,
             parentViewModel: parentViewModel,
             timeRefresher: helperFactory.createHelper(ofType: .timeRefresher) as! TimeRefresherProtocol,

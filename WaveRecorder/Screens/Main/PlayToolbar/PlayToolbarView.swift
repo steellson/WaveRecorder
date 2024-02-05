@@ -9,6 +9,8 @@ import Foundation
 import OSLog
 import UIKit
 
+
+
 //MARK: - Impl
 
 final class PlayToolbarView: UIView {
@@ -25,14 +27,14 @@ final class PlayToolbarView: UIView {
     private let startTimeLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .light)
-        label.backgroundColor = R.Colors.secondaryBackgroundColor
+        label.backgroundColor = RColors.secondaryBackgroundColor
         return label
     }()
     
     private let endTimeLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .light)
-        label.backgroundColor = R.Colors.secondaryBackgroundColor
+        label.backgroundColor = RColors.secondaryBackgroundColor
         return label
     }()
     
@@ -81,7 +83,7 @@ final class PlayToolbarView: UIView {
     
     private func animateLabels() {
         guard let viewModel else {
-            os_log("\(R.Strings.Errors.playViewModelIsNotSetted.rawValue)")
+            os_log("\(RErrors.playViewModelIsNotSetted)")
             return
         }
         
@@ -131,7 +133,7 @@ final class PlayToolbarView: UIView {
         animateTappedButton(withSender: sender)
         
         guard let viewModel else {
-            os_log("\(R.Strings.Errors.playViewModelIsNotSetted.rawValue)")
+            os_log("\(RErrors.playViewModelIsNotSetted)")
             return
         }
         

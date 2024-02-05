@@ -10,7 +10,7 @@ import UIKit
 
 //MARK: - Impl
 
-final class RecordWaveView: UIView {
+final public class RecordWaveView: UIView {
     
     private let shapeLayer = CAShapeLayer()
     
@@ -30,7 +30,7 @@ final class RecordWaveView: UIView {
     private weak var displayLink: CADisplayLink?
     
     
-    enum Direction {
+    public enum Direction {
         case right
         case left
     }
@@ -38,7 +38,7 @@ final class RecordWaveView: UIView {
     
     //MARK: Methods
     
-    override func draw(_ rect: CGRect) {
+    override public func draw(_ rect: CGRect) {
         super.draw(rect)
                 
         let path = UIBezierPath()
@@ -64,7 +64,7 @@ final class RecordWaveView: UIView {
     
     //MARK: Configure
     
-    func configureWith(
+    public func configureWith(
         direction: Direction,
         speed: Double,
         waveWidth: CGFloat,
@@ -76,7 +76,7 @@ final class RecordWaveView: UIView {
         self.color = color
     }
     
-    func configureWith(
+    public func configureWith(
         speed: Double = 10,
         frequency: Double = 8.0,
         parameterA: Double = 1.5,
@@ -118,7 +118,7 @@ final class RecordWaveView: UIView {
 
 //MARK: - Public
 
-extension RecordWaveView {
+public extension RecordWaveView {
     
     func animationStart() {
         speed = direction == .right ? -speed : speed

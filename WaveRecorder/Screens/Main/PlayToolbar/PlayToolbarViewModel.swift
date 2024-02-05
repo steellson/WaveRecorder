@@ -42,8 +42,9 @@ final class PlayToolbarViewModelImpl: PlayToolbarViewModel {
     private var isPlaying = false
     
     private let record: AudioRecord
+    private let indexPath: IndexPath
     private let audioPlayer: AudioPlayer
-    private let parentViewModel: RecordCellViewModel
+    private let parentViewModel: MainViewModel
     private let timeRefresher: TimeRefresherProtocol
     private let formatter: FormatterImpl
 
@@ -52,12 +53,14 @@ final class PlayToolbarViewModelImpl: PlayToolbarViewModel {
     
     init(
         record: AudioRecord,
+        indexPath: IndexPath,
         audioPlayer: AudioPlayer,
-        parentViewModel: RecordCellViewModel,
+        parentViewModel: MainViewModel,
         timeRefresher: TimeRefresherProtocol,
         formatter: FormatterImpl
     ) {
         self.record = record
+        self.indexPath = indexPath
         self.audioPlayer = audioPlayer
         self.parentViewModel = parentViewModel
         self.timeRefresher = timeRefresher
@@ -80,7 +83,7 @@ extension PlayToolbarViewModelImpl {
     
     func play(atTime time: Float, withAnimation animation: @escaping () -> Void) async {
         guard !isPlaying else {
-            os_log("\(R.Strings.Errors.audioIsAlreadyPlaying.rawValue)")
+            os_log("\(RErrors.audioIsAlreadyPlaying)")
             return
         }
         
@@ -127,7 +130,7 @@ extension PlayToolbarViewModelImpl {
     //MARK: Delete
     
     func deleteRecord() async {
-        await parentViewModel.deleteRecord()
+        await parentViewModel.delete(forIndexPath: indexPath)
     }
 }
 

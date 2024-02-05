@@ -7,70 +7,65 @@
 
 import UIKit
 
-enum R {
-    
-    //MARK: - Strings
-    
-    enum Strings {
-     
-        
-        //MARK: Erorrs
-        enum Errors: String {
-            
-            // Main View Model
-            case cantGetRecordsFromStorage = "ERROR: Cant get records from storage! "
-            case cantRenameRecord = "ERROR: Cant rename record! "
-            case cantSearchRecordsWithText = "ERROR: Cant search records with text: "
-            case cantDeleteRecordWithName = "ERROR: Cant delete record with name "
-            case notificationCouldntBeActivated = "ERROR: Notification couldnt be activated"
-            case notificationCouldntBeRemoved = "ERROR: Notification couldnt be removed"
-            
-            //MARK: Main View
-            case cantDequeReusableCell = "ERROR: Cant dequeue reusable cell"
-            case wrongFieldResponder = "ERROR: Wrong field responder"
-            
-            
-            //MARK: Edit View
-            case editViewModelIsNotSetted = "ERROR: EditViewModel isn't setted!"
-            
-            
-            //MARK: Play View Model
-            case audioIsAlreadyPlaying = "ERROR: Audio is already playing!"
 
-            //MARK: Play View
-            case playViewModelIsNotSetted = "ERROR: PlayViewModel isn't setted!"
-        }
-        
-        
-        //MARK: Logs
-        enum Logs: String {
-            case recordDeleted = "SUCCESS: Record deleted. Name: "
-        }
-        
-        
-        //MARK: Titles
-        enum Titles: String {
-            
-            //MARK: Main Screen
-            case navigationTitleMain = "All records"
-            case editButtonTitle = "Edit"
-            case stopEditButtonTitle = "Cancel"
-            case searchTextFieldPlaceholder = "Search"
-        }
-        
-        
-        //MARK: Identity
-        enum Identifiers: String {
-            case recordCellIdentifier = "RecordCellIdentifier"
-        }
-    }
+//MARK: Titles
+
+public enum RTitles {
+    
+    //MARK: Main Screen
+    public static let navigationTitleMain = "All records"
+    public static let editButtonTitle = "Edit"
+    public static let stopEditButtonTitle = "Cancel"
+    public static let searchTextFieldPlaceholder = "Search"
+}
+
+
+//MARK: Identity
+
+public enum RIdentifiers {
+    public static let cellIdentifier = "RecordsCellIdentifier"
+}
+
+
+//MARK: Logs
+
+public enum RLogs {
+    public static let recordDeleted = "SUCCESS: Record deleted. Name: "
+}
+
+
+//MARK: Erorrs
+
+public enum RErrors {
+    
+    // Main View Model
+    public static let cantGetRecordsFromStorage = "ERROR: Cant get records from storage! "
+    public static let cantRenameRecord = "ERROR: Cant rename record! "
+    public static let cantSearchRecordsWithText = "ERROR: Cant search records with text: "
+    public static let cantDeleteRecordWithName = "ERROR: Cant delete record with name "
+    public static let notificationCouldntBeActivated = "ERROR: Notification couldnt be activated"
+    public static let notificationCouldntBeRemoved = "ERROR: Notification couldnt be removed"
+    
+    //MARK: Main View
+    public static let cantDequeReusableCell = "ERROR: Cant dequeue reusable cell"
+    public static let wrongFieldResponder = "ERROR: Wrong field responder"
     
     
+    //MARK: Edit View
+    public static let editViewModelIsNotSetted = "ERROR: EditViewModel isn't setted!"
     
-    //MARK: - Colors
     
-    enum Colors {
-        static let primaryBackgroundColor = UIColor(red: 183/255, green: 198/255, blue: 206/255, alpha: 1)
-        static let secondaryBackgroundColor = UIColor.white
-    }
+    //MARK: Play View Model
+    public static let audioIsAlreadyPlaying = "ERROR: Audio is already playing!"
+
+    //MARK: Play View
+    public static let playViewModelIsNotSetted = "ERROR: PlayViewModel isn't setted!"
+}
+
+
+//MARK: - Colors
+
+public enum RColors {
+    public static let primaryBackgroundColor = UIColor(red: 183/255, green: 198/255, blue: 206/255, alpha: 1)
+    public static let secondaryBackgroundColor = UIColor.white
 }

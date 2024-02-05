@@ -11,22 +11,31 @@ import OSLog
 
 //MARK: - Input
 
-struct WRSearchControllerInput {
-    var fetchAllAction: () async -> Void
-    var searchWithTextAction: (String) async -> Void
+public struct WRSearchControllerInput {
+    let fetchAllAction: () async -> Void
+    let searchWithTextAction: (String) async -> Void
+    
+    public init(
+        fetchAllAction: @escaping () async -> Void,
+        searchWithTextAction: @escaping (String) async -> Void
+    ) {
+        self.fetchAllAction = fetchAllAction
+        self.searchWithTextAction = searchWithTextAction
+    }
 }
 
 
 //MARK: - Impl
 
-final class WRSearchController: UISearchController {
+@available(iOS 14.0, *)
+public final class WRSearchController: UISearchController {
     
     private var input: WRSearchControllerInput?
     
     
     //MARK: Lifecycle
     
-    init() {
+    public init() {
         super.init(searchResultsController: nil)
         setupAppereance()
         setupSettings()
@@ -40,7 +49,7 @@ final class WRSearchController: UISearchController {
         setupDelegates()
     }
     
-    func configure(withInput input: WRSearchControllerInput) {
+    public func configure(withInput input: WRSearchControllerInput) {
         self.input = input
     }
 }
@@ -48,10 +57,11 @@ final class WRSearchController: UISearchController {
 
 //MARK: - Setup
 
+@available(iOS 14.0, *)
 private extension WRSearchController {
     
     func setupAppereance() {
-        searchBar.placeholder = R.Strings.Titles.searchTextFieldPlaceholder.rawValue
+        searchBar.placeholder = RTitles.searchTextFieldPlaceholder
         searchBar.tintColor = .black
         searchBar.searchBarStyle = .minimal
     }
@@ -74,11 +84,12 @@ private extension WRSearchController {
 
 //MARK: - Private methods
 
+@available(iOS 14.0, *)
 private extension WRSearchController {
     
     func searchFieldShouldClear(_ textField: UITextField) {
         guard textField == searchBar.searchTextField else {
-            os_log("\(R.Strings.Errors.wrongFieldResponder.rawValue)")
+            os_log("\(RErrors.wrongFieldResponder)")
             return
         }
         
@@ -111,14 +122,15 @@ private extension WRSearchController {
 
 //MARK: - SearchBar+TextField Delegate
 
+@available(iOS 14.0, *)
 extension WRSearchController: UISearchBarDelegate, UISearchTextFieldDelegate {
     
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         guard searchText.isEmpty else { return }
         searchBar.resignFirstResponder()
     }
     
-    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+    public func textFieldShouldClear(_ textField: UITextField) -> Bool {
         searchFieldShouldClear(textField)
         restoreResults()
         return false
@@ -128,9 +140,10 @@ extension WRSearchController: UISearchBarDelegate, UISearchTextFieldDelegate {
 
 //MARK: - Search Reslut Updating
 
+@available(iOS 14.0, *)
 extension WRSearchController: UISearchResultsUpdating {
     
-    func updateSearchResults(for searchController: UISearchController) {
+    public func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.searchTextField.text else {
             os_log("ERROR: Couldnt recognize search field!")
             return
