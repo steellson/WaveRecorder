@@ -7,6 +7,8 @@
 
 import OSLog
 import UIKit
+import WRResources
+
 
 //MARK: - Impl
 
@@ -133,7 +135,7 @@ private extension MainViewController {
             numberOfItems: viewModel.numberOfItems,
             tableViewCellHeight: viewModel.tableViewCellHeight,
             makeEditViewModelAction: viewModel.makeEditViewModel,
-            makePlayToolbarViewModellAction: viewModel.makePlayToolbarViewModel,
+            makePlayToolbarViewModelAction: viewModel.makePlayToolbarViewModel,
             deleteAction: viewModel.delete
         )
         tableView.configure(withInput: tableViewInput)

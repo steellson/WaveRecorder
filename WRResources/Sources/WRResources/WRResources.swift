@@ -1,10 +1,3 @@
-//
-//  Resources.swift
-//  WaveRecorder
-//
-//  Created by Andrew Steellson on 23.11.2023.
-//
-
 import UIKit
 
 
@@ -69,3 +62,4 @@ public enum RColors {
     public static let primaryBackgroundColor = UIColor(red: 183/255, green: 198/255, blue: 206/255, alpha: 1)
     public static let secondaryBackgroundColor = UIColor.white
 }
+

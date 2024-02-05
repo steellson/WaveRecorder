@@ -7,6 +7,7 @@
 
 import UIKit
 import OSLog
+import WRResources
 
 
 //MARK: - Input

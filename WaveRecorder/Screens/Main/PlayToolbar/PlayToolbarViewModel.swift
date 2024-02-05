@@ -8,6 +8,7 @@
 import Foundation
 import OSLog
 import WRAudio
+import WRResources
 
 
 //MARK: - Protocol

@@ -8,7 +8,7 @@
 import Foundation
 import OSLog
 import UIKit
-
+import WRResources
 
 
 //MARK: - Impl

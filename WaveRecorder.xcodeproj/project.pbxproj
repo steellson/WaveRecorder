@@ -18,8 +18,9 @@
 		3D682DAE2B1F29DA00067DFE /* RecordBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D682DAC2B1F29DA00067DFE /* RecordBarView.swift */; };
 		3D7CB1252B2C557A00F5B91F /* PlayToolbarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7CB1242B2C557A00F5B91F /* PlayToolbarViewModel.swift */; };
 		3D7CB1282B2C6FB900F5B91F /* EditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7CB1272B2C6FB900F5B91F /* EditViewModel.swift */; };
-		3DD02D8F2B70251200E49AFC /* RecordsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD02D8D2B70251200E49AFC /* RecordsTableViewCell.swift */; };
-		3DD02D902B70251200E49AFC /* RecordsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD02D8E2B70251200E49AFC /* RecordsTableView.swift */; };
+		3D86A7802B70ECEF006C492A /* WRResources in Frameworks */ = {isa = PBXBuildFile; productRef = 3D86A77F2B70ECEF006C492A /* WRResources */; };
+		3D86A7872B70EFF0006C492A /* RecordsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D86A7862B70EFF0006C492A /* RecordsTableView.swift */; };
+		3D86A7892B70EFFE006C492A /* RecordsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D86A7882B70EFFE006C492A /* RecordsTableViewCell.swift */; };
 		3DD02DB42B70CCB300E49AFC /* RecordWaveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD02DAF2B70CCB300E49AFC /* RecordWaveView.swift */; };
 		3DD02DB52B70CCB300E49AFC /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD02DB02B70CCB300E49AFC /* UIView+Extension.swift */; };
 		3DD02DB62B70CCB300E49AFC /* RecordVisualizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD02DB12B70CCB300E49AFC /* RecordVisualizerView.swift */; };
@@ -27,8 +28,6 @@
 		3DD02DB82B70CCB300E49AFC /* PlayTolbarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD02DB32B70CCB300E49AFC /* PlayTolbarButton.swift */; };
 		3DD02DBB2B70CCC200E49AFC /* WRNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD02DB92B70CCC200E49AFC /* WRNavigationController.swift */; };
 		3DD02DBC2B70CCC200E49AFC /* WRSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD02DBA2B70CCC200E49AFC /* WRSearchController.swift */; };
-		3DD02DBF2B70CCEF00E49AFC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3DD02DBD2B70CCEF00E49AFC /* Assets.xcassets */; };
-		3DD02DC02B70CCEF00E49AFC /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD02DBE2B70CCEF00E49AFC /* Resources.swift */; };
 		3DD02DCB2B70DC8000E49AFC /* WRAudio in Frameworks */ = {isa = PBXBuildFile; productRef = 3DD02DCA2B70DC8000E49AFC /* WRAudio */; };
 		3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF8E2B0F65F3004CAE97 /* AppDelegate.swift */; };
 		3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF902B0F65F3004CAE97 /* SceneDelegate.swift */; };
@@ -50,8 +49,8 @@
 		3D682DAC2B1F29DA00067DFE /* RecordBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordBarView.swift; sourceTree = "<group>"; };
 		3D7CB1242B2C557A00F5B91F /* PlayToolbarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayToolbarViewModel.swift; sourceTree = "<group>"; };
 		3D7CB1272B2C6FB900F5B91F /* EditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewModel.swift; sourceTree = "<group>"; };
-		3DD02D8D2B70251200E49AFC /* RecordsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RecordsTableViewCell.swift; path = ../../../../../../../../.Trash/RecordsTableViewCell.swift; sourceTree = "<group>"; };
-		3DD02D8E2B70251200E49AFC /* RecordsTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RecordsTableView.swift; path = ../../../../../../../../.Trash/RecordsTableView.swift; sourceTree = "<group>"; };
+		3D86A7862B70EFF0006C492A /* RecordsTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordsTableView.swift; path = WaveRecorder/Screens/Main/RecordsTableView.swift; sourceTree = SOURCE_ROOT; };
+		3D86A7882B70EFFE006C492A /* RecordsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordsTableViewCell.swift; path = WaveRecorder/Screens/Main/RecordsTableViewCell.swift; sourceTree = SOURCE_ROOT; };
 		3DD02DAF2B70CCB300E49AFC /* RecordWaveView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordWaveView.swift; sourceTree = "<group>"; };
 		3DD02DB02B70CCB300E49AFC /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		3DD02DB12B70CCB300E49AFC /* RecordVisualizerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordVisualizerView.swift; sourceTree = "<group>"; };
@@ -59,8 +58,6 @@
 		3DD02DB32B70CCB300E49AFC /* PlayTolbarButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayTolbarButton.swift; sourceTree = "<group>"; };
 		3DD02DB92B70CCC200E49AFC /* WRNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WRNavigationController.swift; sourceTree = "<group>"; };
 		3DD02DBA2B70CCC200E49AFC /* WRSearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WRSearchController.swift; sourceTree = "<group>"; };
-		3DD02DBD2B70CCEF00E49AFC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		3DD02DBE2B70CCEF00E49AFC /* Resources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 		3DEAFF8B2B0F65F3004CAE97 /* WaveRecorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WaveRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DEAFF8E2B0F65F3004CAE97 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3DEAFF902B0F65F3004CAE97 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -77,6 +74,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3DD02DCB2B70DC8000E49AFC /* WRAudio in Frameworks */,
+				3D86A7802B70ECEF006C492A /* WRResources in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,17 +97,17 @@
 				3D682DA22B1F29B000067DFE /* MainViewController.swift */,
 				3DFEFF672B5FCE6500954745 /* Editor */,
 				3DFEFF682B5FCE7B00954745 /* PlayToolbar */,
-				3DD02D882B7024A100E49AFC /* RecordsTableView */,
+				3D86A7812B70EE29006C492A /* RecordsTableView */,
 				3DFEFF692B5FCE8700954745 /* RecordBar */,
 			);
 			path = Main;
 			sourceTree = "<group>";
 		};
-		3DD02D882B7024A100E49AFC /* RecordsTableView */ = {
+		3D86A7812B70EE29006C492A /* RecordsTableView */ = {
 			isa = PBXGroup;
 			children = (
-				3DD02D8E2B70251200E49AFC /* RecordsTableView.swift */,
-				3DD02D8D2B70251200E49AFC /* RecordsTableViewCell.swift */,
+				3D86A7862B70EFF0006C492A /* RecordsTableView.swift */,
+				3D86A7882B70EFFE006C492A /* RecordsTableViewCell.swift */,
 			);
 			path = RecordsTableView;
 			sourceTree = "<group>";
@@ -121,15 +119,6 @@
 				3DD02DBA2B70CCC200E49AFC /* WRSearchController.swift */,
 			);
 			path = WRParts;
-			sourceTree = "<group>";
-		};
-		3DD02D9B2B70CC3F00E49AFC /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				3DD02DBD2B70CCEF00E49AFC /* Assets.xcassets */,
-				3DD02DBE2B70CCEF00E49AFC /* Resources.swift */,
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		3DD02D9C2B70CC4700E49AFC /* UIComponents */ = {
@@ -169,7 +158,6 @@
 				3DEAFFD02B15F53D004CAE97 /* Helpers */,
 				3DEAFFA62B0F66B9004CAE97 /* Screens */,
 				3DD02D9C2B70CC4700E49AFC /* UIComponents */,
-				3DD02D9B2B70CC3F00E49AFC /* Resources */,
 				3DD02D9A2B70CC3200E49AFC /* WRParts */,
 			);
 			path = WaveRecorder;
@@ -257,6 +245,7 @@
 			name = WaveRecorder;
 			packageProductDependencies = (
 				3DD02DCA2B70DC8000E49AFC /* WRAudio */,
+				3D86A77F2B70ECEF006C492A /* WRResources */,
 			);
 			productName = WaveRecorder;
 			productReference = 3DEAFF8B2B0F65F3004CAE97 /* WaveRecorder.app */;
@@ -288,6 +277,7 @@
 			mainGroup = 3DEAFF822B0F65F3004CAE97;
 			packageReferences = (
 				3DD02DC92B70DC8000E49AFC /* XCLocalSwiftPackageReference "WRAudio" */,
+				3D86A77E2B70ECEF006C492A /* XCLocalSwiftPackageReference "WRResources" */,
 			);
 			productRefGroup = 3DEAFF8C2B0F65F3004CAE97 /* Products */;
 			projectDirPath = "";
@@ -303,7 +293,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3DD02DBF2B70CCEF00E49AFC /* Assets.xcassets in Resources */,
 				3DEAFF9B2B0F65F4004CAE97 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -316,22 +305,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				3D7CB1282B2C6FB900F5B91F /* EditViewModel.swift in Sources */,
+				3D86A7892B70EFFE006C492A /* RecordsTableViewCell.swift in Sources */,
 				3DEAFFD22B15F54D004CAE97 /* Formatter.swift in Sources */,
 				3D7CB1252B2C557A00F5B91F /* PlayToolbarViewModel.swift in Sources */,
 				3DD02DB62B70CCB300E49AFC /* RecordVisualizerView.swift in Sources */,
 				3D5665F32B56B32D0047A32B /* HelperFactory.swift in Sources */,
 				3DD02DB82B70CCB300E49AFC /* PlayTolbarButton.swift in Sources */,
 				3DD02DBB2B70CCC200E49AFC /* WRNavigationController.swift in Sources */,
-				3DD02DC02B70CCEF00E49AFC /* Resources.swift in Sources */,
 				3D5665F52B56B8410047A32B /* FileManager+Extension.swift in Sources */,
 				3DD02DB52B70CCB300E49AFC /* UIView+Extension.swift in Sources */,
 				3DFCE9AE2B331FF600D27A0B /* TimeRefresher.swift in Sources */,
 				3D682DAE2B1F29DA00067DFE /* RecordBarView.swift in Sources */,
 				3DD02DBC2B70CCC200E49AFC /* WRSearchController.swift in Sources */,
-				3DD02D8F2B70251200E49AFC /* RecordsTableViewCell.swift in Sources */,
 				3DD02DB42B70CCB300E49AFC /* RecordWaveView.swift in Sources */,
-				3DD02D902B70251200E49AFC /* RecordsTableView.swift in Sources */,
 				3D682DA52B1F29B000067DFE /* MainViewController.swift in Sources */,
+				3D86A7872B70EFF0006C492A /* RecordsTableView.swift in Sources */,
 				3DD02DB72B70CCB300E49AFC /* RecordButtonView.swift in Sources */,
 				3D682DAB2B1F29D300067DFE /* PlayToolbarView.swift in Sources */,
 				3D682DA32B1F29B000067DFE /* EditView.swift in Sources */,
@@ -567,6 +555,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		3D86A77E2B70ECEF006C492A /* XCLocalSwiftPackageReference "WRResources" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = WRResources;
+		};
 		3DD02DC92B70DC8000E49AFC /* XCLocalSwiftPackageReference "WRAudio" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = WRAudio;
@@ -574,6 +566,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		3D86A77F2B70ECEF006C492A /* WRResources */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WRResources;
+		};
 		3DD02DCA2B70DC8000E49AFC /* WRAudio */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WRAudio;
