@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import UIComponents
 import WRResources
 
 //MARK: - Impl

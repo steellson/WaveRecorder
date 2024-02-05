@@ -8,6 +8,7 @@
 import Foundation
 import OSLog
 import UIKit
+import UIComponents
 import WRResources
 
 

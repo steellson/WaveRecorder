@@ -86,11 +86,7 @@ private extension RecordsTableView {
 extension RecordsTableView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let input else {
-            os_log("ERROR: Input isn't setted!")
-            return 0
-        }
-        return input.numberOfItems
+         input?.numberOfItems ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

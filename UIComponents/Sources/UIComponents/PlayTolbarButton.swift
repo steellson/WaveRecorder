@@ -21,7 +21,6 @@ public enum PlayToolbarButtonType {
 
 //MARK: - Impl
 
-@available(iOS 13.0, *)
 public final class PlayTolbarButton: UIButton {
     
     public var type: PlayToolbarButtonType

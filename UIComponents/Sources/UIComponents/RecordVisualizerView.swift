@@ -67,7 +67,7 @@ final public class RecordVisualizerView: UIView {
     
     private func setupView() {
         backgroundColor = RColors.primaryBackgroundColor
-        addNewSubview(stackView)
+        addSubview(stackView)
     }
     
     private func setupStackViewContent() {
@@ -87,6 +87,8 @@ final public class RecordVisualizerView: UIView {
     }
     
     private func setupLayout() {
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),

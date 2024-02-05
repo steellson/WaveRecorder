@@ -100,7 +100,7 @@ private extension RecordButtonView {
     
     func setupContentView() {
         backgroundColor = .clear
-        addNewSubview(button)
+        addSubview(button)
     }
     
     func setupButtonAppearence() {
@@ -132,6 +132,8 @@ private extension RecordButtonView {
     //MARK: Constraints
     
     func setupConstraints() {
+        button.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
             button.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.95),
             button.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.95),
