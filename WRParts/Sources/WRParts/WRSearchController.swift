@@ -28,7 +28,6 @@ public struct WRSearchControllerInput {
 
 //MARK: - Impl
 
-@available(iOS 14.0, *)
 public final class WRSearchController: UISearchController {
     
     private var input: WRSearchControllerInput?
@@ -58,7 +57,6 @@ public final class WRSearchController: UISearchController {
 
 //MARK: - Setup
 
-@available(iOS 14.0, *)
 private extension WRSearchController {
     
     func setupAppereance() {
@@ -85,7 +83,6 @@ private extension WRSearchController {
 
 //MARK: - Private methods
 
-@available(iOS 14.0, *)
 private extension WRSearchController {
     
     func searchFieldShouldClear(_ textField: UITextField) {
@@ -123,11 +120,13 @@ private extension WRSearchController {
 
 //MARK: - SearchBar+TextField Delegate
 
-@available(iOS 14.0, *)
 extension WRSearchController: UISearchBarDelegate, UISearchTextFieldDelegate {
     
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard searchText.isEmpty else { return }
+        guard searchText.isEmpty else {
+            updateResults(withText: searchText)
+            return
+        }
         searchBar.resignFirstResponder()
     }
     
@@ -141,7 +140,6 @@ extension WRSearchController: UISearchBarDelegate, UISearchTextFieldDelegate {
 
 //MARK: - Search Reslut Updating
 
-@available(iOS 14.0, *)
 extension WRSearchController: UISearchResultsUpdating {
     
     public func updateSearchResults(for searchController: UISearchController) {
