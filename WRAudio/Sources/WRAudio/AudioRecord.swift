@@ -41,6 +41,17 @@ public struct AudioRecord: Identifiable {
     }
 }
 
+extension AudioRecord: Hashable {
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    public static func == (lhs: AudioRecord, rhs: AudioRecord) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
 
 //MARK: - Metadata
 

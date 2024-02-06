@@ -26,15 +26,16 @@ final public class MainTableViewCell:  UITableViewCell {
     //MARK: Methods
     
      func configureCellWith(
-        editView: EditView,
-        playToolbarView: PlayToolbarView
+        editView: EditView?,
+        playToolbarView: PlayToolbarView?
     ) {
         self.editView = editView
         self.playToolbar = playToolbarView
         
-        setupContentView()
-        setupConstraints()
-        layoutIfNeeded()
+        if editView != nil, playToolbarView != nil {
+            setupContentView()
+            setupConstraints()
+        }
     }
 }
 

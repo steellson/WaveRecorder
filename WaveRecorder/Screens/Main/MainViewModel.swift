@@ -39,8 +39,8 @@ protocol MainTableViewModel: AnyObject {
 
 protocol MainViewModel: InterfaceUpdatable, Searcher, Editor, Notifier, MainTableViewModel {
     func makeRecordBar() -> RecordBarView
-    func makeEditView(indexPath: IndexPath) -> EditView
-    func makePlayToolbarView(indexPath: IndexPath) -> PlayToolbarView
+    func makeEditView(indexPath: IndexPath) -> EditView?
+    func makePlayToolbarView(indexPath: IndexPath) -> PlayToolbarView?
 }
 
 
@@ -85,7 +85,8 @@ final class MainViewModelImpl: MainViewModel {
         return recordBarView
     }
     
-    func makeEditView(indexPath: IndexPath) -> EditView {
+    func makeEditView(indexPath: IndexPath) -> EditView? {
+        guard records.count > indexPath.row else { return nil }
         let editViewModel: EditViewModel = EditViewModelImpl(
             record: records[indexPath.row],
             indexPath: indexPath,
@@ -96,7 +97,8 @@ final class MainViewModelImpl: MainViewModel {
         return editView
     }
     
-    func makePlayToolbarView(indexPath: IndexPath) -> PlayToolbarView {
+    func makePlayToolbarView(indexPath: IndexPath) -> PlayToolbarView? {
+        guard records.count > indexPath.row else { return nil }
         let playToolbarViewModel: PlayToolbarViewModel = PlayToolbarViewModelImpl(
             record: records[indexPath.row],
             indexPath: indexPath,
@@ -139,15 +141,11 @@ extension MainViewModelImpl {
 
     
     func search(withText text: String) async {
-        guard !text.isEmpty else {
-            await fetchAll()
-            return
-        }
+        guard !text.isEmpty else { return }
+
         do {
-            let records = try await audioRepository.search(withText: text)
-            self.records = records
-            
-            await self.fetchAll()
+            self.records = try await audioRepository.search(withText: text)
+            await self.shouldUpdateInterface?(false)
         } catch {
             os_log("\(RErrors.cantSearchRecordsWithText + text + " \(error)")")
         }
@@ -183,8 +181,6 @@ extension MainViewModelImpl {
         let record = records[indexPath.item]
         do {
             try await audioRepository.delete(record: record)
-            self.records.remove(at: indexPath.item)
-    
             await self.fetchAll()
             
             os_log("\(RLogs.recordDeleted + record.name)")
