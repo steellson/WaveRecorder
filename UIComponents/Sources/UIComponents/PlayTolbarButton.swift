@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import WRResources
+
 
 //MARK: - Type
 

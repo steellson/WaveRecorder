@@ -15,7 +15,7 @@ final class RecordBarView: UIView {
     
     private let viewModel: RecordViewModel
     
-    private let recordVisualizerView = RecordVisualizerView()
+    private let recordVisualizerView = RecordVisualizerView(backgroundColor: RColors.primaryBackgroundColor)
     private let recordWaveView = RecordWaveView()
     
     private let buttonRadius: CGFloat = 30

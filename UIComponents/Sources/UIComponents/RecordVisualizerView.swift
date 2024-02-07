@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import WRResources
 
 
 //MARK: - Impl
@@ -16,7 +15,6 @@ final public class RecordVisualizerView: UIView {
     
     private let stackView: UIStackView = {
         let view = UIStackView()
-        view.backgroundColor = RColors.primaryBackgroundColor
         view.distribution = .fillEqually
         view.spacing = 4
         view.axis = .horizontal
@@ -35,9 +33,9 @@ final public class RecordVisualizerView: UIView {
     
     //MARK: Init
     
-    public init() {
+    public init(backgroundColor: UIColor) {
         super.init(frame: .zero)
-        setupView()
+        setupView(withBackgroundColor: backgroundColor)
         setupLayout()
     }
     
@@ -65,8 +63,9 @@ final public class RecordVisualizerView: UIView {
     
     //MARK: Setup
     
-    private func setupView() {
-        backgroundColor = RColors.primaryBackgroundColor
+    private func setupView(withBackgroundColor color: UIColor) {
+        backgroundColor = color
+        stackView.backgroundColor = color
         addSubview(stackView)
     }
     
