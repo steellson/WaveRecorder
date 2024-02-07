@@ -21,7 +21,7 @@ protocol PlayToolbarViewModel: AnyObject {
     var remainingTimeFormatted: String { get }
     
     func goBack()
-    func play(atTime time: Float, withAnimation animation: @escaping () -> Void) async
+    func play(atTime time: Float) async
     func stop() async
     func goForward()
     func deleteRecord() async
@@ -84,7 +84,7 @@ extension PlayToolbarViewModelImpl {
     
     //MARK: Play
     
-    func play(atTime time: Float, withAnimation animation: @escaping () -> Void) async {
+    func play(atTime time: Float) async {
         guard !isPlaying else {
             os_log("\(RErrors.audioIsAlreadyPlaying)")
             return
@@ -94,9 +94,8 @@ extension PlayToolbarViewModelImpl {
             try await audioPlayer.play(record: record, onTime: time)
             isPlaying = true
             
-            timeRefresher.register {
-                self.updateTime(withValue: time)
-                animation()
+            timeRefresher.register { [weak self] in
+                self?.updateTime(withValue: time)
             }
             
             setTimeWithDifference(startTime: time)
