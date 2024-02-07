@@ -51,26 +51,27 @@ final class MainViewModelImpl: MainViewModel {
     var shouldUpdateInterface: ((Bool) async -> Void)?
     
     var numberOfItems: Int = 0
-    
     var tableViewCellHeight: CGFloat = 200
-
     
     private var records: [AudioRecord] = []
     
+    private let audioPlayer: AudioPlayer
     private let audioRepository: AudioRepository
-    private let notificationCenter: NotificationCenter
+    private let helpers: HelpersStorage
     private let coordinator: Coordinator
-    
+        
     
     //MARK: Init
     
     init(
+        audioPlayer: AudioPlayer,
         audioRepository: AudioRepository,
-        notificationCenter: NotificationCenter,
+        helpers: HelpersStorage,
         coordinator: Coordinator
     ) {
+        self.audioPlayer = audioPlayer
         self.audioRepository = audioRepository
-        self.notificationCenter = notificationCenter
+        self.helpers = helpers
         self.coordinator = coordinator
         
         Task { await fetchAll() }
@@ -90,7 +91,7 @@ final class MainViewModelImpl: MainViewModel {
         let editViewModel: EditViewModel = EditViewModelImpl(
             record: records[indexPath.row],
             indexPath: indexPath,
-            formatter: HelpersStorage.formatter,
+            formatter: helpers.formatter,
             parentViewModel: self
         )
         let editView = EditView(viewModel: editViewModel)
@@ -102,9 +103,9 @@ final class MainViewModelImpl: MainViewModel {
         let playToolbarViewModel: PlayToolbarViewModel = PlayToolbarViewModelImpl(
             record: records[indexPath.row],
             indexPath: indexPath,
-            audioPlayer: AudioPlayerImpl(),
-            timeRefresher: HelpersStorage.timeRefresher,
-            formatter: HelpersStorage.formatter,
+            audioPlayer: audioPlayer,
+            timeRefresher: helpers.timeRefresher,
+            formatter: helpers.formatter,
             parentViewModel: self
         )
         let playToolbarView = PlayToolbarView(viewModel: playToolbarViewModel)
@@ -206,7 +207,7 @@ extension MainViewModelImpl {
             return
         }
         
-        notificationCenter.addObserver(recievedFrom,
+        helpers.notificationCenter.addObserver(recievedFrom,
                                        selector: selector,
                                        name: name,
                                        object: nil)
@@ -223,7 +224,7 @@ extension MainViewModelImpl {
             return
         }
         
-        notificationCenter.removeObserver(recievedFrom,
+        helpers.notificationCenter.removeObserver(recievedFrom,
                                           name: name,
                                           object: nil)
     }

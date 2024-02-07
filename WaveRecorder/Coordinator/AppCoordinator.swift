@@ -29,6 +29,8 @@ final class AppCoordinator: Coordinator {
     var children: [Coordinator] = []
     var navigationController: UINavigationController
     
+    private let helpersStorage: HelpersStorage = HelpersStorageImpl()
+    
     
     //MARK: Init
     
@@ -43,9 +45,12 @@ final class AppCoordinator: Coordinator {
 extension AppCoordinator {
     
     func startWithMainView() {
+        let audioPlayer: AudioPlayer = AudioPlayerImpl()
+        let audioRepository: AudioRepository = AudioRepositoryImpl()
         let mainViewModel: MainViewModel = MainViewModelImpl(
-            audioRepository: AudioRepositoryImpl(),
-            notificationCenter: HelpersStorage.notificationCenter,
+            audioPlayer: audioPlayer,
+            audioRepository: audioRepository,
+            helpers: helpersStorage,
             coordinator: self
         )
         let mainViewController = MainViewController(viewModel: mainViewModel)

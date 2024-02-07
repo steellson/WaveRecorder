@@ -7,13 +7,22 @@
 
 import Foundation
 
-struct HelpersStorage {
+//MARK: - Protocol
+
+protocol HelpersStorage: AnyObject {
+    var formatter: FormatterProtocol { get }
+    var timeRefresher: TimeRefresherProtocol { get }
+    var notificationCenter: NotificationCenter { get }
+    var fileManager: FileManager { get }
+}
+
+final class HelpersStorageImpl: HelpersStorage {
     
     //MARK: Self created
-    static let formatter: FormatterProtocol = FormatterImpl()
-    static let timeRefresher: TimeRefresherProtocol = TimeRefresher()
+    private(set) var formatter: FormatterProtocol = FormatterImpl()
+    private(set) var timeRefresher: TimeRefresherProtocol = TimeRefresher()
     
     //MARK: Default
-    static let notificationCenter: NotificationCenter = NotificationCenter.default
-    static let fileManager: FileManager = FileManager.default
+    private(set) var notificationCenter: NotificationCenter = NotificationCenter.default
+    private(set) var fileManager: FileManager = FileManager.default
 }
