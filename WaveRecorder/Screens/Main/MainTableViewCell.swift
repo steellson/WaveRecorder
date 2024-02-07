@@ -12,7 +12,7 @@ import WRResources
 
 //MARK: - Impl
 
-final public class MainTableViewCell:  UITableViewCell {
+final class MainTableViewCell:  UITableViewCell {
     
     static let cellIdentifier = RIdentifiers.cellIdentifier
     
@@ -36,6 +36,12 @@ final public class MainTableViewCell:  UITableViewCell {
             setupContentView()
             setupConstraints()
         }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        editView = nil
+        playToolbar = nil
     }
 }
 

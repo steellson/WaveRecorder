@@ -16,8 +16,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../Foundation"),
-        .package(path: "../UIKit"),
-        .package(path: "../WRResources")
+        .package(path: "../UIKit")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

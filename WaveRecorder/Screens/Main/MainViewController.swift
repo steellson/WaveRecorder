@@ -17,7 +17,7 @@ final class MainViewController: UIViewController {
     
     private let editButton = UIBarButtonItem()
     private let titleLabel = UILabel()
-    private let searchController = WRSearchController()
+    private let searchController = WRSearchController(placeholderText: RTitles.searchTextFieldPlaceholder)
     private let tableView = MainTableView(frame: .zero, style: .plain)
     private lazy var recordBarView = viewModel.makeRecordBar()
     

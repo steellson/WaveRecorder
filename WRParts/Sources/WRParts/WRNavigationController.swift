@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import WRResources
 
 
 //MARK: - Impl
@@ -15,14 +14,14 @@ public final class WRNavigationController: UINavigationController {
     
     //MARK: Init
     
-    public init() {
+    public init(backgroundColor: UIColor) {
         super.init(nibName: nil, bundle: nil)
-        setupAppereance()
+        setupAppereance(withBackgroundColor: backgroundColor)
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        setupAppereance()
+        setupAppereance(withBackgroundColor: .white)
     }
 }
 
@@ -30,7 +29,7 @@ public final class WRNavigationController: UINavigationController {
 
 private extension WRNavigationController {
     
-    func setupAppereance() {
-        navigationBar.backgroundColor = RColors.primaryBackgroundColor
+    func setupAppereance(withBackgroundColor color: UIColor) {
+        navigationBar.backgroundColor = color
     }
 }

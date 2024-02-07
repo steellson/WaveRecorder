@@ -7,7 +7,6 @@
 
 import UIKit
 import OSLog
-import WRResources
 
 
 //MARK: - Input
@@ -35,16 +34,16 @@ public final class WRSearchController: UISearchController {
     
     //MARK: Lifecycle
     
-    public init() {
+    public init(placeholderText: String) {
         super.init(searchResultsController: nil)
-        setupAppereance()
+        setupAppereance(withPlaceholderText: placeholderText)
         setupSettings()
         setupDelegates()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupAppereance()
+        setupAppereance(withPlaceholderText: "Search")
         setupSettings()
         setupDelegates()
     }
@@ -59,8 +58,8 @@ public final class WRSearchController: UISearchController {
 
 private extension WRSearchController {
     
-    func setupAppereance() {
-        searchBar.placeholder = RTitles.searchTextFieldPlaceholder
+    func setupAppereance(withPlaceholderText text: String) {
+        searchBar.placeholder = text
         searchBar.tintColor = .black
         searchBar.searchBarStyle = .minimal
     }
@@ -87,7 +86,7 @@ private extension WRSearchController {
     
     func searchFieldShouldClear(_ textField: UITextField) {
         guard textField == searchBar.searchTextField else {
-            os_log("\(RErrors.wrongFieldResponder)")
+            os_log("ERROR <WRSearchController>: Cant get search bar text field!")
             return
         }
         
@@ -98,7 +97,7 @@ private extension WRSearchController {
     
     func updateResults(withText text: String) {
         guard let input else {
-            os_log("ERROR: Input isn't setted!")
+            os_log("ERROR <WRSearchController>: Input isn't setted!")
             return
         }
         Task {
@@ -108,7 +107,7 @@ private extension WRSearchController {
     
     func restoreResults() {
         guard let input else {
-            os_log("ERROR: Input isn't setted!")
+            os_log("ERROR <WRSearchController>: Input isn't setted!")
             return
         }
         Task {
@@ -144,7 +143,7 @@ extension WRSearchController: UISearchResultsUpdating {
     
     public func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.searchTextField.text else {
-            os_log("ERROR: Couldnt recognize search field!")
+            os_log("ERROR <WRSearchController>: Couldnt recognize search field!")
             return
         }
         
