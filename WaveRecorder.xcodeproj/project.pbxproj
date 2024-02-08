@@ -24,6 +24,7 @@
 		3D86A7982B70F8A2006C492A /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D86A7972B70F8A2006C492A /* MainTableViewCell.swift */; };
 		3D86A79A2B711399006C492A /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D86A7992B711399006C492A /* AppCoordinator.swift */; };
 		3DD02DCB2B70DC8000E49AFC /* WRAudio in Frameworks */ = {isa = PBXBuildFile; productRef = 3DD02DCA2B70DC8000E49AFC /* WRAudio */; };
+		3DE74FEC2B73C9CE00EBA885 /* AppProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE74FEB2B73C9CE00EBA885 /* AppProtocols.swift */; };
 		3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF8E2B0F65F3004CAE97 /* AppDelegate.swift */; };
 		3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF902B0F65F3004CAE97 /* SceneDelegate.swift */; };
 		3DEAFF9B2B0F65F4004CAE97 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3DEAFF992B0F65F4004CAE97 /* LaunchScreen.storyboard */; };
@@ -45,6 +46,7 @@
 		3D86A7952B70F89B006C492A /* MainTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableView.swift; sourceTree = "<group>"; };
 		3D86A7972B70F8A2006C492A /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
 		3D86A7992B711399006C492A /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		3DE74FEB2B73C9CE00EBA885 /* AppProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppProtocols.swift; sourceTree = "<group>"; };
 		3DEAFF8B2B0F65F3004CAE97 /* WaveRecorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WaveRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DEAFF8E2B0F65F3004CAE97 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3DEAFF902B0F65F3004CAE97 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -100,6 +102,14 @@
 			path = Coordinator;
 			sourceTree = "<group>";
 		};
+		3DE74FEA2B73C98000EBA885 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				3DE74FEB2B73C9CE00EBA885 /* AppProtocols.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
 		3DEAFF822B0F65F3004CAE97 = {
 			isa = PBXGroup;
 			children = (
@@ -124,6 +134,7 @@
 				3D86A79B2B7115A8006C492A /* Coordinator */,
 				3DEAFFB22B0F7F0B004CAE97 /* Extensions */,
 				3DEAFFD02B15F53D004CAE97 /* Helpers */,
+				3DE74FEA2B73C98000EBA885 /* Protocols */,
 				3DEAFFA62B0F66B9004CAE97 /* Screens */,
 			);
 			path = WaveRecorder;
@@ -289,6 +300,7 @@
 				3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */,
 				3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */,
 				3D682D9C2B1F297600067DFE /* MainViewModel.swift in Sources */,
+				3DE74FEC2B73C9CE00EBA885 /* AppProtocols.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

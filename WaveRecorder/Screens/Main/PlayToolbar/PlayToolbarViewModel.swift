@@ -13,7 +13,7 @@ import WRResources
 
 //MARK: - Protocol
 
-protocol PlayToolbarViewModel: AnyObject {
+protocol PlayToolbarViewModel: ChildViewModel {
     var progress: Float { get }
     var duration: Float { get }
     
@@ -33,7 +33,7 @@ protocol PlayToolbarViewModel: AnyObject {
 final class PlayToolbarViewModelImpl: PlayToolbarViewModel {
         
     var progress: Float = 0.0
-    var duration: Float { Float(record.duration ?? 0) }
+    var duration: Float { Float(record?.duration ?? 0) }
     
     private(set) var elapsedTimeFormatted: String = "00:00"
     private(set) var remainingTimeFormatted: String = "00:00"
@@ -43,30 +43,23 @@ final class PlayToolbarViewModelImpl: PlayToolbarViewModel {
     
     private var isPlaying = false
     
-    private let record: AudioRecord
-    private let indexPath: IndexPath
+    private var record: AudioRecord?
     private let audioPlayer: AudioPlayer
-    private let timeRefresher: TimeRefresherProtocol
-    private let formatter: FormatterProtocol
-    
+    private let helpers: HelpersStorage
     private let parentViewModel: MainViewModel
 
     
     //MARK: Init
     
     init(
-        record: AudioRecord,
-        indexPath: IndexPath,
+        record: AudioRecord? = nil,
         audioPlayer: AudioPlayer,
-        timeRefresher: TimeRefresherProtocol,
-        formatter: FormatterProtocol,
+        helpers: HelpersStorage,
         parentViewModel: MainViewModel
     ) {
         self.record = record
-        self.indexPath = indexPath
         self.audioPlayer = audioPlayer
-        self.timeRefresher = timeRefresher
-        self.formatter = formatter
+        self.helpers = helpers
         self.parentViewModel = parentViewModel
         
         resetTime()
@@ -85,7 +78,10 @@ extension PlayToolbarViewModelImpl {
     //MARK: Play
     
     func play(atTime time: Float) async {
-        guard !isPlaying else {
+        guard 
+            let record,
+            !isPlaying
+        else {
             os_log("\(RErrors.audioIsAlreadyPlaying)")
             return
         }
@@ -94,12 +90,12 @@ extension PlayToolbarViewModelImpl {
             try await audioPlayer.play(record: record, onTime: time)
             isPlaying = true
             
-            timeRefresher.register { [weak self] in
+            helpers.timeRefresher.register { [weak self] in
                 self?.updateTime(withValue: time)
             }
             
             setTimeWithDifference(startTime: time)
-            timeRefresher.start()
+            helpers.timeRefresher.start()
         } catch {
             os_log("ERROR: Cant play audio! \(error)")
             return
@@ -112,7 +108,7 @@ extension PlayToolbarViewModelImpl {
     func stop() async {
         do {
             try await audioPlayer.stop()
-            timeRefresher.stop()
+            helpers.timeRefresher.stop()
             resetTime()
             isPlaying = false
         } catch {
@@ -132,7 +128,11 @@ extension PlayToolbarViewModelImpl {
     //MARK: Delete
     
     func deleteRecord() async {
-        await parentViewModel.delete(forIndexPath: indexPath)
+        guard let record else {
+            os_log("\(RErrors.cantDeleteRecordWithName)")
+            return
+        }
+        await parentViewModel.delete(record: record)
     }
 }
 
@@ -148,8 +148,8 @@ private extension PlayToolbarViewModelImpl {
     
     func format(withType type: FormatType) -> String {
         switch type {
-        case .date(let date): formatter.formatDate(date)
-        case .duration(let duration): formatter.formatDuration(duration)
+        case .date(let date): helpers.formatter.formatDate(date)
+        case .duration(let duration): helpers.formatter.formatDuration(duration)
         }
     }
     
@@ -184,10 +184,19 @@ private extension PlayToolbarViewModelImpl {
     }
     
     func resetTime() {
-        timeRefresher.stop()
+        helpers.timeRefresher.stop()
         progress = 0.0
         elapsedTime = 0.0
         remainingTime = duration
         updateFormattedTime()
+    }
+}
+
+//MARK: - Child
+
+extension PlayToolbarViewModelImpl {
+    
+    func update(record: AudioRecord) {
+        self.record = record
     }
 }

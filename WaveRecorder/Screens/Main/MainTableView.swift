@@ -91,8 +91,8 @@ extension MainTableView: UITableViewDataSource {
         }
         
         cell.configureCellWith(
-            editView: viewModel.makeEditView(indexPath: indexPath),
-            playToolbarView: viewModel.makePlayToolbarView(indexPath: indexPath)
+            editView: viewModel.makeEditView(withIndexPath: indexPath),
+            playToolbarView: viewModel.makePlayToolbarView(withIndexPath: indexPath)
         )
         
         return cell
@@ -115,6 +115,15 @@ extension MainTableView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         false
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let viewModel else {
+            os_log("ERROR: ViewModel isn't setted!")
+            return
+        }
+        viewModel.didTappedOnCell(withIndexPath: indexPath)
+        tableView.deselectRow(at: indexPath, animated: false)
+    }
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         UISwipeActionsConfiguration(actions: [ UIContextualAction(
@@ -125,9 +134,7 @@ extension MainTableView: UITableViewDelegate {
                     os_log("ERROR: ViewModel isn't setted!")
                     return
                 }
-                Task {
-                    await viewModel.delete(forIndexPath: indexPath)
-                }
+                viewModel.didSwipedForDelete(forIndexPath: indexPath)
             }
         )])
     }

@@ -45,11 +45,11 @@ final class AppCoordinator: Coordinator {
 extension AppCoordinator {
     
     func startWithMainView() {
-        let audioPlayer: AudioPlayer = AudioPlayerImpl()
         let audioRepository: AudioRepository = AudioRepositoryImpl()
+        let audioPlayer: AudioPlayer = AudioPlayerImpl()
         let mainViewModel: MainViewModel = MainViewModelImpl(
-            audioPlayer: audioPlayer,
             audioRepository: audioRepository,
+            audioPlayer: audioPlayer,
             helpers: helpersStorage,
             coordinator: self
         )

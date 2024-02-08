@@ -13,35 +13,14 @@ import WRResources
 
 //MARK: - Protocols
 
-protocol InterfaceUpdatable: AnyObject {
-    var shouldUpdateInterface: ((Bool) async -> Void)? { get set }
-}
-
-protocol Searcher: AnyObject {
-    func resetData() async
-    func search(withText text: String) async
-}
-
-protocol Editor: AnyObject {
-    func rename(forIndexPath indexPath: IndexPath, newName name: String) async
-    func delete(forIndexPath indexPath: IndexPath) async
-}
-
-protocol Notifier: AnyObject {
-    func activateNotification(withName name: NSNotification.Name, selector: Selector, from: Any?)
-    func removeNotification(withName name: NSNotification.Name, from: Any?)
-}
-
 protocol MainTableViewModel: AnyObject {
     var numberOfItems: Int { get }
     var tableViewCellHeight: CGFloat { get }
+    func didTappedOnCell(withIndexPath indexPath: IndexPath)
+    func didSwipedForDelete(forIndexPath indexPath: IndexPath)
 }
 
-protocol MainViewModel: InterfaceUpdatable, Searcher, Editor, Notifier, MainTableViewModel {
-    func makeRecordBar() -> RecordBarView
-    func makeEditView(indexPath: IndexPath) -> EditView?
-    func makePlayToolbarView(indexPath: IndexPath) -> PlayToolbarView?
-}
+protocol MainViewModel: InterfaceUpdatable, Searcher, Editor, Notifier, MainTableViewModel, ModuleMaker { }
 
 
 //MARK: - Impl
@@ -55,22 +34,37 @@ final class MainViewModelImpl: MainViewModel {
     
     private var records: [AudioRecord] = []
     
-    private let audioPlayer: AudioPlayer
     private let audioRepository: AudioRepository
+    private let audioPlayer: AudioPlayer
     private let helpers: HelpersStorage
     private let coordinator: Coordinator
+    
+    private lazy var editViewModel: EditViewModel = {
+        EditViewModelImpl(
+            helpers: helpers,
+            parentViewModel: self
+        )
+    }()
+    
+    private lazy var playToolbarViewModel: PlayToolbarViewModel = {
+        PlayToolbarViewModelImpl(
+            audioPlayer: audioPlayer,
+            helpers: helpers,
+            parentViewModel: self
+        )
+    }()
         
     
     //MARK: Init
     
     init(
-        audioPlayer: AudioPlayer,
         audioRepository: AudioRepository,
+        audioPlayer: AudioPlayer,
         helpers: HelpersStorage,
         coordinator: Coordinator
     ) {
-        self.audioPlayer = audioPlayer
         self.audioRepository = audioRepository
+        self.audioPlayer = audioPlayer
         self.helpers = helpers
         self.coordinator = coordinator
         
@@ -78,7 +72,21 @@ final class MainViewModelImpl: MainViewModel {
     }
     
     
-    //MARK: Make childs
+    func didTappedOnCell(withIndexPath indexPath: IndexPath) {
+        let selectedRecord = records[indexPath.row]
+        editViewModel.update(record: selectedRecord)
+        playToolbarViewModel.update(record: selectedRecord)
+    }
+    
+    func didSwipedForDelete(forIndexPath indexPath: IndexPath) {
+        Task { await delete(record: records[indexPath.row]) }
+    }
+}
+
+
+//MARK: Module Maker
+
+extension MainViewModelImpl {
     
     func makeRecordBar() -> RecordBarView {
         let recordViewModel: RecordViewModel = RecordBarViewModelImpl(parentViewModel: self)
@@ -86,30 +94,16 @@ final class MainViewModelImpl: MainViewModel {
         return recordBarView
     }
     
-    func makeEditView(indexPath: IndexPath) -> EditView? {
+    func makeEditView(withIndexPath indexPath: IndexPath) -> EditView? {
         guard records.count > indexPath.row else { return nil }
-        let editViewModel: EditViewModel = EditViewModelImpl(
-            record: records[indexPath.row],
-            indexPath: indexPath,
-            formatter: helpers.formatter,
-            parentViewModel: self
-        )
-        let editView = EditView(viewModel: editViewModel)
-        return editView
+        editViewModel.update(record: records[indexPath.row])
+        return EditView(viewModel: editViewModel)
     }
     
-    func makePlayToolbarView(indexPath: IndexPath) -> PlayToolbarView? {
+    func makePlayToolbarView(withIndexPath indexPath: IndexPath) -> PlayToolbarView? {
         guard records.count > indexPath.row else { return nil }
-        let playToolbarViewModel: PlayToolbarViewModel = PlayToolbarViewModelImpl(
-            record: records[indexPath.row],
-            indexPath: indexPath,
-            audioPlayer: audioPlayer,
-            timeRefresher: helpers.timeRefresher,
-            formatter: helpers.formatter,
-            parentViewModel: self
-        )
-        let playToolbarView = PlayToolbarView(viewModel: playToolbarViewModel)
-        return playToolbarView
+        playToolbarViewModel.update(record: records[indexPath.row])
+        return PlayToolbarView(viewModel: playToolbarViewModel)
     }
 }
 
@@ -158,28 +152,35 @@ extension MainViewModelImpl {
 
 extension MainViewModelImpl {
 
-    func rename(forIndexPath indexPath: IndexPath, newName name: String) async {
+    func rename(record: AudioRecord, newName name: String) async {
         do {
             try await audioRepository.rename(
-                record: records[indexPath.item],
+                record: record,
                 newName: name
             )
-            let oldRecord = self.records[indexPath.item]
             let newRecord = AudioRecord(
                 name: name,
-                format: oldRecord.format,
-                date: oldRecord.date,
-                duration: oldRecord.duration
+                format: record.format,
+                date: record.date,
+                duration: record.duration
             )
-            self.records[indexPath.item] = newRecord
+            
+            guard let oldRecordIndex = self.records.firstIndex(of: record) else {
+                os_log("\(RErrors.cantRenameRecord)")
+                return
+            }
+            
+            self.editViewModel.update(record: newRecord)
+            self.playToolbarViewModel.update(record: newRecord)
+            self.records[oldRecordIndex] = newRecord
+            
         } catch {
             os_log("\(RErrors.cantRenameRecord + " \(error)")")
         }
     }
 
     
-    func delete(forIndexPath indexPath: IndexPath) async {
-        let record = records[indexPath.item]
+    func delete(record: AudioRecord) async {
         do {
             try await audioRepository.delete(record: record)
             await self.fetchAll()

@@ -11,7 +11,7 @@ import WRAudio
 
 //MARK: - Protocols
 
-protocol EditViewModel: AnyObject {
+protocol EditViewModel: ChildViewModel {
     var recordName: String { get }
     var recordedAt: String { get }
     var isEditing: Bool { get }
@@ -27,34 +27,30 @@ protocol EditViewModel: AnyObject {
 final class EditViewModelImpl: EditViewModel {
         
     var recordName: String {
-        formatter.formatName(record.name)
+        helpers.formatter.formatName(record?.name ?? "error")
     }
     
     var recordedAt: String {
-        formatter.formatDate(record.date)
+        helpers.formatter.formatDate(record?.date ?? .now)
     }
     
     private(set) var isEditing = false
     
-    private var record: AudioRecord
-    private let indexPath: IndexPath
-    
+    private var record: AudioRecord?
+    private let helpers: HelpersStorage
     private let parentViewModel: MainViewModel
     
-    private let formatter: FormatterProtocol
     
     
     //MARK: Init
     
     init(
-        record: AudioRecord,
-        indexPath: IndexPath,
-        formatter: FormatterProtocol,
+        record: AudioRecord? = nil,
+        helpers: HelpersStorage,
         parentViewModel: MainViewModel
     ) {
         self.record = record
-        self.indexPath = indexPath
-        self.formatter = formatter
+        self.helpers = helpers
         self.parentViewModel = parentViewModel
     }
 }
@@ -73,9 +69,14 @@ extension EditViewModelImpl {
     func onEndEditing(withNewName newName: String) async {
         isEditing = false
         
-        guard newName != record.name else { return }
+        guard 
+            let record,
+            newName != record.name
+        else {
+            return
+        }
         
-        await parentViewModel.rename(forIndexPath: indexPath, newName: newName)
+        await parentViewModel.rename(record: record, newName: newName)
         
         self.record = AudioRecord(
             name: newName,
@@ -86,3 +87,11 @@ extension EditViewModelImpl {
     }
 }
 
+//MARK: - Child
+
+extension EditViewModelImpl {
+    
+    func update(record: AudioRecord) {
+        self.record = record
+    }
+}
