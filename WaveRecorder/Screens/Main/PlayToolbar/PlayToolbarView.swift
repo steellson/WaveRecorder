@@ -78,6 +78,11 @@ final class PlayToolbarView: UIView {
         animateTappedButton(withSender: sender)
         setupButtonActions(withSender: sender)
     }
+    
+    @objc
+    private func didProgressSliderDragged(_ sender: UISlider) {
+        try? viewModel?.play(atTime: sender.value, animation: animateProgress)
+    }
 }
 
 
@@ -102,6 +107,9 @@ private extension PlayToolbarView {
         stopButton.addTarget(self, action: #selector(toolBarButtonDidTapped), for: .touchUpInside)
         goForwardButton.addTarget(self, action: #selector(toolBarButtonDidTapped), for: .touchUpInside)
         deleteButton.addTarget(self, action: #selector(toolBarButtonDidTapped), for: .touchUpInside)
+        progressSlider.addTarget(self, action: #selector(didProgressSliderDragged), for: [
+            .touchUpInside, .touchUpOutside, .touchCancel
+        ])
     }
     
     private func setupButtonActions(withSender sender: PlayTolbarButton) {
