@@ -84,7 +84,8 @@ extension MainTableView: UITableViewDataSource {
             let cell = dequeueReusableCell(
                 withIdentifier: MainTableViewCell.cellIdentifier,
                 for: indexPath) as? MainTableViewCell,
-            let viewModel
+            let viewModel,
+            viewModel.numberOfItems > 0
         else {
             os_log("\(RErrors.cantDequeReusableCell)")
             return UITableViewCell()

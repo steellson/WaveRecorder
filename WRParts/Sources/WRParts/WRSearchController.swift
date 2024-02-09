@@ -13,11 +13,14 @@ import OSLog
 
 public struct WRSearchControllerInput {
     let searchWithTextAction: (String) async throws -> Void
+    let updateDataAction: () async throws -> Void
     
     public init(
-        searchWithTextAction: @escaping (String) async throws -> Void
+        searchWithTextAction: @escaping (String) async throws -> Void,
+        updateDataAction: @escaping () async throws -> Void
     ) {
         self.searchWithTextAction = searchWithTextAction
+        self.updateDataAction = updateDataAction
     }
 }
 
@@ -90,6 +93,7 @@ private extension WRSearchController {
         textField.text = ""
         textField.endEditing(true)
         textField.resignFirstResponder()
+        Task { try await input?.updateDataAction() }
     }
     
     func updateResults(withText text: String) {
@@ -114,11 +118,12 @@ extension WRSearchController: UISearchBarDelegate, UISearchTextFieldDelegate {
             return
         }
         searchBar.resignFirstResponder()
+        searchFieldShouldClear(searchBar.searchTextField)
     }
     
     public func textFieldShouldClear(_ textField: UITextField) -> Bool {
         searchFieldShouldClear(textField)
-        return false
+        return true
     }
 }
 
