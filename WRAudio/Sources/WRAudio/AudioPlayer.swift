@@ -12,8 +12,8 @@ import OSLog
 //MARK: - Protocols
 
 public protocol AudioPlayer: AnyObject {
-    func play(record: AudioRecord, onTime time: Float) async throws
-    func stop() async throws
+    func play(record: AudioRecord, onTime time: Float) throws
+    func stop() throws
 }
 
 
@@ -84,7 +84,7 @@ public extension AudioPlayerImpl {
     
     //MARK: Play
     
-    func play(record: AudioRecord, onTime time: Float) async throws {
+    func play(record: AudioRecord, onTime time: Float) throws {
         let recordURL = audioPathManager.createURL(
             forRecordWithName: record.name,
             andFormat: record.format.rawValue
@@ -97,40 +97,35 @@ public extension AudioPlayerImpl {
             return
         }
         
-        Task {
-            do {
-                let audioPlayer = try AVAudioPlayer(contentsOf: recordURL)
-                self.audioPlayer = audioPlayer
-                
-                try startPlay(atTime: time, fromURL: recordURL)
-                
-                guard audioPlayer.isPlaying else {
-                    os_log(">> Cant start playing audio with URL: \(recordURL)")
-                    throw AudioPlayerError.audioCantStartPlaying
-                }
-                os_log(">> Start playing audio with URL: \(recordURL)")
-                
-            } catch {
-                os_log("ERROR: AudioPlayer could not be instantiated! \(error)")
-                throw AudioPlayerError.audioPlayerCantBeInstantiated
+        do {
+            let audioPlayer = try AVAudioPlayer(contentsOf: recordURL)
+            self.audioPlayer = audioPlayer
+            
+            try startPlay(atTime: time, fromURL: recordURL)
+            
+            guard audioPlayer.isPlaying else {
+                os_log(">> Cant start playing audio with URL: \(recordURL)")
+                throw AudioPlayerError.audioCantStartPlaying
             }
-    
+            os_log(">> Start playing audio with URL: \(recordURL)")
+            
+        } catch {
+            os_log("ERROR: AudioPlayer could not be instantiated! \(error)")
+            throw AudioPlayerError.audioPlayerCantBeInstantiated
         }
     }
 
     
     //MARK: Pause
     
-    func stop() async throws {
-        Task {
-            if let player = self.audioPlayer, player.isPlaying {
-                self.audioPlayer?.stop()
-                os_log("SUCCESS: Audio stopped!")
-                self.audioPlayer = nil
-            } else {
-                os_log("ERROR: Audio is not stopped because its not playing now!")
-                throw AudioPlayerError.audioIsNotPlayinngNow
-            }
+    func stop() throws {
+        if let player = self.audioPlayer, player.isPlaying {
+            self.audioPlayer?.stop()
+            os_log("SUCCESS: Audio stopped!")
+            self.audioPlayer = nil
+        } else {
+            os_log("ERROR: Audio is not stopped because its not playing now!")
+            throw AudioPlayerError.audioIsNotPlayinngNow
         }
     }
 }

@@ -20,11 +20,11 @@ protocol PlayToolbarViewModel: AnyObject {
     var elapsedTimeFormatted: String { get }
     var remainingTimeFormatted: String { get }
     
-    func goBack() async throws
-    func play(atTime time: Float) async throws
-    func stop() async throws
-    func goForward() async throws
-    func deleteRecord() async throws
+    func goBack() throws
+    func play(atTime time: Float) throws
+    func stop() throws
+    func goForward() throws
+    func deleteRecord() throws
 }
 
 
@@ -70,21 +70,21 @@ extension PlayToolbarViewModelImpl {
     
     //MARK: Go back
     
-    func goBack() async throws {
+    func goBack() throws {
         os_log("Go back tapped")
     }
     
     
     //MARK: Play
     
-    func play(atTime time: Float) async throws {
+    func play(atTime time: Float) throws {
         guard !isPlaying else {
             os_log("\(RErrors.audioIsAlreadyPlaying)")
             return
         }
         
         do {
-            try await audioPlayer.play(record: record, onTime: time)
+            try audioPlayer.play(record: record, onTime: time)
             isPlaying = true
             
             helpers.timeRefresher.register { [weak self] in
@@ -102,9 +102,9 @@ extension PlayToolbarViewModelImpl {
     
     //MARK: Stop
     
-    func stop() async throws {
+    func stop() throws {
         do {
-            try await audioPlayer.stop()
+            try audioPlayer.stop()
             helpers.timeRefresher.stop()
             resetTime()
             isPlaying = false
@@ -117,15 +117,15 @@ extension PlayToolbarViewModelImpl {
     
     //MARK: Go forward
     
-    func goForward() async throws {
+    func goForward() throws {
         os_log("Go forward tapped")
     }
     
     
     //MARK: Delete
     
-    func deleteRecord() async throws {
-        try await parentViewModel.delete(record: record)
+    func deleteRecord() throws {
+        Task { try await parentViewModel.delete(record: record) }
     }
 }
 
@@ -162,17 +162,14 @@ private extension PlayToolbarViewModelImpl {
     func updateTime(withValue value: Float) {
         let step: Float = 0.1
         
-        Task {
-            if elapsedTime <= duration {
-                progress += step
-                elapsedTime += step
-                remainingTime -= step
-                updateFormattedTime()
-            } else {
-                try await stop()
-                self.resetTime()
-                self.isPlaying = false
-            }
+        if elapsedTime <= duration {
+            progress += step
+            elapsedTime += step
+            remainingTime -= step
+            updateFormattedTime()
+        } else {
+            self.resetTime()
+            self.isPlaying = false
         }
     }
     

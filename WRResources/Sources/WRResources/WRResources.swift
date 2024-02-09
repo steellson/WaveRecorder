@@ -55,9 +55,10 @@ public enum RErrors {
     
     //MARK: Play View Model
     public static let audioIsAlreadyPlaying = "ERROR: Audio is already playing!"
+    public static let playViewModelIsNotSetted = "ERROR: PlayViewModel isn't setted!"
     
     //MARK: Play View
-    public static let playViewModelIsNotSetted = "ERROR: PlayViewModel isn't setted!"
+    public static let playButtonsActionCorrupted = "ERROR: Play buttons action error!"
 }
 
 

@@ -73,28 +73,10 @@ final class PlayToolbarView: UIView {
     
     //MARK: Actions
     
-    private func toolBarButtonPressedAction(_ sender: PlayTolbarButton) {
-        guard let viewModel else {
-            os_log("\(RErrors.playViewModelIsNotSetted)")
-            return
-        }
-        Task {
-            switch sender.type {
-            case .goBack: try await viewModel.goBack()
-            case .goForward: try await viewModel.goForward()
-            case .delete: try await viewModel.deleteRecord()
-            case .play: try await viewModel.play(atTime: progressSlider.value)
-            case .stop:
-                try await viewModel.stop()
-                self.reset()
-            }
-        }
-    }
-    
     @objc
     private func toolBarButtonDidTapped(_ sender: PlayTolbarButton) {
         animateTappedButton(withSender: sender)
-        toolBarButtonPressedAction(sender)
+        setupButtonActions(withSender: sender)
     }
 }
 
@@ -120,6 +102,28 @@ private extension PlayToolbarView {
         stopButton.addTarget(self, action: #selector(toolBarButtonDidTapped), for: .touchUpInside)
         goForwardButton.addTarget(self, action: #selector(toolBarButtonDidTapped), for: .touchUpInside)
         deleteButton.addTarget(self, action: #selector(toolBarButtonDidTapped), for: .touchUpInside)
+    }
+    
+    private func setupButtonActions(withSender sender: PlayTolbarButton) {
+        guard let viewModel else {
+            os_log("\(RErrors.playViewModelIsNotSetted)")
+            return
+        }
+        
+        do {
+            switch sender.type {
+            case .goBack: try viewModel.goBack()
+            case .goForward: try viewModel.goForward()
+            case .delete: try viewModel.deleteRecord()
+            case .play: try viewModel.play(atTime: progressSlider.value)
+            case .stop:
+                try viewModel.stop()
+                reset()
+            }
+        } catch {
+            os_log("\(RErrors.playButtonsActionCorrupted)")
+            reset()
+        }
     }
     
     
