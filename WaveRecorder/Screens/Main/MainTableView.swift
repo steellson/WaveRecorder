@@ -91,8 +91,8 @@ extension MainTableView: UITableViewDataSource {
         }
         
         cell.configureCellWith(
-            editView: viewModel.makeEditView(withIndexPath: indexPath),
-            playToolbarView: viewModel.makePlayToolbarView(withIndexPath: indexPath)
+            editViewModel: viewModel.makeEditViewModel(withIndexPath: indexPath),
+            playToolbarViewModel: viewModel.makePlayToolbarViewModel(withIndexPath: indexPath)
         )
         
         return cell
@@ -114,15 +114,6 @@ extension MainTableView: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         false
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let viewModel else {
-            os_log("ERROR: ViewModel isn't setted!")
-            return
-        }
-        viewModel.didTappedOnCell(withIndexPath: indexPath)
-        tableView.deselectRow(at: indexPath, animated: false)
     }
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

@@ -16,32 +16,29 @@ final class MainTableViewCell:  UITableViewCell {
     
     static let cellIdentifier = RIdentifiers.cellIdentifier
     
-    
     //MARK: Variables
     
-    private var editView: EditView?
-    private var playToolbar: PlayToolbarView?
+    private var editView = EditView()
+    private var playToolbar = PlayToolbarView()
     
     
     //MARK: Methods
     
      func configureCellWith(
-        editView: EditView?,
-        playToolbarView: PlayToolbarView?
+        editViewModel: EditViewModel,
+        playToolbarViewModel: PlayToolbarViewModel
     ) {
-        self.editView = editView
-        self.playToolbar = playToolbarView
-        
-        if editView != nil, playToolbarView != nil {
-            setupContentView()
-            setupConstraints()
-        }
+        self.editView.configureWith(viewModel: editViewModel)
+        self.playToolbar.configureWith(viewModel: playToolbarViewModel)
+        setupSubviews()
+        setupConstraints()
     }
+    
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        editView = nil
-        playToolbar = nil
+        editView.reset()
+        playToolbar.reset()
     }
 }
 
@@ -59,14 +56,6 @@ private extension MainTableViewCell {
     }
     
     func setupSubviews() {
-        guard
-            let editView,
-            let playToolbar
-        else {
-            os_log("\(RErrors.cellIsNotConfigured)")
-            return
-        }
-        
         contentView.addNewSubview(editView)
         contentView.addNewSubview(playToolbar)
     }
@@ -75,14 +64,6 @@ private extension MainTableViewCell {
     //MARK: Constriants
 
     func setupConstraints() {
-        guard
-            let editView,
-            let playToolbar
-        else {
-            os_log("\(RErrors.cellIsNotConfigured)")
-            return
-        }
-        
         NSLayoutConstraint.activate([
             editView.topAnchor.constraint(equalTo: contentView.topAnchor),
             editView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),

@@ -125,7 +125,6 @@ private extension MainViewController {
     
     func setupSearchController() {
         let searchControllerInput = WRSearchControllerInput(
-            fetchAllAction: viewModel.resetData,
             searchWithTextAction: viewModel.search
         )
         searchController.configure(withInput: searchControllerInput)

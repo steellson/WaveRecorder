@@ -13,16 +13,14 @@ import WRAudio
 //MARK: - Protocol
 
 protocol RecordViewModel: AnyObject {
-    func record(isRecording: Bool) async
+    func record(isRecording: Bool) async throws
 }
 
 
 //MARK: - Impl
 
 final class RecordBarViewModelImpl: RecordViewModel {
-    
-    private var record: AudioRecord?
-    
+        
     private let audioRecorder: AudioRecorder = AudioRecorderImpl()
     private let parentViewModel: MainViewModel
     
@@ -41,26 +39,16 @@ final class RecordBarViewModelImpl: RecordViewModel {
 
 private extension RecordBarViewModelImpl {
     
-    func startRecord() async {
-        guard let recorded = try? await audioRecorder.stopRecord() else {
-            os_log("ERROR: Cant stop recording")
-            return
-        }
-        
-        self.record = recorded
-        await self.parentViewModel.resetData()
-        await self.parentViewModel.shouldUpdateInterface?(false)
+    func startRecord() async throws {
+        try await audioRecorder.startRecord()
+        try await self.parentViewModel.updateData()
+        try await self.parentViewModel.shouldUpdateInterface?(true)
     }
     
-    
-    func stopRecord() async {
-        guard let _ = try? await audioRecorder.startRecord() else {
-            os_log("ERROR: Cant start recording")
-            return
-        }
-        
-        await self.parentViewModel.resetData()
-        await self.parentViewModel.shouldUpdateInterface?(true)
+    func stopRecord() async throws {
+        let _ = try await audioRecorder.stopRecord()
+        try await self.parentViewModel.updateData()
+        try await self.parentViewModel.shouldUpdateInterface?(false)
     }
 }
 
@@ -69,9 +57,9 @@ private extension RecordBarViewModelImpl {
 
 extension RecordBarViewModelImpl {
     
-    func record(isRecording: Bool) async {
-        !isRecording
-        ? await stopRecord()
-        : await startRecord()
+    func record(isRecording: Bool) async throws {
+        isRecording
+        ? try await stopRecord()
+        : try await startRecord()
     }
 }

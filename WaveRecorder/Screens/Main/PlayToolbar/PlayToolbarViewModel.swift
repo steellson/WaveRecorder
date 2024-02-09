@@ -13,18 +13,18 @@ import WRResources
 
 //MARK: - Protocol
 
-protocol PlayToolbarViewModel: ChildViewModel {
+protocol PlayToolbarViewModel: AnyObject {
     var progress: Float { get }
     var duration: Float { get }
     
     var elapsedTimeFormatted: String { get }
     var remainingTimeFormatted: String { get }
     
-    func goBack()
-    func play(atTime time: Float) async
-    func stop() async
-    func goForward()
-    func deleteRecord() async
+    func goBack() async throws
+    func play(atTime time: Float) async throws
+    func stop() async throws
+    func goForward() async throws
+    func deleteRecord() async throws
 }
 
 
@@ -33,7 +33,7 @@ protocol PlayToolbarViewModel: ChildViewModel {
 final class PlayToolbarViewModelImpl: PlayToolbarViewModel {
         
     var progress: Float = 0.0
-    var duration: Float { Float(record?.duration ?? 0) }
+    var duration: Float { Float(record.duration ?? 0.0) }
     
     private(set) var elapsedTimeFormatted: String = "00:00"
     private(set) var remainingTimeFormatted: String = "00:00"
@@ -43,7 +43,7 @@ final class PlayToolbarViewModelImpl: PlayToolbarViewModel {
     
     private var isPlaying = false
     
-    private var record: AudioRecord?
+    private var record: AudioRecord
     private let audioPlayer: AudioPlayer
     private let helpers: HelpersStorage
     private let parentViewModel: MainViewModel
@@ -52,7 +52,7 @@ final class PlayToolbarViewModelImpl: PlayToolbarViewModel {
     //MARK: Init
     
     init(
-        record: AudioRecord? = nil,
+        record: AudioRecord,
         audioPlayer: AudioPlayer,
         helpers: HelpersStorage,
         parentViewModel: MainViewModel
@@ -70,18 +70,15 @@ extension PlayToolbarViewModelImpl {
     
     //MARK: Go back
     
-    func goBack() {
+    func goBack() async throws {
         os_log("Go back tapped")
     }
     
     
     //MARK: Play
     
-    func play(atTime time: Float) async {
-        guard 
-            let record,
-            !isPlaying
-        else {
+    func play(atTime time: Float) async throws {
+        guard !isPlaying else {
             os_log("\(RErrors.audioIsAlreadyPlaying)")
             return
         }
@@ -105,7 +102,7 @@ extension PlayToolbarViewModelImpl {
     
     //MARK: Stop
     
-    func stop() async {
+    func stop() async throws {
         do {
             try await audioPlayer.stop()
             helpers.timeRefresher.stop()
@@ -120,19 +117,15 @@ extension PlayToolbarViewModelImpl {
     
     //MARK: Go forward
     
-    func goForward() {
+    func goForward() async throws {
         os_log("Go forward tapped")
     }
     
     
     //MARK: Delete
     
-    func deleteRecord() async {
-        guard let record else {
-            os_log("\(RErrors.cantDeleteRecordWithName)")
-            return
-        }
-        await parentViewModel.delete(record: record)
+    func deleteRecord() async throws {
+        try await parentViewModel.delete(record: record)
     }
 }
 
@@ -176,7 +169,7 @@ private extension PlayToolbarViewModelImpl {
                 remainingTime -= step
                 updateFormattedTime()
             } else {
-                await stop()
+                try await stop()
                 self.resetTime()
                 self.isPlaying = false
             }
@@ -189,14 +182,5 @@ private extension PlayToolbarViewModelImpl {
         elapsedTime = 0.0
         remainingTime = duration
         updateFormattedTime()
-    }
-}
-
-//MARK: - Child
-
-extension PlayToolbarViewModelImpl {
-    
-    func update(record: AudioRecord) {
-        self.record = record
     }
 }

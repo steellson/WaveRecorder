@@ -11,13 +11,13 @@ import WRAudio
 
 //MARK: - Protocols
 
-protocol EditViewModel: ChildViewModel {
+protocol EditViewModel: AnyObject {
     var recordName: String { get }
     var recordedAt: String { get }
     var isEditing: Bool { get }
             
     func switchEditing()
-    func onEndEditing(withNewName newName: String) async
+    func onEndEditing(withNewName newName: String) async throws
 }
 
 
@@ -27,16 +27,16 @@ protocol EditViewModel: ChildViewModel {
 final class EditViewModelImpl: EditViewModel {
         
     var recordName: String {
-        helpers.formatter.formatName(record?.name ?? "error")
+        helpers.formatter.formatName(record.name)
     }
     
     var recordedAt: String {
-        helpers.formatter.formatDate(record?.date ?? .now)
+        helpers.formatter.formatDate(record.date)
     }
     
     private(set) var isEditing = false
     
-    private var record: AudioRecord?
+    private var record: AudioRecord
     private let helpers: HelpersStorage
     private let parentViewModel: MainViewModel
     
@@ -45,7 +45,7 @@ final class EditViewModelImpl: EditViewModel {
     //MARK: Init
     
     init(
-        record: AudioRecord? = nil,
+        record: AudioRecord,
         helpers: HelpersStorage,
         parentViewModel: MainViewModel
     ) {
@@ -66,17 +66,12 @@ extension EditViewModelImpl {
     
     //MARK: On end editing
 
-    func onEndEditing(withNewName newName: String) async {
+    func onEndEditing(withNewName newName: String) async throws {
         isEditing = false
         
-        guard 
-            let record,
-            newName != record.name
-        else {
-            return
-        }
+        guard newName != record.name else { return }
         
-        await parentViewModel.rename(record: record, newName: newName)
+        try await parentViewModel.rename(record: record, newName: newName)
         
         self.record = AudioRecord(
             name: newName,
@@ -84,14 +79,5 @@ extension EditViewModelImpl {
             date: record.date,
             duration: record.duration
         )
-    }
-}
-
-//MARK: - Child
-
-extension EditViewModelImpl {
-    
-    func update(record: AudioRecord) {
-        self.record = record
     }
 }

@@ -124,7 +124,7 @@ extension RecordBarView: RecordButtonViewDelegate {
     
     func recButtonDidTapped(_ isRecording: Bool) {
         Task {
-            await viewModel.record(isRecording: isRecording)
+            try await viewModel.record(isRecording: isRecording)
             
             if !isRecording {
                 setupRecordVisualizerView()

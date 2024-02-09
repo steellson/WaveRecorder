@@ -24,6 +24,7 @@ public enum RIdentifiers {
 
 public enum RLogs {
     public static let recordDeleted = "SUCCESS: Record deleted. Name: "
+    public static let searchedRecordsEmpty = "ATTENTION: Searched records is empty!"
 }
 
 

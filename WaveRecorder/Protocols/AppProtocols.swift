@@ -12,20 +12,27 @@ import WRAudio
 //MARK: - Data
 
 protocol Searcher: AnyObject {
-    func resetData() async
-    func search(withText text: String) async
+    func updateData() async throws
+    func search(withText text: String) async throws
 }
 
 protocol Editor: AnyObject {
-    func rename(record: AudioRecord, newName name: String) async
-    func delete(record: AudioRecord) async
+    func rename(record: AudioRecord, newName name: String) async throws
+    func delete(record: AudioRecord) async throws
 }
 
 
 //MARK: - Interface
 
 protocol InterfaceUpdatable: AnyObject {
-    var shouldUpdateInterface: ((Bool) async -> Void)? { get set }
+    var shouldUpdateInterface: ((Bool) async throws -> Void)? { get set }
+}
+
+
+//MARK: - Reusable View
+
+protocol ReusableView {
+    func reset()
 }
 
 
@@ -37,17 +44,10 @@ protocol Notifier: AnyObject {
 }
 
 
-//MARK: - Childs
-
-protocol ChildViewModel: AnyObject {
-    func update(record: AudioRecord)
-}
-
-
 //MARK: - Parents
 
 protocol ModuleMaker: AnyObject {
     func makeRecordBar() -> RecordBarView
-    func makeEditView(withIndexPath indexPath: IndexPath) -> EditView?
-    func makePlayToolbarView(withIndexPath indexPath: IndexPath) -> PlayToolbarView?
+    func makeEditViewModel(withIndexPath indexPath: IndexPath) -> EditViewModel
+    func makePlayToolbarViewModel(withIndexPath indexPath: IndexPath) -> PlayToolbarViewModel
 }

@@ -12,14 +12,11 @@ import OSLog
 //MARK: - Input
 
 public struct WRSearchControllerInput {
-    let fetchAllAction: () async -> Void
-    let searchWithTextAction: (String) async -> Void
+    let searchWithTextAction: (String) async throws -> Void
     
     public init(
-        fetchAllAction: @escaping () async -> Void,
-        searchWithTextAction: @escaping (String) async -> Void
+        searchWithTextAction: @escaping (String) async throws -> Void
     ) {
-        self.fetchAllAction = fetchAllAction
         self.searchWithTextAction = searchWithTextAction
     }
 }
@@ -101,17 +98,7 @@ private extension WRSearchController {
             return
         }
         Task {
-            await input.searchWithTextAction(text.trimmingCharacters(in: .illegalCharacters))
-        }
-    }
-    
-    func restoreResults() {
-        guard let input else {
-            os_log("ERROR <WRSearchController>: Input isn't setted!")
-            return
-        }
-        Task {
-            await input.fetchAllAction()
+            try await input.searchWithTextAction(text.trimmingCharacters(in: .illegalCharacters))
         }
     }
 }
@@ -131,7 +118,6 @@ extension WRSearchController: UISearchBarDelegate, UISearchTextFieldDelegate {
     
     public func textFieldShouldClear(_ textField: UITextField) -> Bool {
         searchFieldShouldClear(textField)
-        restoreResults()
         return false
     }
 }

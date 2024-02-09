@@ -16,7 +16,6 @@ import WRResources
 protocol MainTableViewModel: AnyObject {
     var numberOfItems: Int { get }
     var tableViewCellHeight: CGFloat { get }
-    func didTappedOnCell(withIndexPath indexPath: IndexPath)
     func didSwipedForDelete(forIndexPath indexPath: IndexPath)
 }
 
@@ -27,7 +26,7 @@ protocol MainViewModel: InterfaceUpdatable, Searcher, Editor, Notifier, MainTabl
 
 final class MainViewModelImpl: MainViewModel {
     
-    var shouldUpdateInterface: ((Bool) async -> Void)?
+    var shouldUpdateInterface: ((Bool) async throws -> Void)?
     
     var numberOfItems: Int = 0
     var tableViewCellHeight: CGFloat = 200
@@ -38,22 +37,7 @@ final class MainViewModelImpl: MainViewModel {
     private let audioPlayer: AudioPlayer
     private let helpers: HelpersStorage
     private let coordinator: Coordinator
-    
-    private lazy var editViewModel: EditViewModel = {
-        EditViewModelImpl(
-            helpers: helpers,
-            parentViewModel: self
-        )
-    }()
-    
-    private lazy var playToolbarViewModel: PlayToolbarViewModel = {
-        PlayToolbarViewModelImpl(
-            audioPlayer: audioPlayer,
-            helpers: helpers,
-            parentViewModel: self
-        )
-    }()
-        
+  
     
     //MARK: Init
     
@@ -68,18 +52,12 @@ final class MainViewModelImpl: MainViewModel {
         self.helpers = helpers
         self.coordinator = coordinator
         
-        Task { await fetchAll() }
+        Task { try await updateData() }
     }
-    
-    
-    func didTappedOnCell(withIndexPath indexPath: IndexPath) {
-        let selectedRecord = records[indexPath.row]
-        editViewModel.update(record: selectedRecord)
-        playToolbarViewModel.update(record: selectedRecord)
-    }
+
     
     func didSwipedForDelete(forIndexPath indexPath: IndexPath) {
-        Task { await delete(record: records[indexPath.row]) }
+        Task { try await delete(record: records[indexPath.row]) }
     }
 }
 
@@ -94,34 +72,21 @@ extension MainViewModelImpl {
         return recordBarView
     }
     
-    func makeEditView(withIndexPath indexPath: IndexPath) -> EditView? {
-        guard records.count > indexPath.row else { return nil }
-        editViewModel.update(record: records[indexPath.row])
-        return EditView(viewModel: editViewModel)
+    func makeEditViewModel(withIndexPath indexPath: IndexPath) -> EditViewModel {
+        EditViewModelImpl(
+            record: records[indexPath.row],
+            helpers: helpers,
+            parentViewModel: self
+        )
     }
     
-    func makePlayToolbarView(withIndexPath indexPath: IndexPath) -> PlayToolbarView? {
-        guard records.count > indexPath.row else { return nil }
-        playToolbarViewModel.update(record: records[indexPath.row])
-        return PlayToolbarView(viewModel: playToolbarViewModel)
-    }
-}
-
-
-//MARK: - Updating data (Private)
-
-private extension MainViewModelImpl {
-    
-    func fetchAll() async {
-        do {
-            let records = try await audioRepository.fetchRecords()
-            self.records = records.sorted(by: { $0.name > $1.name })
-            self.numberOfItems = records.count
-            
-            await self.shouldUpdateInterface?(false)
-        } catch {
-            os_log("\(RErrors.cantGetRecordsFromStorage + " \(error)")")
-        }
+    func makePlayToolbarViewModel(withIndexPath indexPath: IndexPath) -> PlayToolbarViewModel {
+        PlayToolbarViewModelImpl(
+            record: records[indexPath.row],
+            audioPlayer: audioPlayer,
+            helpers: helpers,
+            parentViewModel: self
+        )
     }
 }
 
@@ -130,17 +95,33 @@ private extension MainViewModelImpl {
 
 extension MainViewModelImpl {
         
-    func resetData() async {
-        await fetchAll()
+    func updateData() async throws {
+        do {
+            let records = try await audioRepository.fetchRecords()
+            self.records = records.sorted(by: { $0.name > $1.name })
+            self.numberOfItems = records.count
+            
+            try await self.shouldUpdateInterface?(false)
+        } catch {
+            os_log("\(RErrors.cantGetRecordsFromStorage + " \(error)")")
+        }
     }
 
     
-    func search(withText text: String) async {
+    func search(withText text: String) async throws {
         guard !text.isEmpty else { return }
 
         do {
-            self.records = try await audioRepository.search(withText: text)
-            await self.shouldUpdateInterface?(false)
+            let searchedRecords = try await audioRepository.search(withText: text)
+            
+            guard searchedRecords.count > 0 else {
+                os_log("\(RLogs.searchedRecordsEmpty)")
+                try await self.updateData()
+                return
+            }
+            
+            self.records = searchedRecords
+            try await self.shouldUpdateInterface?(false)
         } catch {
             os_log("\(RErrors.cantSearchRecordsWithText + text + " \(error)")")
         }
@@ -152,38 +133,23 @@ extension MainViewModelImpl {
 
 extension MainViewModelImpl {
 
-    func rename(record: AudioRecord, newName name: String) async {
+    func rename(record: AudioRecord, newName name: String) async throws {
         do {
             try await audioRepository.rename(
                 record: record,
                 newName: name
             )
-            let newRecord = AudioRecord(
-                name: name,
-                format: record.format,
-                date: record.date,
-                duration: record.duration
-            )
-            
-            guard let oldRecordIndex = self.records.firstIndex(of: record) else {
-                os_log("\(RErrors.cantRenameRecord)")
-                return
-            }
-            
-            self.editViewModel.update(record: newRecord)
-            self.playToolbarViewModel.update(record: newRecord)
-            self.records[oldRecordIndex] = newRecord
-            
+            try await self.updateData()
         } catch {
             os_log("\(RErrors.cantRenameRecord + " \(error)")")
         }
     }
 
     
-    func delete(record: AudioRecord) async {
+    func delete(record: AudioRecord) async throws {
         do {
             try await audioRepository.delete(record: record)
-            await self.fetchAll()
+            try await self.updateData()
             
             os_log("\(RLogs.recordDeleted + record.name)")
         } catch {
