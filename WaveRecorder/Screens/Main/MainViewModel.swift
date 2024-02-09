@@ -121,6 +121,7 @@ extension MainViewModelImpl {
             }
             
             self.records = searchedRecords
+            self.numberOfItems = records.count
             try await self.shouldUpdateInterface?(false)
         } catch {
             os_log("\(RErrors.cantSearchRecordsWithText + text + " \(error)")")

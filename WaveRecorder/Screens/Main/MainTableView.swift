@@ -51,11 +51,10 @@ final class MainTableView: UITableView {
 private extension MainTableView {
     
     func seutupAppereance() {
-       backgroundColor = .white
-       rowHeight = UITableView.automaticDimension
-       layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-       layer.cornerRadius = 26
-       estimatedRowHeight = 160
+        backgroundColor = .white
+        rowHeight = viewModel?.tableViewCellHeight ?? 200
+        layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        layer.cornerRadius = 26
     }
     
     func setupSettings() {
