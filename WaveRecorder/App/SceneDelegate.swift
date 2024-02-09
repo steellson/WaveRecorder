@@ -6,6 +6,9 @@
 //
 
 import UIKit
+import WRResources
+import WRParts
+ 
 
 //MARK: - Impl
 
@@ -13,17 +16,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     
-    private let AssemblyBuilder: AssemblyProtocol = Assembly()
-
+    private let navigationController = WRNavigationController(backgroundColor: RColors.primaryBackgroundColor)
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
-        let view = AssemblyBuilder.get(module: .main)
-        let navigationController = UINavigationController(rootViewController: view)
         
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         self.window = window
+        
+        let appCoordinator = AppCoordinator(navigationController: navigationController)
+        appCoordinator.startWithMainView()
     }
     
     

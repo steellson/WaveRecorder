@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension UIView {
+public extension UIView {
     
     //MARK: Convenienve find height constaint
     var heightConstraint: NSLayoutConstraint? {
