@@ -21,7 +21,7 @@ protocol PlayToolbarViewModel: AnyObject {
     var remainingTimeFormatted: String { get }
     
     func goBack() throws
-    func play(atTime time: Float) throws
+    func play(atTime time: Float, animation: @escaping () -> Void) throws
     func stop() throws
     func goForward() throws
     func deleteRecord() throws
@@ -77,7 +77,7 @@ extension PlayToolbarViewModelImpl {
     
     //MARK: Play
     
-    func play(atTime time: Float) throws {
+    func play(atTime time: Float, animation: @escaping () -> Void) throws {
         guard !isPlaying else {
             os_log("\(RErrors.audioIsAlreadyPlaying)")
             return
@@ -89,6 +89,7 @@ extension PlayToolbarViewModelImpl {
             
             helpers.timeRefresher.register { [weak self] in
                 self?.updateTime(withValue: time)
+                animation()
             }
             
             setTimeWithDifference(startTime: time)

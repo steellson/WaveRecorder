@@ -115,7 +115,10 @@ private extension PlayToolbarView {
             case .goBack: try viewModel.goBack()
             case .goForward: try viewModel.goForward()
             case .delete: try viewModel.deleteRecord()
-            case .play: try viewModel.play(atTime: progressSlider.value)
+            case .play: try viewModel.play(
+                atTime: progressSlider.value,
+                animation: animateProgress
+            )
             case .stop:
                 try viewModel.stop()
                 reset()
