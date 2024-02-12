@@ -7,6 +7,7 @@
 
 import OSLog
 import UIKit
+import UIComponents
 import WRResources
 
 
@@ -15,10 +16,40 @@ import WRResources
 
 final class RedactorViewController: UIViewController {
     
-    private let titleLabel = UILabel()
-    private let recordTitleLabel = UILabel()
-    private let recordDateLabel = UILabel()
-    private let recordDurationLabel = UILabel()
+    private let titleLabel = TitleLabelView(
+        text: RTitles.redactorMainTite,
+        tColor: .darkGray,
+        font: .systemFont(ofSize: 26, weight: .bold),
+        alignment: .center
+    )
+    
+    private let audioRecordTitleLabel = TitleLabelView(
+        text: RTitles.audioRecordTitleLabel,
+        tColor: .black,
+        font: .systemFont(ofSize: 20, weight: .bold)
+    )
+    
+    private lazy var recordTitleLabel = TitleLabelView(
+        text: viewModel.audioRecordMetadata.name,
+        tColor: .black,
+        font: .systemFont(ofSize: 18, weight: .medium),
+        alignment: .left
+    )
+    
+    private lazy var recordDateLabel = TitleLabelView(
+        text: viewModel.audioRecordMetadata.date,
+        tColor: .darkGray,
+        font: .systemFont(ofSize: 14, weight: .medium),
+        alignment: .left
+    )
+    
+    private lazy var recordDurationLabel = TitleLabelView(
+        text: viewModel.audioRecordMetadata.duration,
+        tColor: .gray,
+        font: .systemFont(ofSize: 14, weight: .light),
+        alignment: .left
+    )
+    
     private let recordStackView = UIStackView()
  
     private let viewModel: RedactorViewModel
@@ -42,16 +73,20 @@ final class RedactorViewController: UIViewController {
         super.viewDidLoad()
         seutpNavigationBar()
         setupContentView()
-        setupTitleLabel()
-        setupRecordTitleLabel()
-        setupRecordDateLabel()
-        setupRecordDurationTabel()
         setupRecordStackView()
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         setupConstrtaints()
+    }
+    
+    
+    //MARK: Actions
+    
+    @objc
+    private func recordStackViewDidTapped() {
+        animateRecordStackViewOnTap()
     }
 }
 
@@ -67,34 +102,8 @@ private extension RedactorViewController {
     func setupContentView() {
         view.backgroundColor = RColors.primaryBackgroundColor
         view.addNewSubview(titleLabel)
+        view.addNewSubview(audioRecordTitleLabel)
         view.addNewSubview(recordStackView)
-    }
-
-    
-    func setupTitleLabel() {
-        titleLabel.text = RTitles.redactorMainTite
-        titleLabel.textColor = .darkGray
-        titleLabel.backgroundColor = RColors.primaryBackgroundColor
-        titleLabel.font = .systemFont(ofSize: 26, weight: .bold)
-        titleLabel.textAlignment = .left
-    }
-    
-    func setupRecordTitleLabel() {
-        recordTitleLabel.text = viewModel.audioRecordMetadata.name
-        recordTitleLabel.font = .systemFont(ofSize: 18, weight: .medium)
-        recordTitleLabel.textColor = .black
-    }
-    
-    func setupRecordDateLabel() {
-        recordDateLabel.text = viewModel.audioRecordMetadata.date
-        recordDateLabel.font = .systemFont(ofSize: 14, weight: .medium)
-        recordDateLabel.textColor = .darkGray
-    }
-    
-    func setupRecordDurationTabel() {
-        recordDurationLabel.text = viewModel.audioRecordMetadata.duration
-        recordDurationLabel.font = .systemFont(ofSize: 14, weight: .light)
-        recordDurationLabel.textColor = .gray
     }
     
     func setupRecordStackView() {
@@ -111,6 +120,12 @@ private extension RedactorViewController {
         
         let subviews = [recordTitleLabel, recordDateLabel, recordDurationLabel]
         subviews.forEach { self.recordStackView.addArrangedSubview($0) }
+        
+        let tapGesture = UITapGestureRecognizer(
+            target: self,
+            action: #selector(recordStackViewDidTapped)
+        )
+        recordStackView.addGestureRecognizer(tapGesture)
     }
   
     
@@ -125,9 +140,13 @@ private extension RedactorViewController {
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 14),
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -14),
             
-            recordStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
+            audioRecordTitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 22),
+            audioRecordTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            audioRecordTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            recordStackView.topAnchor.constraint(equalTo: audioRecordTitleLabel.bottomAnchor, constant: 8),
             recordStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
-            recordStackView.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -12)
+            recordStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12)
         ])
     }
 }
@@ -146,6 +165,13 @@ private extension RedactorViewController {
             Task {
                 self.view.layoutIfNeeded()
             }
+        }
+    }
+    
+    func animateRecordStackViewOnTap() {
+        recordStackView.alpha = 0.5
+        UIView.animate(withDuration: 0.2) {
+            self.recordStackView.alpha = 1
         }
     }
 }

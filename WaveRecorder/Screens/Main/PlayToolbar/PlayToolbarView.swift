@@ -27,19 +27,17 @@ final class PlayToolbarView: UIView {
         return slider
     }()
     
-    private let startTimeLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .light)
-        label.backgroundColor = RColors.secondaryBackgroundColor
-        return label
-    }()
+    private let startTimeLabel = TitleLabelView(
+        text: "",
+        tColor: .black,
+        font: .systemFont(ofSize: 14, weight: .light)
+    )
     
-    private let endTimeLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .light)
-        label.backgroundColor = RColors.secondaryBackgroundColor
-        return label
-    }()
+    private let endTimeLabel = TitleLabelView(
+        text: "",
+        tColor: .black,
+        font: .systemFont(ofSize: 14, weight: .light)
+    )
     
     private let goBackButton = PlayTolbarButton(type: .goBack)
     private let playButton = PlayTolbarButton(type: .play)

@@ -9,6 +9,7 @@ import OSLog
 import UIKit
 import WRParts
 import WRResources
+import UIComponents
 
 
 //MARK: - Impl
@@ -16,9 +17,23 @@ import WRResources
 final class MainViewController: UIViewController {
     
     private let editButton = UIBarButtonItem()
-    private let titleLabel = UILabel()
-    private let searchController = WRSearchController(placeholderText: RTitles.searchTextFieldPlaceholder)
-    private let tableView = MainTableView(frame: .zero, style: .plain)
+    
+    private let titleLabel = TitleLabelView(
+        text: RTitles.navigationTitleMain,
+        tColor: .black,
+        font: .systemFont(ofSize: 26, weight: .bold),
+        alignment: .left
+    )
+    
+    private let searchController = WRSearchController(
+        placeholderText: RTitles.searchTextFieldPlaceholder
+    )
+    
+    private let tableView = MainTableView(
+        frame: .zero, 
+        style: .plain
+    )
+    
     private lazy var recordBarView = viewModel.makeRecordBar()
     
     private lazy var recViewHeightConstraint: NSLayoutConstraint = {
@@ -53,7 +68,6 @@ final class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupContentView()
-        setupTitleLabel()
         setupSearchController()
         hideKeyboardWhenTappedAround()
     }
@@ -113,14 +127,6 @@ private extension MainViewController {
         editButton.target = self
         editButton.action = #selector(editButtonDidTapped)
         editButton.isHidden = viewModel.numberOfItems == 0
-    }
-    
-    func setupTitleLabel() {
-        titleLabel.text = RTitles.navigationTitleMain
-        titleLabel.textColor = .black
-        titleLabel.backgroundColor = RColors.primaryBackgroundColor
-        titleLabel.font = .systemFont(ofSize: 26, weight: .bold)
-        titleLabel.textAlignment = .left
     }
     
     func setupSearchController() {

@@ -8,6 +8,8 @@
 import UIKit
 import OSLog
 import WRResources
+import UIComponents
+
 
 //MARK: - Impl
 
@@ -31,13 +33,12 @@ final class EditView: UIView {
         return field
     }()
     
-    private let dateLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .light)
-        label.textAlignment = .left
-        label.backgroundColor = RColors.secondaryBackgroundColor
-        return label
-    }()
+    private let dateLabel = TitleLabelView(
+        text: "",
+        tColor: .darkGray,
+        font: .systemFont(ofSize: 16, weight: .light),
+        alignment: .left
+    )
     
     private lazy var renameButton: UIButton = {
         let button = UIButton()
