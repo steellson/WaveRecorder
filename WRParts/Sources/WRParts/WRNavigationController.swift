@@ -12,6 +12,7 @@ import UIKit
 
 public final class WRNavigationController: UINavigationController {
     
+    
     //MARK: Init
     
     public init(backgroundColor: UIColor) {
@@ -31,5 +32,6 @@ private extension WRNavigationController {
     
     func setupAppereance(withBackgroundColor color: UIColor) {
         navigationBar.backgroundColor = color
+        navigationBar.tintColor = .black
     }
 }

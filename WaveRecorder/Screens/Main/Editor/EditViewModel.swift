@@ -18,6 +18,7 @@ protocol EditViewModel: AnyObject {
             
     func switchEditing()
     func onEndEditing(withNewName newName: String) async throws
+    func addToVideoButtonTapped()
 }
 
 
@@ -79,5 +80,12 @@ extension EditViewModelImpl {
             date: record.date,
             duration: record.duration
         )
+    }
+    
+    
+    //MARK: Did details tapped
+    
+    func addToVideoButtonTapped() {
+        parentViewModel.openDetails(withAudioRecord: record)
     }
 }

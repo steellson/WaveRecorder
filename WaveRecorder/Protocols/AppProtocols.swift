@@ -19,6 +19,7 @@ protocol Searcher: AnyObject {
 protocol Editor: AnyObject {
     func rename(record: AudioRecord, newName name: String) async throws
     func delete(record: AudioRecord) async throws
+    func openDetails(withAudioRecord record: AudioRecord)
 }
 
 

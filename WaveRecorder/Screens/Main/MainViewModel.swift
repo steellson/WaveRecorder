@@ -157,6 +157,10 @@ extension MainViewModelImpl {
             os_log("\(RErrors.cantDeleteRecordWithName + record.name + " \(error)")")
         }
     }
+    
+    func openDetails(withAudioRecord record: AudioRecord) {
+        coordinator.showRedactorView(withAudioRecord: record)
+    }
 }
 
 

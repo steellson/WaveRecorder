@@ -10,6 +10,12 @@ public enum RTitles {
     public static let editButtonTitle = "Edit"
     public static let stopEditButtonTitle = "Cancel"
     public static let searchTextFieldPlaceholder = "Search"
+    
+    //MARK: Main Cell
+    public static let addToVideoButtonTitle = "Add to video"
+    
+    //MARK: Redactor Screen
+    public static let redactorMainTite = "Redactor 🔌"
 }
 
 

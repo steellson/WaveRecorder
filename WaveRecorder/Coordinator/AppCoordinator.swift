@@ -18,6 +18,7 @@ protocol Coordinator {
     var navigationController: UINavigationController { get set }
     
     func startWithMainView()
+    func showRedactorView(withAudioRecord record: AudioRecord)
 }
 
 
@@ -55,5 +56,16 @@ extension AppCoordinator {
         )
         let mainViewController = MainViewController(viewModel: mainViewModel)
         self.navigationController.pushViewController(mainViewController, animated: true)
+    }
+    
+    func showRedactorView(withAudioRecord record: AudioRecord) {
+        let redactorViewModel: RedactorViewModel = RedactorViewModelImpl(
+            audioRecord: record,
+            helpers: helpersStorage
+        )
+        let redactorViewController: RedactorViewController = RedactorViewController(
+            viewModel: redactorViewModel
+        )
+        self.navigationController.pushViewController(redactorViewController, animated: true)
     }
 }

@@ -46,7 +46,18 @@ final class EditView: UIView {
         button.addTarget(self, action: #selector(renameButtonDidTapped), for: .touchUpInside)
         return button
     }()
-        
+    
+    private lazy var addToVideoButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.tintColor = .gray
+        button.setTitle(RTitles.addToVideoButtonTitle, for: .normal)
+        button.titleLabel?.font =  .systemFont(ofSize: 16, weight: .light)
+        button.titleLabel?.textAlignment = .right
+        button.titleLabel?.backgroundColor = RColors.secondaryBackgroundColor
+        button.addTarget(self, action: #selector(addToVideoButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
     
     //MARK: Lifecycle
     
@@ -82,6 +93,15 @@ final class EditView: UIView {
         animateTitleLabelField(isEditing: viewModel.isEditing)
         animateRenameButton(isEditingStarts: viewModel.isEditing)
     }
+    
+    @objc
+    private func addToVideoButtonTapped() {
+        guard let viewModel else {
+            os_log("\(RErrors.editViewModelIsNotSetted)")
+            return
+        }
+        viewModel.addToVideoButtonTapped()
+    }
 }
             
 //MARK: - Setup
@@ -92,6 +112,7 @@ private extension EditView {
         addNewSubview(titleLabelField)
         addNewSubview(dateLabel)
         addNewSubview(renameButton)
+        addNewSubview(addToVideoButton)
     }
     
     
@@ -112,7 +133,12 @@ private extension EditView {
             dateLabel.topAnchor.constraint(equalTo: titleLabelField.bottomAnchor, constant: 12),
             dateLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
             dateLabel.trailingAnchor.constraint(equalTo: centerXAnchor),
-            dateLabel.heightAnchor.constraint(equalToConstant: 18)
+            dateLabel.heightAnchor.constraint(equalToConstant: 18),
+            
+            addToVideoButton.topAnchor.constraint(equalTo: titleLabelField.bottomAnchor, constant: 12),
+            addToVideoButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -18),
+            addToVideoButton.widthAnchor.constraint(equalToConstant: 100),
+            addToVideoButton.heightAnchor.constraint(equalToConstant: 18)
         ])
     }
 }
