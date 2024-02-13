@@ -62,7 +62,6 @@ final class AudioSectionView: UIView {
         self.setupContentView()
         self.setupRecordSectionStackView()
         self.setupConstraints()
-        self.layoutIfNeeded()
     }
     
     

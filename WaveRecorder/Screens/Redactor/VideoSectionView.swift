@@ -47,7 +47,6 @@ final class VideoSectionView: UIView {
             shadowColor: shadowColor
         )
         self.setupConstraints()
-        self.layoutIfNeeded()
     }
     
     @objc
