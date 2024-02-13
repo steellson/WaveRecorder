@@ -54,5 +54,7 @@ private extension TitleLabelView {
         self.textColor = tColor
         self.font = font
         self.textAlignment = alignment
+        
+        self.numberOfLines = 0
     }
 }

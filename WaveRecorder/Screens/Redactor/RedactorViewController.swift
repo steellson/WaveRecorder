@@ -15,18 +15,19 @@ import WRResources
 //MARK: - Impl
 
 final class RedactorViewController: UIViewController {
-    
+        
     private let titleLabel = TitleLabelView(
         text: RTitles.redactorMainTite,
         tColor: .darkGray,
-        font: .systemFont(ofSize: 26, weight: .bold),
+        font: .systemFont(ofSize: 30, weight: .bold),
         alignment: .center
     )
     
-    private let audioRecordTitleLabel = TitleLabelView(
+    private let audioSectionTitleLabel = TitleLabelView(
         text: RTitles.audioRecordTitleLabel,
         tColor: .black,
-        font: .systemFont(ofSize: 20, weight: .bold)
+        font: .systemFont(ofSize: 20, weight: .bold),
+        alignment: .left
     )
     
     private lazy var recordTitleLabel = TitleLabelView(
@@ -51,7 +52,24 @@ final class RedactorViewController: UIViewController {
     )
     
     private let recordStackView = UIStackView()
+
+    private let videoSectionTitleLabel = TitleLabelView(
+        text: RTitles.videoRecordTitleLabel,
+        tColor: .black,
+        font: .systemFont(ofSize: 20, weight: .bold),
+        alignment: .left
+    )
+    
+    private let videoIsNotSelectedTitle = TitleLabelView(
+        text: RTitles.videoIsntSelected,
+        tColor: .darkGray,
+        font: .systemFont(ofSize: 28, weight: .bold),
+        alignment: .center
+    )
+    
+    private let videoSectionView = UIView()
  
+    
     private let viewModel: RedactorViewModel
 
     
@@ -73,7 +91,8 @@ final class RedactorViewController: UIViewController {
         super.viewDidLoad()
         seutpNavigationBar()
         setupContentView()
-        setupRecordStackView()
+        setupRecordSectionStackView()
+        setupVideoSectionView()
     }
     
     override func viewWillLayoutSubviews() {
@@ -83,6 +102,11 @@ final class RedactorViewController: UIViewController {
     
     
     //MARK: Actions
+    
+    @objc
+    private func selectVideoButtonTapped() {
+        
+    }
     
     @objc
     private func recordStackViewDidTapped() {
@@ -97,26 +121,38 @@ private extension RedactorViewController {
     
     func seutpNavigationBar() {
         navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: RTitles.selectVideo,
+            style: .plain,
+            target: self,
+            action: #selector(selectVideoButtonTapped)
+        )
     }
     
     func setupContentView() {
         view.backgroundColor = RColors.primaryBackgroundColor
         view.addNewSubview(titleLabel)
-        view.addNewSubview(audioRecordTitleLabel)
+        view.addNewSubview(audioSectionTitleLabel)
         view.addNewSubview(recordStackView)
+        view.addNewSubview(videoSectionTitleLabel)
+        view.addNewSubview(videoSectionView)
     }
     
-    func setupRecordStackView() {
+    func setupSection(_ view: UIView) {
+        view.backgroundColor = RColors.secondaryBackgroundColor.withAlphaComponent(0.8)
+        view.layer.cornerRadius = 12
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.2
+        view.layer.shadowOffset = .init(width: 1, height: 1)
+    }
+    
+    func setupRecordSectionStackView() {
         recordStackView.axis = .vertical
         recordStackView.spacing = 6
         recordStackView.distribution = .fillEqually
         recordStackView.layoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         recordStackView.isLayoutMarginsRelativeArrangement = true
-        recordStackView.backgroundColor = RColors.secondaryBackgroundColor.withAlphaComponent(0.8)
-        recordStackView.layer.cornerRadius = 12
-        recordStackView.layer.shadowColor = UIColor.black.cgColor
-        recordStackView.layer.shadowOpacity = 0.2
-        recordStackView.layer.shadowOffset = .init(width: 1, height: 1)
+        setupSection(recordStackView)
         
         let subviews = [recordTitleLabel, recordDateLabel, recordDurationLabel]
         subviews.forEach { self.recordStackView.addArrangedSubview($0) }
@@ -127,6 +163,13 @@ private extension RedactorViewController {
         )
         recordStackView.addGestureRecognizer(tapGesture)
     }
+    
+    func setupVideoSectionView() {
+        videoSectionView.addNewSubview(videoIsNotSelectedTitle)
+        setupSection(videoSectionView)
+    }
+    
+
   
     
     
@@ -140,13 +183,27 @@ private extension RedactorViewController {
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 14),
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -14),
             
-            audioRecordTitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 22),
-            audioRecordTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            audioRecordTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            audioSectionTitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 22),
+            audioSectionTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            audioSectionTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
-            recordStackView.topAnchor.constraint(equalTo: audioRecordTitleLabel.bottomAnchor, constant: 8),
+            recordStackView.topAnchor.constraint(equalTo: audioSectionTitleLabel.bottomAnchor, constant: 8),
             recordStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
-            recordStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12)
+            recordStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
+            
+            videoSectionTitleLabel.topAnchor.constraint(equalTo: recordStackView.bottomAnchor, constant: 22),
+            videoSectionTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
+            videoSectionTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
+            
+            videoSectionView.topAnchor.constraint(equalTo: videoSectionTitleLabel.bottomAnchor, constant: 8),
+            videoSectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
+            videoSectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
+            videoSectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -22),
+            
+            videoIsNotSelectedTitle.leadingAnchor.constraint(equalTo: videoSectionView.leadingAnchor, constant: 16),
+            videoIsNotSelectedTitle.trailingAnchor.constraint(equalTo: videoSectionView.trailingAnchor, constant: -16),
+            videoIsNotSelectedTitle.centerXAnchor.constraint(equalTo: videoSectionView.centerXAnchor),
+            videoIsNotSelectedTitle.centerYAnchor.constraint(equalTo: videoSectionView.centerYAnchor)
         ])
     }
 }

@@ -16,7 +16,10 @@ public enum RTitles {
     
     //MARK: Redactor Screen
     public static let redactorMainTite = "Redactor 🔌"
-    public static let audioRecordTitleLabel = "Audio Record 🎵"
+    public static let audioRecordTitleLabel = "Audio 🎵"
+    public static let videoRecordTitleLabel = "Video 🎬"
+    public static let videoIsntSelected = "There is no selected videos yet ☹︎"
+    public static let selectVideo = "Select video"
 }
 
 
