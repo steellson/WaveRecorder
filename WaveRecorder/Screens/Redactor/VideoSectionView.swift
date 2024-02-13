@@ -44,6 +44,7 @@ final class VideoSectionView: UIView {
         if isVideoEmpty {
             videoIsNotSelectedTitle.isHidden = false
             videoPlayerView.isHidden = true
+            animateContainerViewOnTap()
         } else {
             videoIsNotSelectedTitle.isHidden = true
             videoPlayerView.isHidden = false
@@ -140,7 +141,7 @@ private extension VideoSectionView {
      
     func animateContainerViewOnTap() {
         let oldBackgroundColor = containerView.backgroundColor
-        containerView.backgroundColor = .systemRed.withAlphaComponent(0.3)
+        containerView.backgroundColor = .systemBlue.withAlphaComponent(0.3)
         
         UIView.animate(
             withDuration: 1,

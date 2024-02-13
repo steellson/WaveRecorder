@@ -11,12 +11,16 @@ import WRAudio
 
 
 typealias AudioRecordMetadata = (name: String, duration: String, date: String)
+typealias VideoRecordMetadata = (name: String, url: URL)
 
 
 //MARK: - Protocol
 
-protocol RedactorViewModel: AnyObject {
+protocol RedactorViewModel: InterfaceUpdatable {
     var audioRecordMetadata: AudioRecordMetadata { get }
+    var videoRecordMetadata: VideoRecordMetadata? { get }
+    
+    func update(videoMetadata: VideoRecordMetadata) async throws
 }
 
 
@@ -24,7 +28,10 @@ protocol RedactorViewModel: AnyObject {
 
 final class RedactorViewModelImpl: RedactorViewModel {
     
+    var shouldUpdateInterface: ((Bool) async throws -> Void)?
+    
     private(set) var audioRecordMetadata = AudioRecordMetadata(name: "", duration: "", date: "")
+    private(set) var videoRecordMetadata: VideoRecordMetadata?
     
     private let audioRecord: AudioRecord
     private let helpers: HelpersStorage
@@ -53,5 +60,16 @@ private extension RedactorViewModelImpl {
             duration: helpers.formatter.formatDuration(audioRecord.duration ?? 0.0),
             date: helpers.formatter.formatDate(audioRecord.date)
         )
+    }
+}
+
+
+//MARK: - Public
+
+extension RedactorViewModelImpl {
+    
+    func update(videoMetadata: VideoRecordMetadata) async throws {
+        self.videoRecordMetadata = videoMetadata
+        try await self.shouldUpdateInterface?(false)
     }
 }

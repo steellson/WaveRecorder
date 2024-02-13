@@ -7,9 +7,9 @@
 
 import OSLog
 import UIKit
+import Photos
 import UIComponents
 import WRResources
-
 
 
 //MARK: - Impl
@@ -26,7 +26,9 @@ final class RedactorViewController: UIViewController {
     private let audioSectionView = AudioSectionView()
     private let videoSectionView = VideoSectionView()
     
-    private var isVideoSelected: Bool = false
+    private lazy var isVideoSelected: Bool = {
+        viewModel.videoRecordMetadata != nil
+    }()
     
     private let viewModel: RedactorViewModel
 
@@ -55,6 +57,7 @@ final class RedactorViewController: UIViewController {
         super.viewWillLayoutSubviews()
         setupAudioSectionView()
         setupVideoSectionView()
+        setupUpdatingLayout()
         setupConstrtaints()
     }
     
@@ -63,8 +66,17 @@ final class RedactorViewController: UIViewController {
     
     @objc
     private func selectVideoButtonTapped() {
-        isVideoSelected.toggle()
-        videoSectionView.configureWith(emptyVideo: !isVideoSelected)
+//        isVideoSelected.toggle()
+//        videoSectionView.configureWith(emptyVideo: !isVideoSelected)
+        
+        Task {
+            let picker = UIImagePickerController()
+            picker.delegate = self
+            picker.sourceType = .savedPhotosAlbum
+            picker.mediaTypes = ["public.movie"]
+            picker.allowsEditing = false
+            present(picker, animated: true, completion: nil)
+        }
     }
 }
 
@@ -111,6 +123,13 @@ private extension RedactorViewController {
         )
     }
     
+    func setupUpdatingLayout() {
+        viewModel.shouldUpdateInterface = { [weak self] isVideoEmpty in
+            self?.videoSectionView.configureWith(emptyVideo: isVideoEmpty)
+            self?.animateUpdatedLayout()
+        }
+    }
+    
     
     //MARK: Constraints
     
@@ -149,6 +168,34 @@ private extension RedactorViewController {
             Task {
                 self.view.layoutSubviews()
             }
+        }
+    }
+}
+
+
+//MARK: - Picker & Navigation Delegate
+
+extension RedactorViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
+    
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]
+    ) {
+        guard 
+            let url = info[.mediaURL] as? URL
+        else {
+            picker.dismiss(animated: true)
+            videoSectionView.configureWith(emptyVideo: true)
+            return
+        }
+       
+        Task {
+            try await viewModel.update(videoMetadata: VideoRecordMetadata(name: url.lastPathComponent, url: url))
+            picker.dismiss(animated: true)
         }
     }
 }
