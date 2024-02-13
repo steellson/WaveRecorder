@@ -26,6 +26,8 @@ final class RedactorViewController: UIViewController {
     private let audioSectionView = AudioSectionView()
     private let videoSectionView = VideoSectionView()
     
+    private var isVideoSelected: Bool = false
+    
     private let viewModel: RedactorViewModel
 
     
@@ -61,7 +63,8 @@ final class RedactorViewController: UIViewController {
     
     @objc
     private func selectVideoButtonTapped() {
-        
+        isVideoSelected.toggle()
+        videoSectionView.configureWith(emptyVideo: !isVideoSelected)
     }
 }
 
@@ -100,10 +103,11 @@ private extension RedactorViewController {
     }
     
     func setupVideoSectionView() {
-        videoSectionView.configureWith()
+        videoSectionView.configureWith(emptyVideo: !isVideoSelected)
         videoSectionView.configureAppereanceWith(
             backgroundColor: RColors.secondaryBackgroundWithAlpha,
-            shadowColor: UIColor.black
+            shadowColor: UIColor.black,
+            videoPlayerHeight: 300
         )
     }
     
@@ -137,13 +141,13 @@ private extension RedactorViewController {
     
     func animateUpdatedLayout() {
         UIView.animate(
-            withDuration: 0.2,
+            withDuration: 0.5,
             delay: 0,
             usingSpringWithDamping: 1,
             initialSpringVelocity: 1
         ) {
             Task {
-                self.view.layoutIfNeeded()
+                self.view.layoutSubviews()
             }
         }
     }

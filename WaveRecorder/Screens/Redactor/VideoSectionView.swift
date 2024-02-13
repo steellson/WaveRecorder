@@ -8,6 +8,7 @@
 import UIKit
 import UIComponents
 import WRResources
+import AVKit
 
 
 //MARK: - Impl
@@ -16,6 +17,7 @@ final class VideoSectionView: UIView {
     
     private let contentView = UIView()
     private let containerView = UIView()
+    private let videoPlayerView = UIImageView()
     
     //MARK: Variables
     
@@ -33,19 +35,28 @@ final class VideoSectionView: UIView {
         alignment: .center
     )
     
+    private var videoPlayerHeight: CGFloat = 100.0
+
     
     //MARK: Configure
     
-    func configureWith() {
-        
+    func configureWith(emptyVideo isVideoEmpty: Bool) {
+        if isVideoEmpty {
+            videoIsNotSelectedTitle.isHidden = false
+            videoPlayerView.isHidden = true
+        } else {
+            videoIsNotSelectedTitle.isHidden = true
+            videoPlayerView.isHidden = false
+        }
     }
     
-    func configureAppereanceWith(backgroundColor: UIColor, shadowColor: UIColor) {
+    func configureAppereanceWith(backgroundColor: UIColor, shadowColor: UIColor, videoPlayerHeight: CGFloat) {
         self.setupContentView()
         self.setupContainerView(
             backgroundColor: backgroundColor,
             shadowColor: shadowColor
         )
+        self.setupVideoPlayerView(withHeight: videoPlayerHeight)
         self.setupConstraints()
     }
     
@@ -76,13 +87,21 @@ private extension VideoSectionView {
         containerView.layer.cornerRadius = 12
         containerView.layer.shadowOpacity = 0.2
         containerView.layer.shadowOffset = .init(width: 1, height: 1)
+        
         containerView.addNewSubview(videoIsNotSelectedTitle)
+        containerView.addNewSubview(videoPlayerView)
         
         let tapGesture = UITapGestureRecognizer(
             target: self,
             action: #selector(contanierViewDidTapped)
         )
         containerView.addGestureRecognizer(tapGesture)
+    }
+    
+    func setupVideoPlayerView(withHeight height: CGFloat) {
+        videoPlayerView.backgroundColor = .darkGray
+        videoPlayerView.layer.cornerRadius = 6
+        videoPlayerHeight = height
     }
     
     func setupConstraints() {
@@ -104,7 +123,12 @@ private extension VideoSectionView {
             videoIsNotSelectedTitle.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
             videoIsNotSelectedTitle.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
             videoIsNotSelectedTitle.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            videoIsNotSelectedTitle.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
+            videoIsNotSelectedTitle.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            
+            videoPlayerView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
+            videoPlayerView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
+            videoPlayerView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
+            videoPlayerView.heightAnchor.constraint(equalToConstant: videoPlayerHeight)
         ])
     }
 }
@@ -122,7 +146,7 @@ private extension VideoSectionView {
             withDuration: 1,
             delay: 0.0,
             usingSpringWithDamping: 1,
-            initialSpringVelocity: 0
+            initialSpringVelocity: 1
         ) {
             self.containerView.backgroundColor = oldBackgroundColor
         }
