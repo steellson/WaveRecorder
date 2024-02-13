@@ -25,7 +25,7 @@ protocol MainViewModel: InterfaceUpdatable, Searcher, Editor, Notifier, MainTabl
 //MARK: - Impl
 
 final class MainViewModelImpl: MainViewModel {
-    
+        
     var shouldUpdateInterface: ((Bool) async throws -> Void)?
     
     var numberOfItems: Int = 0

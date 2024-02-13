@@ -40,14 +40,17 @@ final class VideoSectionView: UIView {
     
     //MARK: Configure
     
-    func configureWith(emptyVideo isVideoEmpty: Bool) {
-        if isVideoEmpty {
+    func configureWith(videoThumbnail thumbnailImage: CGImage?) {
+        guard let cgImage = thumbnailImage else {
             videoIsNotSelectedTitle.isHidden = false
             videoPlayerView.isHidden = true
             animateContainerViewOnTap()
-        } else {
+            return
+        }
+        Task {
             videoIsNotSelectedTitle.isHidden = true
             videoPlayerView.isHidden = false
+            videoPlayerView.image = UIImage(cgImage: cgImage)
         }
     }
     

@@ -26,10 +26,6 @@ final class RedactorViewController: UIViewController {
     private let audioSectionView = AudioSectionView()
     private let videoSectionView = VideoSectionView()
     
-    private lazy var isVideoSelected: Bool = {
-        viewModel.videoRecordMetadata != nil
-    }()
-    
     private let viewModel: RedactorViewModel
 
     
@@ -115,7 +111,7 @@ private extension RedactorViewController {
     }
     
     func setupVideoSectionView() {
-        videoSectionView.configureWith(emptyVideo: !isVideoSelected)
+        videoSectionView.configureWith(videoThumbnail: viewModel.thumbnailImage)
         videoSectionView.configureAppereanceWith(
             backgroundColor: RColors.secondaryBackgroundWithAlpha,
             shadowColor: UIColor.black,
@@ -124,8 +120,8 @@ private extension RedactorViewController {
     }
     
     func setupUpdatingLayout() {
-        viewModel.shouldUpdateInterface = { [weak self] isVideoEmpty in
-            self?.videoSectionView.configureWith(emptyVideo: isVideoEmpty)
+        viewModel.shouldUpdateInterface = { [weak self] _ in
+            self?.videoSectionView.configureWith(videoThumbnail: self?.viewModel.thumbnailImage)
             self?.animateUpdatedLayout()
         }
     }
@@ -185,11 +181,9 @@ extension RedactorViewController: UIImagePickerControllerDelegate & UINavigation
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]
     ) {
-        guard 
-            let url = info[.mediaURL] as? URL
-        else {
+        guard let url = info[.mediaURL] as? URL else {
             picker.dismiss(animated: true)
-            videoSectionView.configureWith(emptyVideo: true)
+            videoSectionView.configureWith(videoThumbnail: viewModel.thumbnailImage)
             return
         }
        

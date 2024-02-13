@@ -7,6 +7,7 @@
 
 import Foundation
 import OSLog
+import CoreGraphics
 import WRAudio
 
 
@@ -19,6 +20,7 @@ typealias VideoRecordMetadata = (name: String, url: URL)
 protocol RedactorViewModel: InterfaceUpdatable {
     var audioRecordMetadata: AudioRecordMetadata { get }
     var videoRecordMetadata: VideoRecordMetadata? { get }
+    var thumbnailImage: CGImage? { get }
     
     func update(videoMetadata: VideoRecordMetadata) async throws
 }
@@ -32,6 +34,9 @@ final class RedactorViewModelImpl: RedactorViewModel {
     
     private(set) var audioRecordMetadata = AudioRecordMetadata(name: "", duration: "", date: "")
     private(set) var videoRecordMetadata: VideoRecordMetadata?
+    private(set) var thumbnailImage: CGImage?
+    
+    private let videoPlayer: VideoPlayer = VideoPlayerImpl() // should be imported
     
     private let audioRecord: AudioRecord
     private let helpers: HelpersStorage
@@ -61,6 +66,11 @@ private extension RedactorViewModelImpl {
             date: helpers.formatter.formatDate(audioRecord.date)
         )
     }
+    
+    
+    func getThumbnailImage(forUrl url: URL) throws {
+        self.thumbnailImage = try videoPlayer.getThumbnailImage(forUrl: url)
+    }
 }
 
 
@@ -70,6 +80,8 @@ extension RedactorViewModelImpl {
     
     func update(videoMetadata: VideoRecordMetadata) async throws {
         self.videoRecordMetadata = videoMetadata
+        try self.getThumbnailImage(forUrl: videoMetadata.url)
         try await self.shouldUpdateInterface?(false)
     }
+
 }
