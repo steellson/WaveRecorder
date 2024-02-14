@@ -71,7 +71,7 @@ extension AppCoordinator {
         self.navigationController.pushViewController(redactorViewController, animated: true)
     }
     
-    func showVideoPicker(forDelegate delegate: VideoPickerDelegate) {
+    func showVideoPicker(forDelegate delegate: UIImagePickerControllerDelegate & UINavigationControllerDelegate) {
         let picker = UIImagePickerController()
         picker.delegate = delegate
         picker.sourceType = .savedPhotosAlbum
