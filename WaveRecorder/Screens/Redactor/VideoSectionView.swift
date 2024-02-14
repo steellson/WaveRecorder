@@ -54,13 +54,13 @@ final class VideoSectionView: UIView {
     }
     
     func configureAppereanceWith(backgroundColor: UIColor, shadowColor: UIColor, videoPlayerHeight: CGFloat) {
-        self.setupContentView()
-        self.setupContainerView(
+        setupContentView()
+        setupContainerView(
             backgroundColor: backgroundColor,
             shadowColor: shadowColor
         )
-        self.setupVideoPlayerView(withHeight: videoPlayerHeight)
-        self.setupConstraints()
+        setupVideoPlayerView(withHeight: videoPlayerHeight)
+        setupConstraints()
     }
     
     @objc

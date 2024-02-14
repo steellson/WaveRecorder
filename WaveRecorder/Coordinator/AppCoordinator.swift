@@ -19,6 +19,7 @@ protocol Coordinator {
     
     func startWithMainView()
     func showRedactorView(withAudioRecord record: AudioRecord)
+    func showVideoPicker(forDelegate delegate: VideoPickerDelegate)
 }
 
 
@@ -61,11 +62,22 @@ extension AppCoordinator {
     func showRedactorView(withAudioRecord record: AudioRecord) {
         let redactorViewModel: RedactorViewModel = RedactorViewModelImpl(
             audioRecord: record,
-            helpers: helpersStorage
+            helpers: helpersStorage,
+            coordinator: self
         )
         let redactorViewController: RedactorViewController = RedactorViewController(
             viewModel: redactorViewModel
         )
         self.navigationController.pushViewController(redactorViewController, animated: true)
+    }
+    
+    func showVideoPicker(forDelegate delegate: VideoPickerDelegate) {
+        let picker = UIImagePickerController()
+        picker.delegate = delegate
+        picker.sourceType = .savedPhotosAlbum
+        picker.mediaTypes = ["public.movie"]
+        picker.allowsEditing = true
+        
+        self.navigationController.present(picker, animated: true)
     }
 }

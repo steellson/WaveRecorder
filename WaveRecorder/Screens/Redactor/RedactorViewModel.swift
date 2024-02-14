@@ -23,6 +23,7 @@ protocol RedactorViewModel: InterfaceUpdatable {
     var thumbnailImage: CGImage? { get }
     
     func update(videoMetadata: VideoRecordMetadata) async throws
+    func didSeletVideoButtonTapped(_ delegate: VideoPickerDelegate)
 }
 
 
@@ -40,16 +41,19 @@ final class RedactorViewModelImpl: RedactorViewModel {
     
     private let audioRecord: AudioRecord
     private let helpers: HelpersStorage
+    private let coordinator: AppCoordinator
     
     
     //MARK: Init
     
     init(
         audioRecord: AudioRecord,
-        helpers: HelpersStorage
+        helpers: HelpersStorage,
+        coordinator: AppCoordinator
     ) {
         self.audioRecord = audioRecord
         self.helpers = helpers
+        self.coordinator = coordinator
         
         loadRecordMetadata()
     }
@@ -84,4 +88,7 @@ extension RedactorViewModelImpl {
         try await self.shouldUpdateInterface?(false)
     }
 
+    func didSeletVideoButtonTapped(_ delegate: VideoPickerDelegate) {
+        coordinator.showVideoPicker(forDelegate: delegate)
+    }
 }

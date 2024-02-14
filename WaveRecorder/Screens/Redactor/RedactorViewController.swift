@@ -10,6 +10,8 @@ import UIKit
 import UIComponents
 import WRResources
 
+typealias VideoPickerDelegate = UIImagePickerControllerDelegate & UINavigationControllerDelegate
+
 
 //MARK: - Impl
 
@@ -61,17 +63,7 @@ final class RedactorViewController: UIViewController {
     
     @objc
     private func selectVideoButtonTapped() {
-//        isVideoSelected.toggle()
-//        videoSectionView.configureWith(emptyVideo: !isVideoSelected)
-        
-        Task {
-            let picker = UIImagePickerController()
-            picker.delegate = self
-            picker.sourceType = .savedPhotosAlbum
-            picker.mediaTypes = ["public.movie"]
-            picker.allowsEditing = false
-            present(picker, animated: true, completion: nil)
-        }
+        viewModel.didSeletVideoButtonTapped(self)
     }
 }
 
@@ -168,9 +160,9 @@ private extension RedactorViewController {
 }
 
 
-//MARK: - Picker & Navigation Delegate
+//MARK: - Video Picker Delegate
 
-extension RedactorViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+extension RedactorViewController: VideoPickerDelegate {
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true)
