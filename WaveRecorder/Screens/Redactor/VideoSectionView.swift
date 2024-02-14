@@ -8,7 +8,6 @@
 import UIKit
 import UIComponents
 import WRResources
-import AVKit
 
 
 //MARK: - Impl
