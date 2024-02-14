@@ -7,7 +7,6 @@
 
 import OSLog
 import UIKit
-import Photos
 import UIComponents
 import WRResources
 

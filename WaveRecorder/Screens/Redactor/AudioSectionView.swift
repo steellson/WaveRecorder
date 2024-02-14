@@ -134,8 +134,8 @@ private extension AudioSectionView {
         containerStackView.backgroundColor = .systemGreen.withAlphaComponent(0.3)
         
         UIView.animate(
-            withDuration: 1,
-            delay: 0.0,
+            withDuration: 0.5,
+            delay: 0.1,
             usingSpringWithDamping: 1,
             initialSpringVelocity: 0
         ) {
