@@ -17,7 +17,7 @@ final class VideoSectionView: UIView {
     
     private let contentView = UIView()
     private let containerView = UIView()
-    private let videoPlayerView = UIImageView()
+    private let videoPlayerView = UIView()
     
     //MARK: Variables
     
@@ -42,10 +42,7 @@ final class VideoSectionView: UIView {
     //MARK: Configure
     
     func configureWith(videoMetadata: VideoRecordMetadata?) {
-        guard 
-            let videoMetadata,
-            let cgImage = videoMetadata.thumbnailImage
-        else {
+        guard let videoMetadata else {
             videoIsNotSelectedTitle.isHidden = false
             videoPlayerView.isHidden = true
             animateContainerViewOnTap()
@@ -54,7 +51,6 @@ final class VideoSectionView: UIView {
         Task {
             videoIsNotSelectedTitle.isHidden = true
             videoPlayerView.isHidden = false
-            videoPlayerView.image = UIImage(cgImage: cgImage)
             setupVideoPlayer(withURL: videoMetadata.url)
         }
     }
@@ -73,6 +69,19 @@ final class VideoSectionView: UIView {
     private func contanierViewDidTapped() {
         guard !videoIsNotSelectedTitle.isHidden else { return }
         animateContainerViewOnTap()
+    }
+    
+    @objc
+    private func videoPlayerViewDidTapped() {
+        switch videoPlayer.timeControlStatus {
+        case .paused:
+            videoPlayer.play()
+        case .waitingToPlayAtSpecifiedRate:
+            videoPlayer.play()
+        case .playing:
+            videoPlayer.pause()
+        @unknown default: return
+        }
     }
 }
 
@@ -100,18 +109,24 @@ private extension VideoSectionView {
         containerView.addNewSubview(videoIsNotSelectedTitle)
         containerView.addNewSubview(videoPlayerView)
         
-        let tapGesture = UITapGestureRecognizer(
+        setTapGesture(
+            toView: containerView,
             target: self,
             action: #selector(contanierViewDidTapped)
         )
-        containerView.addGestureRecognizer(tapGesture)
     }
     
     func setupVideoPlayerView(withHeight height: CGFloat) {
         videoPlayerHeight = height
-        videoPlayerView.backgroundColor = .darkGray
+        videoPlayerView.backgroundColor = .clear
         videoPlayerView.layer.cornerRadius = 6
         videoPlayerView.contentMode = .scaleAspectFit
+        
+        setTapGesture(
+            toView: videoPlayerView,
+            target: self,
+            action: #selector(videoPlayerViewDidTapped)
+        )
     }
     
     func setupVideoPlayer(withURL url: URL) {

@@ -99,11 +99,11 @@ private extension AudioSectionView {
         let subviews = [recordTitleLabel, recordDateLabel, recordDurationLabel]
         subviews.forEach { self.containerStackView.addArrangedSubview($0) }
         
-        let tapGesture = UITapGestureRecognizer(
+        setTapGesture(
+            toView: containerStackView,
             target: self,
             action: #selector(containerStackViewDidTapped)
         )
-        containerStackView.addGestureRecognizer(tapGesture)
     }
     
     func setupConstraints() {

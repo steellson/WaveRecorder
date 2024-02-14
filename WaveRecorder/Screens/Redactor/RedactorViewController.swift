@@ -182,8 +182,7 @@ extension RedactorViewController: VideoPickerDelegate {
         Task {
             try await viewModel.update(videoMetadata: VideoRecordMetadata(
                 name: url.lastPathComponent,
-                url: url,
-                thumbnailImage: nil
+                url: url
             ))
             picker.dismiss(animated: true)
         }

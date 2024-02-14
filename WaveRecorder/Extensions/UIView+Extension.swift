@@ -26,4 +26,13 @@ public extension UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
         addSubview(view)
     }
+    
+    //MARK: Convenience adding tap gestures
+    func setTapGesture(toView view: UIView, target: Any?, action: Selector) {
+        let tapGesture = UITapGestureRecognizer(
+            target: target,
+            action: action
+        )
+        view.addGestureRecognizer(tapGesture)
+    }
 }
