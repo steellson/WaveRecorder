@@ -12,7 +12,7 @@ import WRAudio
 
 
 typealias AudioRecordMetadata = (name: String, duration: String, date: String)
-typealias VideoRecordMetadata = (name: String, url: URL)
+typealias VideoRecordMetadata = (name: String, url: URL, thumbnailImage: CGImage?)
 
 
 //MARK: - Protocol
@@ -20,7 +20,6 @@ typealias VideoRecordMetadata = (name: String, url: URL)
 protocol RedactorViewModel: InterfaceUpdatable {
     var audioRecordMetadata: AudioRecordMetadata { get }
     var videoRecordMetadata: VideoRecordMetadata? { get }
-    var thumbnailImage: CGImage? { get }
     
     func update(videoMetadata: VideoRecordMetadata) async throws
     func didSeletVideoButtonTapped(_ delegate: VideoPickerDelegate)
@@ -35,7 +34,6 @@ final class RedactorViewModelImpl: RedactorViewModel {
     
     private(set) var audioRecordMetadata = AudioRecordMetadata(name: "", duration: "", date: "")
     private(set) var videoRecordMetadata: VideoRecordMetadata?
-    private(set) var thumbnailImage: CGImage?
     
     private let videoPlayer: VideoPlayer = VideoPlayerImpl() // should be imported
     
@@ -72,8 +70,8 @@ private extension RedactorViewModelImpl {
     }
     
     
-    func getThumbnailImage(forUrl url: URL) throws {
-        self.thumbnailImage = try videoPlayer.getThumbnailImage(forUrl: url)
+    func getThumbnailImage(forUrl url: URL) throws -> CGImage? {
+        try videoPlayer.getThumbnailImage(forUrl: url)
     }
 }
 
@@ -83,8 +81,15 @@ private extension RedactorViewModelImpl {
 extension RedactorViewModelImpl {
     
     func update(videoMetadata: VideoRecordMetadata) async throws {
-        self.videoRecordMetadata = videoMetadata
-        try self.getThumbnailImage(forUrl: videoMetadata.url)
+        let videoURL = videoMetadata.url
+        let thumbnailImage = try self.getThumbnailImage(forUrl: videoMetadata.url)
+        let videoMetadataSnapshot = VideoRecordMetadata(
+            name: videoMetadata.name,
+            url: videoURL,
+            thumbnailImage: thumbnailImage
+        )
+        
+        self.videoRecordMetadata = videoMetadataSnapshot
         try await self.shouldUpdateInterface?(false)
     }
 

@@ -102,7 +102,7 @@ private extension RedactorViewController {
     }
     
     func setupVideoSectionView() {
-        videoSectionView.configureWith(videoThumbnail: viewModel.thumbnailImage)
+        videoSectionView.configureWith(videoMetadata: viewModel.videoRecordMetadata)
         videoSectionView.configureAppereanceWith(
             backgroundColor: RColors.secondaryBackgroundWithAlpha,
             shadowColor: UIColor.black,
@@ -112,7 +112,8 @@ private extension RedactorViewController {
     
     func setupUpdatingLayout() {
         viewModel.shouldUpdateInterface = { [weak self] _ in
-            self?.videoSectionView.configureWith(videoThumbnail: self?.viewModel.thumbnailImage)
+            let videoMetadataSnapshot = self?.viewModel.videoRecordMetadata
+            self?.videoSectionView.configureWith(videoMetadata: videoMetadataSnapshot)
             self?.animateUpdatedLayout()
         }
     }
@@ -174,12 +175,16 @@ extension RedactorViewController: VideoPickerDelegate {
     ) {
         guard let url = info[.mediaURL] as? URL else {
             picker.dismiss(animated: true)
-            videoSectionView.configureWith(videoThumbnail: viewModel.thumbnailImage)
+            videoSectionView.configureWith(videoMetadata: viewModel.videoRecordMetadata)
             return
         }
        
         Task {
-            try await viewModel.update(videoMetadata: VideoRecordMetadata(name: url.lastPathComponent, url: url))
+            try await viewModel.update(videoMetadata: VideoRecordMetadata(
+                name: url.lastPathComponent,
+                url: url,
+                thumbnailImage: nil
+            ))
             picker.dismiss(animated: true)
         }
     }

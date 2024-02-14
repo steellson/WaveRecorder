@@ -5,6 +5,7 @@
 //  Created by Andrew Steellson on 13.02.2024.
 //
 
+import AVFoundation
 import UIKit
 import UIComponents
 import WRResources
@@ -34,13 +35,17 @@ final class VideoSectionView: UIView {
         alignment: .center
     )
     
+    private var videoPlayer = AVPlayer()
     private var videoPlayerHeight: CGFloat = 100.0
 
     
     //MARK: Configure
     
-    func configureWith(videoThumbnail thumbnailImage: CGImage?) {
-        guard let cgImage = thumbnailImage else {
+    func configureWith(videoMetadata: VideoRecordMetadata?) {
+        guard 
+            let videoMetadata,
+            let cgImage = videoMetadata.thumbnailImage
+        else {
             videoIsNotSelectedTitle.isHidden = false
             videoPlayerView.isHidden = true
             animateContainerViewOnTap()
@@ -50,6 +55,7 @@ final class VideoSectionView: UIView {
             videoIsNotSelectedTitle.isHidden = true
             videoPlayerView.isHidden = false
             videoPlayerView.image = UIImage(cgImage: cgImage)
+            setupVideoPlayer(withURL: videoMetadata.url)
         }
     }
     
@@ -106,6 +112,15 @@ private extension VideoSectionView {
         videoPlayerView.backgroundColor = .darkGray
         videoPlayerView.layer.cornerRadius = 6
         videoPlayerView.contentMode = .scaleAspectFit
+    }
+    
+    func setupVideoPlayer(withURL url: URL) {
+        self.videoPlayer = AVPlayer(url: url)
+        
+        let playerLayer = AVPlayerLayer(player: videoPlayer)
+        playerLayer.frame = videoPlayerView.bounds
+        
+        videoPlayerView.layer.addSublayer(playerLayer)
     }
     
     func setupConstraints() {
