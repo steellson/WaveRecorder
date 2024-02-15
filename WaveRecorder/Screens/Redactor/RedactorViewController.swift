@@ -142,7 +142,7 @@ private extension RedactorViewController {
     }
 }
 
-//MARK: Animation
+//MARK: - Animation
 
 private extension RedactorViewController {
     

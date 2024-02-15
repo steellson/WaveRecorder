@@ -5,7 +5,6 @@
 //  Created by Andrew Steellson on 28.11.2023.
 //
 
-import Foundation
 import OSLog
 import UIKit
 import UIComponents

@@ -5,7 +5,6 @@
 //  Created by Andrew Steellson on 12.02.2024.
 //
 
-import Foundation
 import UIKit
 
 //MARK: - Impl
