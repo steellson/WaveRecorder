@@ -11,10 +11,16 @@ import OSLog
 
 //MARK: - Protocol
 
-protocol AudioMetadataManager: AnyObject {
+public protocol AudioMetadataManager: AnyObject {
     func loadMetadataList() async throws -> [AudioMetadata]
     func rewrite(url: URL, withNewPath newName: String) -> Bool
     func destroyFile(withURL url: URL) -> Bool
+}
+
+//MARK: - Error
+
+public enum AudioMetadataManagerError: Error {
+    case cantDecodeMetadata
 }
 
 
@@ -60,7 +66,7 @@ private extension AudioMetadataManagerImpl {
       
                 guard let date = dateValue as? Date else {
                     os_log("ERROR: Cant parse asset Date!")
-                    throw AudioRepositoryError.cantDecodeMetadata
+                    throw AudioMetadataManagerError.cantDecodeMetadata
                 }
                 
                 return SecondaryAudioData(
@@ -71,7 +77,7 @@ private extension AudioMetadataManagerImpl {
             }
         } catch {
             os_log("ERROR: Something went wrong! Asset couldnt be parsed")
-            throw AudioRepositoryError.cantDecodeMetadata
+            throw AudioMetadataManagerError.cantDecodeMetadata
         }
     }
 }
@@ -81,7 +87,7 @@ private extension AudioMetadataManagerImpl {
 
 extension AudioMetadataManagerImpl {
     
-    func loadMetadataList() async throws -> [AudioMetadata] {
+    public func loadMetadataList() async throws -> [AudioMetadata] {
         let urls = loadListOfUrls()
         let assets = urls.compactMap { AVAsset(url: $0) }
         

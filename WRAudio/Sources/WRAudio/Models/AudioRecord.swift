@@ -51,23 +51,3 @@ extension AudioRecord: Hashable {
         lhs.id == rhs.id
     }
 }
-
-
-//MARK: - Metadata
-
-public struct PrimaryAudioData {
-    public let name: String
-    public let format: String
-}
-
-public struct SecondaryAudioData {
-    public let date: Date
-    public let duration: TimeInterval
-    public let url: URL
-}
-
-public struct AudioMetadata {
-    public let primary: PrimaryAudioData
-    public let secondary: SecondaryAudioData
-}
-

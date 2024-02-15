@@ -25,7 +25,6 @@ public enum AudioRepositoryError: Error {
     case cantFetchRecords
     case cantFetchRecord
     case cantDecodeRecord
-    case cantDecodeMetadata
     case cantRenameRecord
     case cantDeleteRecord
     case cantHandleFormat
