@@ -11,7 +11,7 @@ import WRAudio
 
 
 typealias AudioRecordMetadata = (name: String, duration: String, date: String)
-typealias VideoRecordMetadata = (name: String, url: URL)
+typealias VideoRecordMetadata = (name: String, url: URL, frames: [VideoFrame]?)
 
 
 //MARK: - Protocol
@@ -37,6 +37,8 @@ final class RedactorViewModelImpl: RedactorViewModel {
     private let audioRecord: AudioRecord
     private let helpers: HelpersStorage
     private let coordinator: AppCoordinator
+    
+    private let videoFrameGenerator: any VideoFrameGenerator = VideoFrameGeneratorImpl()
     
     
     //MARK: Init
@@ -73,7 +75,13 @@ private extension RedactorViewModelImpl {
 extension RedactorViewModelImpl {
     
     func update(videoMetadata: VideoRecordMetadata) async throws {
-        self.videoRecordMetadata = videoMetadata
+        let frames = try await videoFrameGenerator.getAllFrames(forVideoWithUrl: videoMetadata.url)
+        let videoMetadataSnapshop = VideoRecordMetadata(
+            name: videoMetadata.name,
+            url: videoMetadata.url,
+            frames: frames
+        )
+        self.videoRecordMetadata = videoMetadataSnapshop
         try await self.shouldUpdateInterface?(false)
     }
 

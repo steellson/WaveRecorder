@@ -35,9 +35,12 @@ final class VideoSectionView: UIView {
         alignment: .center
     )
     
+    private lazy var videoTimelineView = VideoTimelineView()
+    private var videoTimelineViewHeight = 40.0
+    
     private var videoPlayer = AVPlayer()
     private var videoPlayerHeight: CGFloat = 100.0
-
+    
     
     //MARK: Configure
     
@@ -52,6 +55,7 @@ final class VideoSectionView: UIView {
             videoIsNotSelectedTitle.isHidden = true
             videoPlayerView.isHidden = false
             setupVideoPlayer(withURL: videoMetadata.url)
+            videoTimelineView.configure(withFrames: videoMetadata.frames)
         }
     }
     
@@ -121,6 +125,7 @@ private extension VideoSectionView {
         videoPlayerView.backgroundColor = .clear
         videoPlayerView.layer.cornerRadius = 6
         videoPlayerView.contentMode = .scaleAspectFit
+        videoPlayerView.addNewSubview(videoTimelineView)
         
         setTapGesture(
             toView: videoPlayerView,
@@ -162,7 +167,12 @@ private extension VideoSectionView {
             videoPlayerView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
             videoPlayerView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
             videoPlayerView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
-            videoPlayerView.heightAnchor.constraint(equalToConstant: videoPlayerHeight)
+            videoPlayerView.heightAnchor.constraint(equalToConstant: videoPlayerHeight),
+            
+            videoTimelineView.leadingAnchor.constraint(equalTo: videoPlayerView.leadingAnchor),
+            videoTimelineView.trailingAnchor.constraint(equalTo: videoPlayerView.trailingAnchor),
+            videoTimelineView.bottomAnchor.constraint(equalTo: videoPlayerView.bottomAnchor),
+            videoTimelineView.heightAnchor.constraint(equalToConstant: videoTimelineViewHeight)
         ])
     }
 }
