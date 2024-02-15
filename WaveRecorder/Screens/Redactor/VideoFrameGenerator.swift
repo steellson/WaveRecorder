@@ -29,10 +29,16 @@ enum VideoFrameGeneratorError: Error {
 //MARK: - Impl
 
 final class VideoFrameGeneratorImpl: VideoFrameGenerator {
-        
+    
+    private var prefferedTimesacle: Int32 = 600
     private var generator: AVAssetImageGenerator?
     private var frames = [VideoFrame]()
-
+    
+    init(
+        prefferedTimesacle: Int32 = 600
+    ) {
+        self.prefferedTimesacle = prefferedTimesacle
+    }
 }
 
 //MARK: - Public
@@ -66,7 +72,7 @@ extension VideoFrameGeneratorImpl {
 private extension VideoFrameGeneratorImpl {
     
     func getFrame(fromSecond second: Double) throws -> CGImage {
-       let time = CMTimeMakeWithSeconds(second, preferredTimescale: 600)
+       let time = CMTimeMakeWithSeconds(second, preferredTimescale: prefferedTimesacle)
        
        do {
            guard
