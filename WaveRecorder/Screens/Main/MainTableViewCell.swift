@@ -14,7 +14,7 @@ import WRResources
 
 final class MainTableViewCell:  UITableViewCell {
     
-    static let cellIdentifier = RIdentifiers.cellIdentifier
+    static let cellIdentifier = WRIdentifiers.cellIdentifier
     
     //MARK: Variables
     
@@ -50,7 +50,7 @@ private extension MainTableViewCell {
     func setupContentView() {
         selectionStyle = .gray
         contentView.clipsToBounds = true
-        contentView.backgroundColor = RColors.secondaryBackgroundColor
+        contentView.backgroundColor = WRColors.secondaryBackgroundColor
         
         setupSubviews()
     }

@@ -86,7 +86,7 @@ extension MainTableView: UITableViewDataSource {
             let viewModel,
             viewModel.numberOfItems > 0
         else {
-            os_log("\(RErrors.cantDequeReusableCell)")
+            os_log("\(WRErrors.cantDequeReusableCell)")
             return UITableViewCell()
         }
         

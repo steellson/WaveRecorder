@@ -22,7 +22,7 @@ final class EditView: UIView {
     private lazy var titleLabelField: UITextField = {
         let field = UITextField()
         field.font = .systemFont(ofSize: 18, weight: .semibold)
-        field.backgroundColor = RColors.secondaryBackgroundColor
+        field.backgroundColor = WRColors.secondaryBackgroundColor
         field.autocapitalizationType = .none
         field.autocorrectionType = .no
         field.keyboardType = .asciiCapable
@@ -51,10 +51,10 @@ final class EditView: UIView {
     private lazy var addToVideoButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = .gray
-        button.setTitle(RTitles.addToVideoButtonTitle, for: .normal)
+        button.setTitle(WRTitles.addToVideoButtonTitle, for: .normal)
         button.titleLabel?.font =  .systemFont(ofSize: 16, weight: .light)
         button.titleLabel?.textAlignment = .right
-        button.titleLabel?.backgroundColor = RColors.secondaryBackgroundColor
+        button.titleLabel?.backgroundColor = WRColors.secondaryBackgroundColor
         button.addTarget(self, action: #selector(addToVideoButtonTapped), for: .touchUpInside)
         return button
     }()
@@ -86,7 +86,7 @@ final class EditView: UIView {
     @objc
     private func renameButtonDidTapped() {
         guard let viewModel else {
-            os_log("\(RErrors.editViewModelIsNotSetted)")
+            os_log("\(WRErrors.editViewModelIsNotSetted)")
             return
         }
         viewModel.switchEditing()
@@ -98,7 +98,7 @@ final class EditView: UIView {
     @objc
     private func addToVideoButtonTapped() {
         guard let viewModel else {
-            os_log("\(RErrors.editViewModelIsNotSetted)")
+            os_log("\(WRErrors.editViewModelIsNotSetted)")
             return
         }
         viewModel.addToVideoButtonTapped()
@@ -150,7 +150,7 @@ private extension EditView {
     
     func setupSubviewsAnimated() {
         guard let viewModel else {
-            os_log("\(RErrors.editViewModelIsNotSetted)")
+            os_log("\(WRErrors.editViewModelIsNotSetted)")
             return
         }
         UIView.animate(withDuration: 0.3) {
@@ -180,10 +180,10 @@ private extension EditView {
         UIView.animate(withDuration: 0.2) {
             if isEditing {
                 self.titleLabelField.becomeFirstResponder()
-                self.titleLabelField.backgroundColor = RColors.primaryBackgroundColor.withAlphaComponent(0.3)
+                self.titleLabelField.backgroundColor = WRColors.primaryBackgroundColor.withAlphaComponent(0.3)
             } else {
                 self.titleLabelField.resignFirstResponder()
-                self.titleLabelField.backgroundColor = RColors.secondaryBackgroundColor
+                self.titleLabelField.backgroundColor = WRColors.secondaryBackgroundColor
             }
         }
     }

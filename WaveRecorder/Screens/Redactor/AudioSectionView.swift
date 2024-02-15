@@ -18,7 +18,7 @@ final class AudioSectionView: UIView {
     private let containerStackView = UIStackView()
     
     private let audioSectionTitleLabel = TitleLabelView(
-        text: RTitles.audioRecordTitleLabel,
+        text: WRTitles.audioRecordTitleLabel,
         tColor: .black,
         font: .systemFont(ofSize: 20, weight: .bold),
         alignment: .left

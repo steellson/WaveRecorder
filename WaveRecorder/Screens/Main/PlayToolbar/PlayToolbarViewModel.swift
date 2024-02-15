@@ -79,7 +79,7 @@ extension PlayToolbarViewModelImpl {
     
     func play(atTime time: Float, animation: @escaping () -> Void) throws {
         guard !isPlaying else {
-            os_log("\(RErrors.audioIsAlreadyPlaying)")
+            os_log("\(WRErrors.audioIsAlreadyPlaying)")
             return
         }
         

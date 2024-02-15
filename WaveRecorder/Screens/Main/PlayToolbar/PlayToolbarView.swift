@@ -111,7 +111,7 @@ private extension PlayToolbarView {
     
     private func setupButtonActions(withSender sender: PlayTolbarButton) {
         guard let viewModel else {
-            os_log("\(RErrors.playViewModelIsNotSetted)")
+            os_log("\(WRErrors.playViewModelIsNotSetted)")
             return
         }
         
@@ -129,7 +129,7 @@ private extension PlayToolbarView {
                 reset()
             }
         } catch {
-            os_log("\(RErrors.playButtonsActionCorrupted)")
+            os_log("\(WRErrors.playButtonsActionCorrupted)")
             reset()
         }
     }
@@ -184,7 +184,7 @@ private extension PlayToolbarView {
     
     func animateLabels() {
         guard let viewModel else {
-            os_log("\(RErrors.playViewModelIsNotSetted)")
+            os_log("\(WRErrors.playViewModelIsNotSetted)")
             return
         }
         UIView.animate(withDuration: 0.1) {
@@ -196,7 +196,7 @@ private extension PlayToolbarView {
     
     func setupSubviewsAnimated() {
         guard let viewModel else {
-            os_log("\(RErrors.playViewModelIsNotSetted)")
+            os_log("\(WRErrors.playViewModelIsNotSetted)")
             return
         }
         UIView.animate(withDuration: 0.5) {

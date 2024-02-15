@@ -18,7 +18,7 @@ typealias VideoPickerDelegate = UIImagePickerControllerDelegate & UINavigationCo
 final class RedactorViewController: UIViewController {
         
     private let titleLabel = TitleLabelView(
-        text: RTitles.redactorMainTite,
+        text: WRTitles.redactorMainTite,
         tColor: .darkGray,
         font: .systemFont(ofSize: 30, weight: .bold),
         alignment: .center
@@ -75,7 +75,7 @@ private extension RedactorViewController {
     func seutpNavigationBar() {
         navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem()
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: RTitles.selectVideo,
+            title: WRTitles.selectVideo,
             style: .plain,
             target: self,
             action: #selector(selectVideoButtonTapped)
@@ -83,7 +83,7 @@ private extension RedactorViewController {
     }
     
     func setupContentView() {
-        view.backgroundColor = RColors.primaryBackgroundColor
+        view.backgroundColor = WRColors.primaryBackgroundColor
         view.addNewSubview(titleLabel)
         view.addNewSubview(audioSectionView)
         view.addNewSubview(videoSectionView)
@@ -96,7 +96,7 @@ private extension RedactorViewController {
             duration: viewModel.audioRecordMetadata.duration
         )
         audioSectionView.configureAppereanceWith(
-            backgroundColor: RColors.secondaryBackgroundWithAlpha,
+            backgroundColor: WRColors.secondaryBackgroundWithAlpha,
             shadowColor: UIColor.black
         )
     }
@@ -104,7 +104,7 @@ private extension RedactorViewController {
     func setupVideoSectionView() {
         videoSectionView.configureWith(videoMetadata: viewModel.videoRecordMetadata)
         videoSectionView.configureAppereanceWith(
-            backgroundColor: RColors.secondaryBackgroundWithAlpha,
+            backgroundColor: WRColors.secondaryBackgroundWithAlpha,
             shadowColor: UIColor.black,
             videoPlayerHeight: 300
         )

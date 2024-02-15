@@ -103,7 +103,7 @@ extension MainViewModelImpl {
             
             try await self.shouldUpdateInterface?(false)
         } catch {
-            os_log("\(RErrors.cantGetRecordsFromStorage + " \(error)")")
+            os_log("\(WRErrors.cantGetRecordsFromStorage + " \(error)")")
         }
     }
 
@@ -115,7 +115,7 @@ extension MainViewModelImpl {
             let searchedRecords = try await audioRepository.search(withText: text)
             
             guard searchedRecords.count > 0 else {
-                os_log("\(RLogs.searchedRecordsEmpty)")
+                os_log("\(WRLogs.searchedRecordsEmpty)")
                 try await self.updateData()
                 return
             }
@@ -124,7 +124,7 @@ extension MainViewModelImpl {
             self.numberOfItems = records.count
             try await self.shouldUpdateInterface?(false)
         } catch {
-            os_log("\(RErrors.cantSearchRecordsWithText + text + " \(error)")")
+            os_log("\(WRErrors.cantSearchRecordsWithText + text + " \(error)")")
         }
     }
 }
@@ -142,7 +142,7 @@ extension MainViewModelImpl {
             )
             try await self.updateData()
         } catch {
-            os_log("\(RErrors.cantRenameRecord + " \(error)")")
+            os_log("\(WRErrors.cantRenameRecord + " \(error)")")
         }
     }
 
@@ -152,9 +152,9 @@ extension MainViewModelImpl {
             try await audioRepository.delete(record: record)
             try await self.updateData()
             
-            os_log("\(RLogs.recordDeleted + record.name)")
+            os_log("\(WRLogs.recordDeleted + record.name)")
         } catch {
-            os_log("\(RErrors.cantDeleteRecordWithName + record.name + " \(error)")")
+            os_log("\(WRErrors.cantDeleteRecordWithName + record.name + " \(error)")")
         }
     }
     
@@ -175,7 +175,7 @@ extension MainViewModelImpl {
         guard 
             let recievedFrom = from
         else {
-            os_log("\(RErrors.notificationCouldntBeActivated)")
+            os_log("\(WRErrors.notificationCouldntBeActivated)")
             return
         }
         
@@ -192,7 +192,7 @@ extension MainViewModelImpl {
         guard 
             let recievedFrom = from
         else {
-            os_log("\(RErrors.notificationCouldntBeRemoved)")
+            os_log("\(WRErrors.notificationCouldntBeRemoved)")
             return
         }
         

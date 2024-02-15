@@ -19,14 +19,14 @@ final class MainViewController: UIViewController {
     private let editButton = UIBarButtonItem()
     
     private let titleLabel = TitleLabelView(
-        text: RTitles.navigationTitleMain,
+        text: WRTitles.navigationTitleMain,
         tColor: .black,
         font: .systemFont(ofSize: 26, weight: .bold),
         alignment: .left
     )
     
     private let searchController = WRSearchController(
-        placeholderText: RTitles.searchTextFieldPlaceholder
+        placeholderText: WRTitles.searchTextFieldPlaceholder
     )
     
     private let tableView = MainTableView(
@@ -116,13 +116,13 @@ private extension MainViewController {
     }
     
     func setupContentView() {
-        view.backgroundColor = RColors.primaryBackgroundColor
+        view.backgroundColor = WRColors.primaryBackgroundColor
         view.addNewSubview(recordBarView)
         view.addNewSubview(tableView)
     }
     
     func setupEditButton() {
-        editButton.title = RTitles.editButtonTitle
+        editButton.title = WRTitles.editButtonTitle
         editButton.tintColor = .black
         editButton.target = self
         editButton.action = #selector(editButtonDidTapped)
@@ -212,8 +212,8 @@ private extension MainViewController {
             self.tableView.isEditing.toggle()
             
             self.editButton.title = self.tableView.isEditing
-            ? RTitles.stopEditButtonTitle
-            : RTitles.editButtonTitle
+            ? WRTitles.stopEditButtonTitle
+            : WRTitles.editButtonTitle
         }
     }
     
