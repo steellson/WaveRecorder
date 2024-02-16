@@ -19,7 +19,7 @@ final class RedactorViewController: UIViewController {
         
     private let titleLabel = TitleLabelView(
         text: WRTitles.redactorMainTite,
-        tColor: .black,
+        tColor: WRColors.primaryText,
         font: .systemFont(ofSize: 22, weight: .bold),
         alignment: .center
     )
@@ -83,7 +83,7 @@ private extension RedactorViewController {
     }
     
     func setupContentView() {
-        view.backgroundColor = WRColors.primaryBackgroundColor
+        view.backgroundColor = WRColors.primaryBackground
         view.addNewSubview(titleLabel)
         view.addNewSubview(audioSectionView)
         view.addNewSubview(videoSectionView)
@@ -96,16 +96,16 @@ private extension RedactorViewController {
             duration: viewModel.audioRecordMetadata.duration
         )
         audioSectionView.configureAppereanceWith(
-            backgroundColor: WRColors.secondaryBackgroundWithAlpha,
-            shadowColor: UIColor.black
+            backgroundColor: WRColors.secondaryBackgroundWithHighAlpha,
+            shadowColor: WRColors.commonShadow
         )
     }
     
     func setupVideoSectionView() {
         videoSectionView.configureWith(videoMetadata: viewModel.videoRecordMetadata)
         videoSectionView.configureAppereanceWith(
-            backgroundColor: WRColors.secondaryBackgroundWithAlpha,
-            shadowColor: UIColor.black,
+            backgroundColor: WRColors.secondaryBackgroundWithHighAlpha,
+            shadowColor: WRColors.commonShadow,
             videoPlayerHeight: 300
         )
     }

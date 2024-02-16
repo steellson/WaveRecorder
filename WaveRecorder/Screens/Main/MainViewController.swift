@@ -116,14 +116,14 @@ private extension MainViewController {
     }
     
     func setupContentView() {
-        view.backgroundColor = WRColors.primaryBackgroundColor
+        view.backgroundColor = WRColors.primaryBackground
         view.addNewSubview(recordBarView)
         view.addNewSubview(tableView)
     }
     
     func setupEditButton() {
         editButton.title = WRTitles.editButtonTitle
-        editButton.tintColor = .black
+        editButton.tintColor = WRColors.primaryText
         editButton.target = self
         editButton.action = #selector(editButtonDidTapped)
         editButton.isHidden = viewModel.numberOfItems == 0

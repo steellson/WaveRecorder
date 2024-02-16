@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     
-    private let navigationController = WRNavigationController(backgroundColor: WRColors.primaryBackgroundColor)
+    private let navigationController = WRNavigationController(backgroundColor: WRColors.primaryBackground)
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }

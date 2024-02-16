@@ -15,7 +15,7 @@ final class RecordBarView: UIView {
     
     private let viewModel: RecordViewModel
     
-    private let recordVisualizerView = RecordVisualizerView(backgroundColor: WRColors.primaryBackgroundColor)
+    private let recordVisualizerView = RecordVisualizerView(backgroundColor: WRColors.primaryBackground)
     private let recordWaveView = RecordWaveView()
     
     private let buttonRadius: CGFloat = 30
@@ -50,7 +50,7 @@ final class RecordBarView: UIView {
 private extension RecordBarView {
     
     func seutupContentView() {
-        backgroundColor = WRColors.primaryBackgroundColor
+        backgroundColor = WRColors.primaryBackground
         addNewSubview(recordButtonView)
     }
     
@@ -59,7 +59,7 @@ private extension RecordBarView {
             numbreOfColumns: 20,
             duration: 0.5,
             rate: 0.2,
-            color: WRColors.secondaryBackgroundColor.withAlphaComponent(0.3)
+            color: WRColors.secondaryBackgroundWithLowAlpha
         )
         recordVisualizerView.clipsToBounds = true
         addNewSubview(recordVisualizerView)
@@ -79,7 +79,7 @@ private extension RecordBarView {
             direction: .right,
             speed: 20,
             waveWidth: 2,
-            color: .systemRed
+            color: WRColors.recoridngWaveLine
         )
         recordWaveView.clipsToBounds = true
         addNewSubview(recordWaveView)

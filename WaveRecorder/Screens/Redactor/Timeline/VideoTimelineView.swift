@@ -64,7 +64,7 @@ final class VideoTimelineView: UIView {
             let frames,
             !frames.isEmpty
         else {
-            os_log("ATTENTION: VideoTimelineView configured with empty video frames!")
+            os_log("ATTENTION <VideoTimelineView>: View configured with empty video frames!")
             return
         }
         

@@ -21,20 +21,20 @@ final class PlayToolbarView: UIView {
     
     private let progressSlider: UISlider = {
         let slider = UISlider()
-        slider.tintColor = .darkGray
+        slider.tintColor = WRColors.secondaryText
         slider.setThumbImage(UIImage(systemName: "circle.fill"), for: .normal)
         return slider
     }()
     
     private let startTimeLabel = TitleLabelView(
         text: "",
-        tColor: .black,
+        tColor: WRColors.primaryText,
         font: .systemFont(ofSize: 14, weight: .light)
     )
     
     private let endTimeLabel = TitleLabelView(
         text: "",
-        tColor: .black,
+        tColor: WRColors.primaryText,
         font: .systemFont(ofSize: 14, weight: .light)
     )
     

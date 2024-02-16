@@ -19,7 +19,7 @@ final class AudioSectionView: UIView {
     
     private let audioSectionTitleLabel = TitleLabelView(
         text: WRTitles.audioRecordTitleLabel,
-        tColor: .darkGray,
+        tColor: WRColors.secondaryText,
         font: .systemFont(ofSize: 18, weight: .bold),
         alignment: .left
     )
@@ -28,21 +28,21 @@ final class AudioSectionView: UIView {
     
     private lazy var recordTitleLabel = TitleLabelView(
         text: "",
-        tColor: .black,
+        tColor: WRColors.primaryText,
         font: .systemFont(ofSize: 16, weight: .medium),
         alignment: .left
     )
     
     private lazy var recordDateLabel = TitleLabelView(
         text: "",
-        tColor: .darkGray,
+        tColor: WRColors.secondaryText,
         font: .systemFont(ofSize: 14, weight: .medium),
         alignment: .left
     )
     
     private lazy var recordDurationLabel = TitleLabelView(
         text: "",
-        tColor: .gray,
+        tColor: WRColors.liteText,
         font: .systemFont(ofSize: 14, weight: .light),
         alignment: .left
     )
@@ -81,8 +81,8 @@ private extension AudioSectionView {
         contentView.addNewSubview(audioSectionTitleLabel)
         contentView.addNewSubview(containerStackView)
         
-        backgroundColor = .clear
-        contentView.backgroundColor = .clear
+        backgroundColor = WRColors.clear
+        contentView.backgroundColor = WRColors.clear
     }
     
     func setupRecordSectionStackView() {
@@ -131,7 +131,7 @@ private extension AudioSectionView {
      
     func animateContainerStackViewOnTap() {
         let oldBackgroundColor = containerStackView.backgroundColor
-        containerStackView.backgroundColor = .systemGreen.withAlphaComponent(0.3)
+        containerStackView.backgroundColor = WRColors.positiveAction
         
         UIView.animate(
             withDuration: 0.5,

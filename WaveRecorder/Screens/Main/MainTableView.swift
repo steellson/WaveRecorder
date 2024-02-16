@@ -51,7 +51,7 @@ final class MainTableView: UITableView {
 private extension MainTableView {
     
     func seutupAppereance() {
-        backgroundColor = .white
+        backgroundColor = WRColors.secondaryBackground
         rowHeight = viewModel?.tableViewCellHeight ?? 200
         layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         layer.cornerRadius = 26
@@ -106,7 +106,7 @@ extension MainTableView: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         guard let viewModel else {
-            os_log("ERROR: ViewModel isn't setted!")
+            os_log("\(WRErrors.tableViewModelIsntSetted)")
             return 0.0
         }
         return viewModel.tableViewCellHeight
@@ -122,7 +122,7 @@ extension MainTableView: UITableViewDelegate {
             title: "Kill",
             handler: { _, _, _ in
                 guard let viewModel = self.viewModel else {
-                    os_log("ERROR: ViewModel isn't setted!")
+                    os_log("\(WRErrors.tableViewModelIsntSetted)")
                     return
                 }
                 viewModel.didSwipedForDelete(forIndexPath: indexPath)

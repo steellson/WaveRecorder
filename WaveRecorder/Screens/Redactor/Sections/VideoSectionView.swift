@@ -23,14 +23,14 @@ final class VideoSectionView: UIView {
     
     private let videoSectionTitleLabel = TitleLabelView(
         text: WRTitles.videoRecordTitleLabel,
-        tColor: .darkGray,
+        tColor: WRColors.secondaryText,
         font: .systemFont(ofSize: 18, weight: .bold),
         alignment: .left
     )
     
     private let videoIsNotSelectedTitle = TitleLabelView(
         text: WRTitles.videoIsntSelected,
-        tColor: .darkGray,
+        tColor: WRColors.secondaryText,
         font: .systemFont(ofSize: 26, weight: .bold),
         alignment: .center
     )
@@ -122,7 +122,7 @@ private extension VideoSectionView {
     
     func setupVideoPlayerView(withHeight height: CGFloat) {
         videoPlayerHeight = height
-        videoPlayerView.backgroundColor = .clear
+        videoPlayerView.backgroundColor = WRColors.clear
         videoPlayerView.layer.cornerRadius = 6
         videoPlayerView.contentMode = .scaleAspectFit
         videoPlayerView.addNewSubview(videoTimelineView)
@@ -184,7 +184,7 @@ private extension VideoSectionView {
      
     func animateContainerViewOnTap() {
         let oldBackgroundColor = containerView.backgroundColor
-        containerView.backgroundColor = .systemBlue.withAlphaComponent(0.3)
+        containerView.backgroundColor = WRColors.negativeAction
         
         UIView.animate(
             withDuration: 0.5,

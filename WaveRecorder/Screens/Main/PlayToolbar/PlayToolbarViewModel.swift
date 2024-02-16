@@ -95,7 +95,7 @@ extension PlayToolbarViewModelImpl {
             setTimeWithDifference(startTime: time)
             helpers.timeRefresher.start()
         } catch {
-            os_log("ERROR: Cant play audio! \(error)")
+            os_log("\(WRErrors.cantPlayAudio) \(error)")
             return
         }
     }
@@ -110,7 +110,7 @@ extension PlayToolbarViewModelImpl {
             resetTime()
             isPlaying = false
         } catch {
-            os_log("ERROR: Cant stop audio! \(error)")
+            os_log("\(WRErrors.cantStopAudio) \(error)")
             return
         }
     }

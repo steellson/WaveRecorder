@@ -48,9 +48,8 @@ final class MainTableViewCell:  UITableViewCell {
 private extension MainTableViewCell {
     
     func setupContentView() {
-        selectionStyle = .gray
         contentView.clipsToBounds = true
-        contentView.backgroundColor = WRColors.secondaryBackgroundColor
+        contentView.backgroundColor = WRColors.secondaryBackground
         
         setupSubviews()
     }

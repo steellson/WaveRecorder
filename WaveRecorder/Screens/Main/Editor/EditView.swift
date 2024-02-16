@@ -22,7 +22,7 @@ final class EditView: UIView {
     private lazy var titleLabelField: UITextField = {
         let field = UITextField()
         field.font = .systemFont(ofSize: 18, weight: .semibold)
-        field.backgroundColor = WRColors.secondaryBackgroundColor
+        field.backgroundColor = WRColors.secondaryBackground
         field.autocapitalizationType = .none
         field.autocorrectionType = .no
         field.keyboardType = .asciiCapable
@@ -35,14 +35,14 @@ final class EditView: UIView {
     
     private let dateLabel = TitleLabelView(
         text: "",
-        tColor: .darkGray,
+        tColor: WRColors.secondaryText,
         font: .systemFont(ofSize: 16, weight: .light),
         alignment: .left
     )
     
     private lazy var renameButton: UIButton = {
         let button = UIButton()
-        button.tintColor = .black
+        button.tintColor = WRColors.primaryText
         button.setImage(UIImage(systemName: "pencil.circle"), for: .normal)
         button.addTarget(self, action: #selector(renameButtonDidTapped), for: .touchUpInside)
         return button
@@ -50,11 +50,11 @@ final class EditView: UIView {
     
     private lazy var addToVideoButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tintColor = .gray
+        button.tintColor = WRColors.liteText
         button.setTitle(WRTitles.addToVideoButtonTitle, for: .normal)
         button.titleLabel?.font =  .systemFont(ofSize: 16, weight: .light)
         button.titleLabel?.textAlignment = .right
-        button.titleLabel?.backgroundColor = WRColors.secondaryBackgroundColor
+        button.titleLabel?.backgroundColor = WRColors.secondaryBackground
         button.addTarget(self, action: #selector(addToVideoButtonTapped), for: .touchUpInside)
         return button
     }()
@@ -180,10 +180,10 @@ private extension EditView {
         UIView.animate(withDuration: 0.2) {
             if isEditing {
                 self.titleLabelField.becomeFirstResponder()
-                self.titleLabelField.backgroundColor = WRColors.primaryBackgroundColor.withAlphaComponent(0.3)
+                self.titleLabelField.backgroundColor = WRColors.primaryBackground.withAlphaComponent(0.3)
             } else {
                 self.titleLabelField.resignFirstResponder()
-                self.titleLabelField.backgroundColor = WRColors.secondaryBackgroundColor
+                self.titleLabelField.backgroundColor = WRColors.secondaryBackground
             }
         }
     }
