@@ -12,7 +12,7 @@ public enum WRTitles {
     public static let addToVideoButtonTitle = "Add to video"
     
     //MARK: Redactor Screen
-    public static let redactorMainTite = "Redactor 🔌"
+    public static let redactorMainTite = "✨ Add track to your video here ✨"
     public static let audioRecordTitleLabel = "Audio 🎵"
     public static let videoRecordTitleLabel = "Video 🎬"
     public static let videoIsntSelected = "There is no selected videos yet ☹︎"

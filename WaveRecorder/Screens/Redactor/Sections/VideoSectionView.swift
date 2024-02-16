@@ -23,15 +23,15 @@ final class VideoSectionView: UIView {
     
     private let videoSectionTitleLabel = TitleLabelView(
         text: WRTitles.videoRecordTitleLabel,
-        tColor: .black,
-        font: .systemFont(ofSize: 20, weight: .bold),
+        tColor: .darkGray,
+        font: .systemFont(ofSize: 18, weight: .bold),
         alignment: .left
     )
     
     private let videoIsNotSelectedTitle = TitleLabelView(
         text: WRTitles.videoIsntSelected,
         tColor: .darkGray,
-        font: .systemFont(ofSize: 28, weight: .bold),
+        font: .systemFont(ofSize: 26, weight: .bold),
         alignment: .center
     )
     

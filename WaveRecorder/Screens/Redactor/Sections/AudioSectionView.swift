@@ -19,8 +19,8 @@ final class AudioSectionView: UIView {
     
     private let audioSectionTitleLabel = TitleLabelView(
         text: WRTitles.audioRecordTitleLabel,
-        tColor: .black,
-        font: .systemFont(ofSize: 20, weight: .bold),
+        tColor: .darkGray,
+        font: .systemFont(ofSize: 18, weight: .bold),
         alignment: .left
     )
     
@@ -29,7 +29,7 @@ final class AudioSectionView: UIView {
     private lazy var recordTitleLabel = TitleLabelView(
         text: "",
         tColor: .black,
-        font: .systemFont(ofSize: 18, weight: .medium),
+        font: .systemFont(ofSize: 16, weight: .medium),
         alignment: .left
     )
     

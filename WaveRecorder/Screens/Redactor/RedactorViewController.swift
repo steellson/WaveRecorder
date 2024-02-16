@@ -19,8 +19,8 @@ final class RedactorViewController: UIViewController {
         
     private let titleLabel = TitleLabelView(
         text: WRTitles.redactorMainTite,
-        tColor: .darkGray,
-        font: .systemFont(ofSize: 30, weight: .bold),
+        tColor: .black,
+        font: .systemFont(ofSize: 22, weight: .bold),
         alignment: .center
     )
     
@@ -125,7 +125,7 @@ private extension RedactorViewController {
         guard let navBar = self.navigationController?.navigationBar else { return }
             
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: navBar.bottomAnchor),
+            titleLabel.topAnchor.constraint(equalTo: navBar.bottomAnchor, constant: 8),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 14),
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -14),
             
@@ -134,7 +134,7 @@ private extension RedactorViewController {
             audioSectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             audioSectionView.heightAnchor.constraint(equalToConstant: 140),
        
-            videoSectionView.topAnchor.constraint(equalTo: audioSectionView.bottomAnchor, constant: 22),
+            videoSectionView.topAnchor.constraint(equalTo: audioSectionView.bottomAnchor, constant: 14),
             videoSectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             videoSectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             videoSectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -22)
