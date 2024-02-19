@@ -6,6 +6,7 @@ public enum WRColors {
     
     //MARK: Main
     public static let primaryBackground = UIColor(red: 183/255, green: 198/255, blue: 206/255, alpha: 1)
+    public static let primaryBackgroundWithLowAlpha = UIColor(red: 183/255, green: 198/255, blue: 206/255, alpha: 0.3)
     public static let secondaryBackground = UIColor.white
     public static let secondaryBackgroundWithHighAlpha = UIColor.white.withAlphaComponent(0.8)
     public static let secondaryBackgroundWithLowAlpha = UIColor.white.withAlphaComponent(0.3)

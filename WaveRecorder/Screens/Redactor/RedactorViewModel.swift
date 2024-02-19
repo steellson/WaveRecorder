@@ -19,6 +19,9 @@ protocol RedactorViewModel: InterfaceUpdatable {
     var audioRecordMetadata: AudioRecordMetadata { get }
     var videoRecord: VideoRecord? { get }
     
+    var elapsedTimeFormatted: String { get }
+    var remainingTimeFormatted: String { get }
+    
     func didSelected(videoWithURL url: URL) async throws
     func didSeletVideoButtonTapped(_ delegate: VideoPickerDelegate)
 }
@@ -32,6 +35,11 @@ final class RedactorViewModelImpl: RedactorViewModel {
     
     private(set) var audioRecordMetadata = AudioRecordMetadata(name: "", duration: "", date: "")
     private(set) var videoRecord: VideoRecord?
+    
+    private(set) var elapsedTimeFormatted = "00:00"
+    private(set) var remainingTimeFormatted = "00:00"
+    
+    private var progress: TimeInterval = TimeInterval(0)
         
     private let audioRecord: AudioRecord
     private let videoPlayer: VideoPlayer
@@ -77,11 +85,15 @@ extension RedactorViewModelImpl {
     func didSelected(videoWithURL url: URL) async throws {
         videoPlayer.configureWith(url: url)
         let record = try await videoPlayer.getVideo()
-        
+   
+        self.elapsedTimeFormatted = helpers.formatter.formatDuration(progress)
+        self.remainingTimeFormatted = helpers.formatter.formatDuration(record.duration)
         self.videoRecord = VideoRecord(
             name: record.name,
             url: record.url,
             duration: record.duration,
+            elapsedTime: elapsedTimeFormatted,
+            remainingTime: remainingTimeFormatted,
             frames: record.frames
         )
         try await self.shouldUpdateInterface?(false)

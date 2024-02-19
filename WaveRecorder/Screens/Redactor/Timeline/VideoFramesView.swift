@@ -53,6 +53,8 @@ final class VideoFramesView: UIView {
         ))
         
         progressLayer.frame = progressRect
+        progressLayer.borderWidth = 0.5
+        progressLayer.borderColor = UIColor.black.cgColor
         progressLayer.backgroundColor = UIColor.darkGray.cgColor
     }
     

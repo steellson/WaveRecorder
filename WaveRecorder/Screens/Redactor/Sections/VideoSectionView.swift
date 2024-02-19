@@ -57,8 +57,11 @@ final class VideoSectionView: UIView {
     //MARK: Configure
     
     func configureWith(videoRecord: VideoRecord?) {
-        guard 
-            let videoRecord else {
+        guard
+            let videoRecord,
+            let elapsedTime = videoRecord.elapsedTime,
+            let remainingTime = videoRecord.remainingTime
+        else {
             videoIsNotSelectedTitle.isHidden = false
             videoPlayerView.isHidden = true
             startTimeLabel.isHidden = true
@@ -75,6 +78,10 @@ final class VideoSectionView: UIView {
             
             setupVideoPlayer(withURL: videoRecord.url)
             videoFramesView.configure(withFrames: videoRecord.frames)
+            animateProgressWith(
+                elapsedTime: elapsedTime,
+                remainingTime: remainingTime
+            )
         }
     }
     
@@ -87,6 +94,9 @@ final class VideoSectionView: UIView {
         setupVideoPlayerView(withHeight: videoPlayerHeight)
         setupConstraints()
     }
+    
+    
+    //MARK: Actions
     
     @objc
     private func contanierViewDidTapped() {
@@ -191,9 +201,9 @@ private extension VideoSectionView {
             videoPlayerView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
             videoPlayerView.heightAnchor.constraint(equalToConstant: videoPlayerHeight),
             
+            videoFramesView.topAnchor.constraint(equalTo: videoPlayerView.bottomAnchor),
             videoFramesView.leadingAnchor.constraint(equalTo: videoPlayerView.leadingAnchor),
             videoFramesView.trailingAnchor.constraint(equalTo: videoPlayerView.trailingAnchor),
-            videoFramesView.bottomAnchor.constraint(equalTo: videoPlayerView.bottomAnchor),
             videoFramesView.heightAnchor.constraint(equalToConstant: videoFramesViewHeight),
             
             startTimeLabel.topAnchor.constraint(equalTo: videoFramesView.bottomAnchor, constant: 4),
@@ -221,6 +231,13 @@ private extension VideoSectionView {
             initialSpringVelocity: 1
         ) {
             self.containerView.backgroundColor = oldBackgroundColor
+        }
+    }
+    
+    private func animateProgressWith(elapsedTime: String, remainingTime: String) {
+        UIView.animate(withDuration: 0.1) {
+            self.startTimeLabel.text = elapsedTime
+            self.endTimeLabel.text = remainingTime
         }
     }
 }
