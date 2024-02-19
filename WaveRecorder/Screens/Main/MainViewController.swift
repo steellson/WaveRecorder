@@ -44,7 +44,7 @@ final class MainViewController: UIViewController {
             toItem: nil,
             attribute: .notAnAttribute,
             multiplier: 1,
-            constant: UIScreen.main.bounds.height * 0.15
+            constant: WRSizes.recordBarViewInactiveHeight
         )
     }()
     
@@ -146,8 +146,8 @@ private extension MainViewController {
         viewModel.shouldUpdateInterface = { [weak self] isRecording in
              
             self?.recViewHeightConstraint.constant = isRecording
-            ? UIScreen.main.bounds.height * 0.25
-            : UIScreen.main.bounds.height * 0.15
+            ? WRSizes.recordBarViewActiveHeight
+            : WRSizes.recordBarViewInactiveHeight
      
             self?.animateUpdatedLayout()
         }

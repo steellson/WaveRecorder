@@ -109,14 +109,22 @@
 			path = Timeline;
 			sourceTree = "<group>";
 		};
+		3D625B092B7F875C00F2EB50 /* WRVideo */ = {
+			isa = PBXGroup;
+			children = (
+				3D5BFC0F2B7E4FFC000AFE73 /* VideoFrameGenerator.swift */,
+			);
+			path = WRVideo;
+			sourceTree = "<group>";
+		};
 		3D6E75F42B76917D00656B39 /* Redactor */ = {
 			isa = PBXGroup;
 			children = (
 				3D6E75F22B76917600656B39 /* RedactorViewController.swift */,
 				3D6E75F52B76919E00656B39 /* RedactorViewModel.swift */,
-				3D5BFC0F2B7E4FFC000AFE73 /* VideoFrameGenerator.swift */,
 				3D5BFC112B7E5892000AFE73 /* Sections */,
 				3D5BFC122B7E589B000AFE73 /* Timeline */,
+				3D625B092B7F875C00F2EB50 /* WRVideo */,
 			);
 			path = Redactor;
 			sourceTree = "<group>";

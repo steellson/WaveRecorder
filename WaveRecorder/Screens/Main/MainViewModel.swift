@@ -29,7 +29,7 @@ final class MainViewModelImpl: MainViewModel {
     var shouldUpdateInterface: ((Bool) async throws -> Void)?
     
     var numberOfItems: Int = 0
-    var tableViewCellHeight: CGFloat = 200
+    var tableViewCellHeight: CGFloat = WRSizes.tableViewCellHeight
     
     private var records: [AudioRecord] = []
     

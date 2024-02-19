@@ -106,7 +106,7 @@ private extension RedactorViewController {
         videoSectionView.configureAppereanceWith(
             backgroundColor: WRColors.secondaryBackgroundWithHighAlpha,
             shadowColor: WRColors.commonShadow,
-            videoPlayerHeight: 300
+            videoPlayerHeight: WRSizes.videoPlayerHeight
         )
     }
     
@@ -132,7 +132,7 @@ private extension RedactorViewController {
             audioSectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 22),
             audioSectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             audioSectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            audioSectionView.heightAnchor.constraint(equalToConstant: 140),
+            audioSectionView.heightAnchor.constraint(equalToConstant: WRSizes.audioSectionView),
        
             videoSectionView.topAnchor.constraint(equalTo: audioSectionView.bottomAnchor, constant: 14),
             videoSectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
