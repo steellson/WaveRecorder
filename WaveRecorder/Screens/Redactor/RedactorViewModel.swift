@@ -11,16 +11,15 @@ import WRAudio
 
 
 typealias AudioRecordMetadata = (name: String, duration: String, date: String)
-typealias VideoRecordMetadata = (name: String, url: URL, frames: [VideoFrame]?)
 
 
 //MARK: - Protocol
 
 protocol RedactorViewModel: InterfaceUpdatable {
     var audioRecordMetadata: AudioRecordMetadata { get }
-    var videoRecordMetadata: VideoRecordMetadata? { get }
+    var videoRecord: VideoRecord? { get }
     
-    func update(videoMetadata: VideoRecordMetadata) async throws
+    func didSelected(videoWithURL url: URL) async throws
     func didSeletVideoButtonTapped(_ delegate: VideoPickerDelegate)
 }
 
@@ -32,23 +31,24 @@ final class RedactorViewModelImpl: RedactorViewModel {
     var shouldUpdateInterface: ((Bool) async throws -> Void)?
     
     private(set) var audioRecordMetadata = AudioRecordMetadata(name: "", duration: "", date: "")
-    private(set) var videoRecordMetadata: VideoRecordMetadata?
+    private(set) var videoRecord: VideoRecord?
         
     private let audioRecord: AudioRecord
+    private let videoPlayer: VideoPlayer
     private let helpers: HelpersStorage
     private let coordinator: AppCoordinator
-    
-    private let videoFrameGenerator: any VideoFrameGenerator = VideoFrameGeneratorImpl()
     
     
     //MARK: Init
     
     init(
         audioRecord: AudioRecord,
+        videoPlayer: VideoPlayer,
         helpers: HelpersStorage,
         coordinator: AppCoordinator
     ) {
         self.audioRecord = audioRecord
+        self.videoPlayer = videoPlayer
         self.helpers = helpers
         self.coordinator = coordinator
         
@@ -74,14 +74,16 @@ private extension RedactorViewModelImpl {
 
 extension RedactorViewModelImpl {
     
-    func update(videoMetadata: VideoRecordMetadata) async throws {
-        let frames = try await videoFrameGenerator.getAllFrames(forVideoWithUrl: videoMetadata.url)
-        let videoMetadataSnapshop = VideoRecordMetadata(
-            name: videoMetadata.name,
-            url: videoMetadata.url,
-            frames: frames
+    func didSelected(videoWithURL url: URL) async throws {
+        videoPlayer.configureWith(url: url)
+        let record = try await videoPlayer.getVideo()
+        
+        self.videoRecord = VideoRecord(
+            name: record.name,
+            url: record.url,
+            duration: record.duration,
+            frames: record.frames
         )
-        self.videoRecordMetadata = videoMetadataSnapshop
         try await self.shouldUpdateInterface?(false)
     }
 

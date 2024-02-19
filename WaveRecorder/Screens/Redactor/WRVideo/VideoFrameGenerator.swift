@@ -8,13 +8,10 @@
 import AVFoundation
 
 
-typealias VideoFrame = CGImage
-
-
 //MARK: - Protocol
 
 protocol VideoFrameGenerator: AnyObject {
-    func getAllFrames(forVideoWithUrl url: URL) async throws -> [VideoFrame]
+    func getAllFrames(forVideoWithUrl url: URL) async throws -> [CGImage]
 }
 
 //MARK: - Error
@@ -32,7 +29,7 @@ final class VideoFrameGeneratorImpl: VideoFrameGenerator {
     
     private var prefferedTimesacle: Int32 = 600
     private var generator: AVAssetImageGenerator?
-    private var frames = [VideoFrame]()
+    private var frames = [CGImage]()
     
     init(
         prefferedTimesacle: Int32 = 600
@@ -45,7 +42,7 @@ final class VideoFrameGeneratorImpl: VideoFrameGenerator {
 
 extension VideoFrameGeneratorImpl {
     
-    func getAllFrames(forVideoWithUrl url: URL) async throws -> [VideoFrame] {
+    func getAllFrames(forVideoWithUrl url: URL) async throws -> [CGImage] {
         do {
             let asset: AVAsset = AVAsset(url: url)
             let trackTime = try await asset.load(.duration)

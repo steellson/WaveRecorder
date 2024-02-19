@@ -12,7 +12,7 @@ import WRResources
 
 //MARK: - Impl
 
-final class VideoTimelineView: UIView {
+final class VideoFramesView: UIView {
     
     //MARK: Variables
     
@@ -80,7 +80,7 @@ final class VideoTimelineView: UIView {
 
 //MARK: - Setup
 
-private extension VideoTimelineView {
+private extension VideoFramesView {
     
     func setupLayers() {
         layer.addSublayer(progressLayer)

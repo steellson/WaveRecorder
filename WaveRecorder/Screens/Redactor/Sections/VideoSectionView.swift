@@ -35,27 +35,46 @@ final class VideoSectionView: UIView {
         alignment: .center
     )
     
-    private lazy var videoTimelineView = VideoTimelineView()
-    private var videoTimelineViewHeight = 40.0
-    
     private var videoPlayer = AVPlayer()
     private var videoPlayerHeight: CGFloat = 100.0
+    
+    private lazy var videoFramesView = VideoFramesView()
+    private var videoFramesViewHeight = 40.0
+    
+    private let startTimeLabel = TitleLabelView(
+        text: "00:00",
+        tColor: WRColors.primaryText,
+        font: .systemFont(ofSize: 14, weight: .light)
+    )
+    
+    private let endTimeLabel = TitleLabelView(
+        text: "00:00",
+        tColor: WRColors.primaryText,
+        font: .systemFont(ofSize: 14, weight: .light)
+    )
     
     
     //MARK: Configure
     
-    func configureWith(videoMetadata: VideoRecordMetadata?) {
-        guard let videoMetadata else {
+    func configureWith(videoRecord: VideoRecord?) {
+        guard 
+            let videoRecord else {
             videoIsNotSelectedTitle.isHidden = false
             videoPlayerView.isHidden = true
+            startTimeLabel.isHidden = true
+            endTimeLabel.isHidden = true
+            
             animateContainerViewOnTap()
             return
         }
         Task {
             videoIsNotSelectedTitle.isHidden = true
             videoPlayerView.isHidden = false
-            setupVideoPlayer(withURL: videoMetadata.url)
-            videoTimelineView.configure(withFrames: videoMetadata.frames)
+            startTimeLabel.isHidden = false
+            endTimeLabel.isHidden = false
+            
+            setupVideoPlayer(withURL: videoRecord.url)
+            videoFramesView.configure(withFrames: videoRecord.frames)
         }
     }
     
@@ -125,7 +144,10 @@ private extension VideoSectionView {
         videoPlayerView.backgroundColor = WRColors.clear
         videoPlayerView.layer.cornerRadius = 6
         videoPlayerView.contentMode = .scaleAspectFit
-        videoPlayerView.addNewSubview(videoTimelineView)
+        
+        videoPlayerView.addNewSubview(videoFramesView)
+        videoPlayerView.addNewSubview(startTimeLabel)
+        videoPlayerView.addNewSubview(endTimeLabel)
         
         setTapGesture(
             toView: videoPlayerView,
@@ -169,10 +191,16 @@ private extension VideoSectionView {
             videoPlayerView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
             videoPlayerView.heightAnchor.constraint(equalToConstant: videoPlayerHeight),
             
-            videoTimelineView.leadingAnchor.constraint(equalTo: videoPlayerView.leadingAnchor),
-            videoTimelineView.trailingAnchor.constraint(equalTo: videoPlayerView.trailingAnchor),
-            videoTimelineView.bottomAnchor.constraint(equalTo: videoPlayerView.bottomAnchor),
-            videoTimelineView.heightAnchor.constraint(equalToConstant: videoTimelineViewHeight)
+            videoFramesView.leadingAnchor.constraint(equalTo: videoPlayerView.leadingAnchor),
+            videoFramesView.trailingAnchor.constraint(equalTo: videoPlayerView.trailingAnchor),
+            videoFramesView.bottomAnchor.constraint(equalTo: videoPlayerView.bottomAnchor),
+            videoFramesView.heightAnchor.constraint(equalToConstant: videoFramesViewHeight),
+            
+            startTimeLabel.topAnchor.constraint(equalTo: videoFramesView.bottomAnchor, constant: 4),
+            startTimeLabel.leadingAnchor.constraint(equalTo: videoPlayerView.leadingAnchor, constant: 8),
+            
+            endTimeLabel.topAnchor.constraint(equalTo: videoFramesView.bottomAnchor, constant: 4),
+            endTimeLabel.trailingAnchor.constraint(equalTo: videoPlayerView.trailingAnchor, constant: -8),
         ])
     }
 }

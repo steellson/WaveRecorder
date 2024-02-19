@@ -60,8 +60,10 @@ extension AppCoordinator {
     }
     
     func showRedactorView(withAudioRecord record: AudioRecord) {
+        let videoPlayer: VideoPlayer = VideoPlayerImpl()
         let redactorViewModel: RedactorViewModel = RedactorViewModelImpl(
             audioRecord: record,
+            videoPlayer: videoPlayer,
             helpers: helpersStorage,
             coordinator: self
         )
