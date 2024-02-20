@@ -6,21 +6,30 @@
 //
 
 import AVFoundation
+import OSLog
 import UIKit
 import UIComponents
 import WRResources
+
+
+//MARK: - Protocol
+
+protocol VideoSectionViewDelegate: AnyObject {
+    func didPlayTapped()
+    func didPauseTapped()
+}
 
 
 //MARK: - Impl
 
 final class VideoSectionView: UIView {
     
+    weak var delegate: VideoSectionViewDelegate?
+    
     private let contentView = UIView()
     private let containerView = UIView()
     private let videoPlayerView = UIView()
-    
-    //MARK: Variables
-    
+        
     private let videoSectionTitleLabel = TitleLabelView(
         text: WRTitles.videoRecordTitleLabel,
         tColor: WRColors.secondaryText,
@@ -35,12 +44,6 @@ final class VideoSectionView: UIView {
         alignment: .center
     )
     
-    private var videoPlayer = AVPlayer()
-    private var videoPlayerHeight: CGFloat = 100.0
-    
-    private lazy var videoFramesView = VideoFramesView()
-    private var videoFramesViewHeight = 40.0
-    
     private let startTimeLabel = TitleLabelView(
         text: "00:00",
         tColor: WRColors.primaryText,
@@ -52,22 +55,28 @@ final class VideoSectionView: UIView {
         tColor: WRColors.primaryText,
         font: .systemFont(ofSize: 14, weight: .light)
     )
+        
+    private let videoFramesView = VideoFramesView()
+    
+    private var videoFramesViewHeight: CGFloat = 40.0
+    private var videoPlayerHeight: CGFloat = 100.0
     
     
     //MARK: Configure
     
-    func configureWith(videoRecord: VideoRecord?) {
-        guard
-            let videoRecord,
-            let elapsedTime = videoRecord.elapsedTime,
-            let remainingTime = videoRecord.remainingTime
-        else {
-            videoIsNotSelectedTitle.isHidden = false
-            videoPlayerView.isHidden = true
-            startTimeLabel.isHidden = true
-            endTimeLabel.isHidden = true
-            
-            animateContainerViewOnTap()
+    func configureEmpty() {
+        videoIsNotSelectedTitle.isHidden = false
+        videoPlayerView.isHidden = true
+        startTimeLabel.isHidden = true
+        endTimeLabel.isHidden = true
+        
+        animateContainerViewOnTap()
+    }
+    
+    func configureWith(videoRecord: VideoRecord?, playerLayer: AVPlayerLayer) {
+        guard let videoRecord else {
+            configureEmpty()
+            os_log("\(WRErrors.videoRecordUrlNotFound)")
             return
         }
         Task {
@@ -76,12 +85,8 @@ final class VideoSectionView: UIView {
             startTimeLabel.isHidden = false
             endTimeLabel.isHidden = false
             
-            setupVideoPlayer(withURL: videoRecord.url)
+            setupVideoPlayer(withLayer: playerLayer)
             videoFramesView.configure(withFrames: videoRecord.frames)
-            animateProgressWith(
-                elapsedTime: elapsedTime,
-                remainingTime: remainingTime
-            )
         }
     }
     
@@ -95,6 +100,10 @@ final class VideoSectionView: UIView {
         setupConstraints()
     }
     
+    func updateProgressWith(elapsedTime: String, remainingTime: String) {
+        animateProgressWith(elapsedTime: elapsedTime, remainingTime: remainingTime)
+    }
+    
     
     //MARK: Actions
     
@@ -106,15 +115,7 @@ final class VideoSectionView: UIView {
     
     @objc
     private func videoPlayerViewDidTapped() {
-        switch videoPlayer.timeControlStatus {
-        case .paused:
-            videoPlayer.play()
-        case .waitingToPlayAtSpecifiedRate:
-            videoPlayer.play()
-        case .playing:
-            videoPlayer.pause()
-        @unknown default: return
-        }
+        delegate?.didPlayTapped()
     }
 }
 
@@ -166,11 +167,11 @@ private extension VideoSectionView {
         )
     }
     
-    func setupVideoPlayer(withURL url: URL) {
-        self.videoPlayer = AVPlayer(url: url)
-        
-        let playerLayer = AVPlayerLayer(player: videoPlayer)
+    func setupVideoPlayer(withLayer playerLayer: AVPlayerLayer) {
         playerLayer.frame = videoPlayerView.bounds
+        playerLayer.cornerRadius = 6
+        playerLayer.masksToBounds = true
+        playerLayer.videoGravity = .resizeAspectFill
         
         videoPlayerView.layer.addSublayer(playerLayer)
     }
@@ -201,7 +202,7 @@ private extension VideoSectionView {
             videoPlayerView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
             videoPlayerView.heightAnchor.constraint(equalToConstant: videoPlayerHeight),
             
-            videoFramesView.topAnchor.constraint(equalTo: videoPlayerView.bottomAnchor),
+            videoFramesView.topAnchor.constraint(equalTo: videoPlayerView.bottomAnchor, constant: 4),
             videoFramesView.leadingAnchor.constraint(equalTo: videoPlayerView.leadingAnchor),
             videoFramesView.trailingAnchor.constraint(equalTo: videoPlayerView.trailingAnchor),
             videoFramesView.heightAnchor.constraint(equalToConstant: videoFramesViewHeight),

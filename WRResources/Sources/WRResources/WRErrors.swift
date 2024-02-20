@@ -29,5 +29,8 @@ public enum WRErrors {
     
     //MARK: Play View
     public static let playButtonsActionCorrupted = "ERROR <PlayToolbarView>: Play buttons action error!"
+    
+    //MARK: Video Section View
+    public static let videoRecordUrlNotFound = "ERROR <VideoSectionView>: Video record url is not found, section configured with empty!"
 }
 

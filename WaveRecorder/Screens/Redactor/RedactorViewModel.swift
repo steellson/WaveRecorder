@@ -5,7 +5,7 @@
 //  Created by Andrew Steellson on 09.02.2024.
 //
 
-import Foundation
+import AVFoundation
 import OSLog
 import WRAudio
 
@@ -22,8 +22,10 @@ protocol RedactorViewModel: InterfaceUpdatable {
     var elapsedTimeFormatted: String { get }
     var remainingTimeFormatted: String { get }
     
-    func didSelected(videoWithURL url: URL) async throws
+    func didSelected(videoWithURL url: URL) async throws -> AVPlayerLayer
     func didSeletVideoButtonTapped(_ delegate: VideoPickerDelegate)
+    func didPlayButtonTapped()
+    func didPauseButtonTapped()
 }
 
 
@@ -82,24 +84,31 @@ private extension RedactorViewModelImpl {
 
 extension RedactorViewModelImpl {
     
-    func didSelected(videoWithURL url: URL) async throws {
+    func didSelected(videoWithURL url: URL) async throws -> AVPlayerLayer {
         videoPlayer.configureWith(url: url)
+        
         let record = try await videoPlayer.getVideo()
-   
-        self.elapsedTimeFormatted = helpers.formatter.formatDuration(progress)
-        self.remainingTimeFormatted = helpers.formatter.formatDuration(record.duration)
         self.videoRecord = VideoRecord(
             name: record.name,
             url: record.url,
             duration: record.duration,
-            elapsedTime: elapsedTimeFormatted,
-            remainingTime: remainingTimeFormatted,
             frames: record.frames
         )
-        try await self.shouldUpdateInterface?(false)
+        self.elapsedTimeFormatted = helpers.formatter.formatDuration(0.0)
+        self.remainingTimeFormatted = helpers.formatter.formatDuration(record.duration)
+        
+        return try videoPlayer.getVideoPlayerLayer()
     }
 
     func didSeletVideoButtonTapped(_ delegate: VideoPickerDelegate) {
         coordinator.showVideoPicker(forDelegate: delegate)
+    }
+    
+    func didPlayButtonTapped() {
+        videoPlayer.play()
+    }
+    
+    func didPauseButtonTapped() {
+        videoPlayer.pause()
     }
 }

@@ -16,7 +16,11 @@ typealias VideoFrame = CGImage
 
 protocol VideoPlayer: AnyObject {
     func configureWith(url: URL)
+    func getVideoPlayerLayer() throws -> AVPlayerLayer
     func getVideo() async throws -> VideoRecord
+    func play()
+    func pause()
+    func stop()
 }
 
 
@@ -24,6 +28,7 @@ protocol VideoPlayer: AnyObject {
 
 enum VideoPlayerError: Error {
     case cantGetUrl
+    case cantGetVideoPlayerInstance
     case cantGetVideoMetadata
     case cantGetVideoFrames
     case cantGetVideoRecord
@@ -35,6 +40,7 @@ enum VideoPlayerError: Error {
 final class VideoPlayerImpl: VideoPlayer {
     
     private var url: URL?
+    private var player: AVPlayer?
     
     private let videoMetadataManager: VideoMetadataManager
     private let videoFrameGenerator: VideoFrameGenerator
@@ -46,6 +52,14 @@ final class VideoPlayerImpl: VideoPlayer {
     
     func configureWith(url: URL) {
         self.url = url
+        self.player = AVPlayer(url: url)
+    }
+    
+    func getVideoPlayerLayer() throws -> AVPlayerLayer {
+        guard let player else {
+            throw VideoPlayerError.cantGetVideoPlayerInstance
+        }
+        return AVPlayerLayer(player: player)
     }
 }
 
@@ -95,6 +109,19 @@ extension VideoPlayerImpl {
             os_log("ERROR <VideoPlayer>: Cant get video metadata")
             throw VideoPlayerError.cantGetVideoRecord
         }
+    }
+    
+    func play() {
+        guard let player else { return }
+        player.play()
+    }
+    
+    func pause() {
+        player?.pause()
+    }
+    
+    func stop() {
+        
     }
 }
 

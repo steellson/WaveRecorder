@@ -102,7 +102,8 @@ private extension RedactorViewController {
     }
     
     func setupVideoSectionView() {
-        videoSectionView.configureWith(videoRecord: viewModel.videoRecord)
+        videoSectionView.delegate = self
+        videoSectionView.configureEmpty()
         videoSectionView.configureAppereanceWith(
             backgroundColor: WRColors.secondaryBackgroundWithHighAlpha,
             shadowColor: WRColors.commonShadow,
@@ -112,8 +113,6 @@ private extension RedactorViewController {
     
     func setupUpdatingLayout() {
         viewModel.shouldUpdateInterface = { [weak self] _ in
-            let videoRecord = self?.viewModel.videoRecord
-            self?.videoSectionView.configureWith(videoRecord: videoRecord)
             self?.animateUpdatedLayout()
         }
     }
@@ -177,13 +176,35 @@ extension RedactorViewController: VideoPickerDelegate {
             let url = info[.mediaURL] as? URL
         else {
             picker.dismiss(animated: true)
-            videoSectionView.configureWith(videoRecord: viewModel.videoRecord)
+            videoSectionView.configureEmpty()
             return
         }
        
         Task {
-            try await viewModel.didSelected(videoWithURL: url)
+            let playerLayer = try await viewModel.didSelected(videoWithURL: url)
+            videoSectionView.configureWith(
+                videoRecord: viewModel.videoRecord,
+                playerLayer: playerLayer
+            )
+            videoSectionView.updateProgressWith(
+                elapsedTime: viewModel.elapsedTimeFormatted,
+                remainingTime: viewModel.remainingTimeFormatted
+            )
             picker.dismiss(animated: true)
         }
+    }
+}
+
+
+//MARK: - Video Section View Delegate
+
+extension RedactorViewController: VideoSectionViewDelegate {
+    
+    func didPlayTapped() {
+        viewModel.didPlayButtonTapped()
+    }
+    
+    func didPauseTapped() {
+        viewModel.didPauseButtonTapped()
     }
 }
