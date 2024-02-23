@@ -18,7 +18,8 @@ protocol VideoPlayer: AnyObject {
     func configureWith(url: URL)
     func getVideoPlayerLayer() throws -> AVPlayerLayer
     func getVideo() async throws -> VideoRecord
-    func play()
+    
+    func play(completion: @escaping (TimeInterval) -> Void) throws
     func pause()
     func stop()
 }
@@ -32,6 +33,7 @@ enum VideoPlayerError: Error {
     case cantGetVideoMetadata
     case cantGetVideoFrames
     case cantGetVideoRecord
+    case cantUpdateTime
 }
 
 
@@ -41,6 +43,7 @@ final class VideoPlayerImpl: VideoPlayer {
     
     private var url: URL?
     private var player: AVPlayer?
+    private var timer: Timer?
     
     private let videoMetadataManager: VideoMetadataManager
     private let videoFrameGenerator: VideoFrameGenerator
@@ -85,6 +88,17 @@ private extension VideoPlayerImpl {
             throw VideoPlayerError.cantGetVideoFrames
         }
     }
+    
+    func updateTime(action: @escaping (TimeInterval) -> Void) throws {
+        guard let player else {
+            throw VideoPlayerError.cantGetVideoPlayerInstance
+        }
+        
+        self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+            let currentTime = player.currentTime()
+            action(currentTime.seconds)
+        }
+    }
 }
 
 
@@ -111,17 +125,27 @@ extension VideoPlayerImpl {
         }
     }
     
-    func play() {
-        guard let player else { return }
-        player.play()
+    func play(completion: @escaping (TimeInterval) -> Void) throws {
+        guard let player else {
+            throw VideoPlayerError.cantGetVideoPlayerInstance
+        }
+        
+        do {
+            player.play()
+            try updateTime(action: completion)
+        } catch {
+            throw VideoPlayerError.cantUpdateTime
+        }
     }
     
     func pause() {
         player?.pause()
+        timer?.invalidate()
     }
     
     func stop() {
-        
+        timer?.invalidate()
+        timer = nil
     }
 }
 

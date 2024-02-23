@@ -32,5 +32,8 @@ public enum WRErrors {
     
     //MARK: Video Section View
     public static let videoRecordUrlNotFound = "ERROR <VideoSectionView>: Video record url is not found, section configured with empty!"
+    
+    //MARK: Redatror View Model
+    public static let videoRecordCouldntBePlayad = "ERROR <RedactorViewModel>: Video couldnt be played!"
 }
 

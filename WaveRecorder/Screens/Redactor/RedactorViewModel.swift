@@ -8,6 +8,7 @@
 import AVFoundation
 import OSLog
 import WRAudio
+import WRResources
 
 
 typealias AudioRecordMetadata = (name: String, duration: String, date: String)
@@ -40,9 +41,7 @@ final class RedactorViewModelImpl: RedactorViewModel {
     
     private(set) var elapsedTimeFormatted = "00:00"
     private(set) var remainingTimeFormatted = "00:00"
-    
-    private var progress: TimeInterval = TimeInterval(0)
-        
+            
     private let audioRecord: AudioRecord
     private let videoPlayer: VideoPlayer
     private let helpers: HelpersStorage
@@ -105,7 +104,19 @@ extension RedactorViewModelImpl {
     }
     
     func didPlayButtonTapped() {
-        videoPlayer.play()
+        do {
+            try videoPlayer.play() { [weak self] timeProgress in
+                guard let self, let videoRecord else { return }
+                let remainingTime = videoRecord.duration - timeProgress
+                
+                self.elapsedTimeFormatted = self.helpers.formatter.formatDuration(Double(timeProgress))
+                self.remainingTimeFormatted = self.helpers.formatter.formatDuration(remainingTime)
+                
+                Task { try await self.shouldUpdateInterface?(false) }
+            }
+        } catch {
+            os_log("\(WRErrors.videoRecordCouldntBePlayad)")
+        }
     }
     
     func didPauseButtonTapped() {

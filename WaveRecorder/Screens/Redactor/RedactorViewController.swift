@@ -154,6 +154,10 @@ private extension RedactorViewController {
         ) {
             Task {
                 self.view.layoutSubviews()
+                self.videoSectionView.updateProgressWith(
+                    elapsedTime: self.viewModel.elapsedTimeFormatted,
+                    remainingTime: self.viewModel.remainingTimeFormatted
+                )
             }
         }
     }
