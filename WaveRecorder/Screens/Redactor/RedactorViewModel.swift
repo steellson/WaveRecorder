@@ -25,8 +25,7 @@ protocol RedactorViewModel: InterfaceUpdatable {
     
     func didSelected(videoWithURL url: URL) async throws -> AVPlayerLayer
     func didSeletVideoButtonTapped(_ delegate: VideoPickerDelegate)
-    func didPlayButtonTapped()
-    func didPauseButtonTapped()
+    func didVideoPlayerTapped()
 }
 
 
@@ -76,6 +75,38 @@ private extension RedactorViewModelImpl {
             date: helpers.formatter.formatDate(audioRecord.date)
         )
     }
+    
+    func updateTime(withTimeProgress timeProgress: TimeInterval) {
+        guard let videoRecord else { return }
+        let remainingTime = videoRecord.duration - timeProgress
+        let elapsedTime = Double(timeProgress)
+        
+        elapsedTimeFormatted = helpers.formatter.formatDuration(elapsedTime)
+        remainingTimeFormatted = helpers.formatter.formatDuration(remainingTime)
+    }
+    
+    func play() {
+        do {
+            try videoPlayer.play() { [weak self] timeProgress in
+                guard let self else { return }
+
+                Task {
+                    self.updateTime(withTimeProgress: timeProgress)
+                    try await self.shouldUpdateInterface?(false)
+                }
+            }
+        } catch {
+            os_log("\(WRErrors.videoRecordCouldntBePlayad)")
+            coordinator.showDefaultAlert(
+                withTitle: WRErrors.defaultAlertTitle,
+                message: WRErrors.defaultAlertMessage
+            )
+        }
+    }
+    
+    func pause() {
+        videoPlayer.pause()
+    }
 }
 
 
@@ -103,23 +134,8 @@ extension RedactorViewModelImpl {
         coordinator.showVideoPicker(forDelegate: delegate)
     }
     
-    func didPlayButtonTapped() {
-        do {
-            try videoPlayer.play() { [weak self] timeProgress in
-                guard let self, let videoRecord else { return }
-                let remainingTime = videoRecord.duration - timeProgress
-                
-                self.elapsedTimeFormatted = self.helpers.formatter.formatDuration(Double(timeProgress))
-                self.remainingTimeFormatted = self.helpers.formatter.formatDuration(remainingTime)
-                
-                Task { try await self.shouldUpdateInterface?(false) }
-            }
-        } catch {
-            os_log("\(WRErrors.videoRecordCouldntBePlayad)")
-        }
-    }
-    
-    func didPauseButtonTapped() {
-        videoPlayer.pause()
+    func didVideoPlayerTapped() {
+        play() // pause()
+
     }
 }

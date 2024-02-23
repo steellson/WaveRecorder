@@ -204,11 +204,11 @@ extension RedactorViewController: VideoPickerDelegate {
 
 extension RedactorViewController: VideoSectionViewDelegate {
     
-    func didPlayTapped() {
-        viewModel.didPlayButtonTapped()
-    }
-    
-    func didPauseTapped() {
-        viewModel.didPauseButtonTapped()
+    func didVideoPlayerTapped() {
+        do {
+            try viewModel.didVideoPlayerTapped()
+        } catch {
+
+        }
     }
 }

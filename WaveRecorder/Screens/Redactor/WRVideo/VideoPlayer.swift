@@ -90,8 +90,13 @@ private extension VideoPlayerImpl {
     }
     
     func updateTime(action: @escaping (TimeInterval) -> Void) throws {
-        guard let player else {
-            throw VideoPlayerError.cantGetVideoPlayerInstance
+        guard
+            let player,
+            player.currentTime().seconds != player.currentItem?.duration.seconds
+        else {
+            self.timer?.invalidate()
+            self.timer = nil
+            throw VideoPlayerError.cantUpdateTime
         }
         
         self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
@@ -126,6 +131,7 @@ extension VideoPlayerImpl {
     }
     
     func play(completion: @escaping (TimeInterval) -> Void) throws {
+        player = nil
         guard let player else {
             throw VideoPlayerError.cantGetVideoPlayerInstance
         }

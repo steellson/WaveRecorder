@@ -2,6 +2,10 @@
 
 public enum WRErrors {
     
+    //MARK: Alerts
+    public static let defaultAlertTitle = "Oups :("
+    public static let defaultAlertMessage = "Couldnt play video!"
+    
     //MARK: Main View Model
     public static let cantGetRecordsFromStorage = "ERROR <MainViewModel>: Cant get records from storage! "
     public static let cantRenameRecord = "ERROR <MainViewModel>: Cant rename record! "

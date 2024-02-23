@@ -15,8 +15,7 @@ import WRResources
 //MARK: - Protocol
 
 protocol VideoSectionViewDelegate: AnyObject {
-    func didPlayTapped()
-    func didPauseTapped()
+    func didVideoPlayerTapped()
 }
 
 
@@ -115,7 +114,7 @@ final class VideoSectionView: UIView {
     
     @objc
     private func videoPlayerViewDidTapped() {
-        delegate?.didPlayTapped()
+        delegate?.didVideoPlayerTapped()
     }
 }
 

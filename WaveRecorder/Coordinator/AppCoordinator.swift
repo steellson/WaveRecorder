@@ -20,6 +20,7 @@ protocol Coordinator {
     func startWithMainView()
     func showRedactorView(withAudioRecord record: AudioRecord)
     func showVideoPicker(forDelegate delegate: VideoPickerDelegate)
+    func showDefaultAlert(withTitle title: String, message: String)
 }
 
 
@@ -81,5 +82,15 @@ extension AppCoordinator {
         picker.allowsEditing = true
         
         self.navigationController.present(picker, animated: true)
+    }
+    
+    func showDefaultAlert(withTitle title: String, message: String) {
+        let defaultAlert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Ok", style: .cancel, handler: { _ in
+                defaultAlert.dismiss(animated: true)
+            })
+        
+        defaultAlert.addAction(okAction)
+        self.navigationController.present(defaultAlert, animated: true)
     }
 }
