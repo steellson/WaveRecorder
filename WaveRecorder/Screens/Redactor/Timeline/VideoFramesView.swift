@@ -15,7 +15,7 @@ import WRResources
 final class VideoFramesView: UIView {
     
     private let backgroundMask = CAShapeLayer()
-    private let carretView = UIView()
+    private let carretView = CarretView()
     
     
     //MARK: Variables
@@ -45,8 +45,7 @@ final class VideoFramesView: UIView {
         }
         
         setupFrames(frames, width: singleFrameWidth)
-        seutpCarretView()
-        animateCarretViewOnAppear()
+        setupCarretView()
         
         setNeedsLayout()
     }
@@ -57,11 +56,11 @@ final class VideoFramesView: UIView {
 private extension VideoFramesView {
     
     func setupBackgroundMask(withRect rect: CGRect) {
-        self.backgroundMask.path = UIBezierPath(
+        backgroundMask.path = UIBezierPath(
             roundedRect: rect,
             cornerRadius: rect.height * cornerRadiusMultiplier
         ).cgPath
-        self.layer.mask = backgroundMask
+        layer.mask = backgroundMask
     }
     
     func setupFrames(_ frames: [CGImage], width: CGFloat) {
@@ -82,48 +81,28 @@ private extension VideoFramesView {
             x: indexValue * singleFrameWidth,
             y: 0.0,
             width: singleFrameWidth,
-            height: self.frame.height
+            height: frame.height
         )
-        imageView.image = self.frames[index]
+        imageView.image = frames[index]
         
-        self.addSubview(imageView)
+        addSubview(imageView)
     }
     
-    func seutpCarretView() {
-        let carretWidth = 5.0
+    func setupCarretView() {
         carretView.frame = CGRect(
             x: 0.1,
-            y: 0,
-            width: carretWidth,
-            height: bounds.height + carretWidth
+            y: 0.0,
+            width: bounds.height * 0.15,
+            height: bounds.height
         )
-        carretView.backgroundColor = .white
-        carretView.layer.borderColor = UIColor.black.cgColor
-        carretView.layer.borderWidth = 1
-        carretView.layer.cornerRadius = 1
-        
-        self.addSubview(carretView)
+        carretView.configure(withDelegate: self)
+        addSubview(carretView)
     }
 }
 
 
-//MARK: - Animation
+//MARK: - CarretVeiw Delegate
 
-private extension VideoFramesView {
+extension VideoFramesView: CarretViewDelegate {
     
-    func animateCarretViewOnAppear() {
-        carretView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-        carretView.backgroundColor = .clear
-        
-        UIView.animate(
-            withDuration: 0.5,
-            delay: 0.5,
-            usingSpringWithDamping: 1,
-            initialSpringVelocity: 1,
-            options: [.autoreverse]
-        ) {
-            self.carretView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-            self.carretView.backgroundColor = .white
-        }
-    }
 }
