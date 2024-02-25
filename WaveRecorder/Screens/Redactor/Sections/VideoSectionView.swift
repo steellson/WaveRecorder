@@ -73,7 +73,7 @@ final class VideoSectionView: UIView {
     }
     
     func configureWith(videoRecord: VideoRecord?, playerLayer: AVPlayerLayer) {
-        guard let videoRecord else {
+        guard let frames = videoRecord?.frames else {
             configureEmpty()
             os_log("\(WRErrors.videoRecordUrlNotFound)")
             return
@@ -85,7 +85,10 @@ final class VideoSectionView: UIView {
             endTimeLabel.isHidden = false
             
             setupVideoPlayer(withLayer: playerLayer)
-            videoFramesView.configure(withFrames: videoRecord.frames)
+            videoFramesView.configure(
+                withFrames: frames,
+                singleFrameWidth: videoPlayerView.frame.width / CGFloat(frames.count)
+            )
         }
     }
     

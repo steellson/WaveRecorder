@@ -14,16 +14,18 @@ import WRResources
 
 final class VideoFramesView: UIView {
     
-    //MARK: Variables
-    
     private let backgroundMask = CAShapeLayer()
     private let progressLayer = CALayer()
+    
+    
+    //MARK: Variables
     
     private var progress: CGFloat = 0 {
         didSet { setNeedsDisplay() }
     }
     
     private var frames = [UIImage]()
+    private var singleFrameWidth: CGFloat = 10.0
     
     
     //MARK: Lifecycle
@@ -61,14 +63,16 @@ final class VideoFramesView: UIView {
     
     //MARK: Configure
     
-    func configure(withFrames frames: [CGImage]?) {
-        guard 
+    func configure(withFrames frames: [CGImage]?, singleFrameWidth: CGFloat) {
+        guard
             let frames,
             !frames.isEmpty
         else {
             os_log("ATTENTION <VideoTimelineView>: View configured with empty video frames!")
             return
         }
+        
+        self.singleFrameWidth = singleFrameWidth
         
         frames.enumerated().forEach { index, frame in
             let imageFrame = UIImage(cgImage: frame)
@@ -93,9 +97,9 @@ private extension VideoFramesView {
         let indexValue = CGFloat(index)
         
         imageView.frame = CGRect(
-            x: indexValue * 20.0,
+            x: indexValue * singleFrameWidth,
             y: 0.0,
-            width: 20.0,
+            width: singleFrameWidth,
             height: self.frame.height
         )
         imageView.image = self.frames[index]
