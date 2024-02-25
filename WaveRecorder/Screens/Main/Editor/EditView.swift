@@ -89,10 +89,10 @@ final class EditView: UIView {
             os_log("\(WRErrors.editViewModelIsNotSetted)")
             return
         }
-        viewModel.switchEditing()
+        viewModel.editDidTapped()
         
-        animateTitleLabelField(isEditing: viewModel.isEditing)
-        animateRenameButton(isEditingStarts: viewModel.isEditing)
+        animateTitleLabelField(isEditing: viewModel.isEditingNow())
+        animateRenameButton(isEditingStarts: viewModel.isEditingNow())
     }
     
     @objc
@@ -153,11 +153,13 @@ private extension EditView {
             os_log("\(WRErrors.editViewModelIsNotSetted)")
             return
         }
+        let isEditingNow = viewModel.isEditingNow()
+        
         UIView.animate(withDuration: 0.3) {
-            self.titleLabelField.text = viewModel.recordName
-            self.titleLabelField.isEnabled = viewModel.isEditing
-            self.dateLabel.text = viewModel.recordedAt
-            self.animateRenameButton(isEditingStarts: viewModel.isEditing)
+            self.titleLabelField.text = viewModel.getRecordName()
+            self.titleLabelField.isEnabled = isEditingNow
+            self.dateLabel.text = viewModel.getCreatinonDateString()
+            self.animateRenameButton(isEditingStarts: isEditingNow)
         }
     }
     
@@ -205,8 +207,8 @@ extension EditView: UITextFieldDelegate {
         Task {
             try await viewModel.onEndEditing(withNewName: newName)
             
-            animateTitleLabelField(isEditing: viewModel.isEditing)
-            animateRenameButton(isEditingStarts: viewModel.isEditing)
+            animateTitleLabelField(isEditing: viewModel.isEditingNow())
+            animateRenameButton(isEditingStarts: viewModel.isEditingNow())
         }
     }
     
@@ -221,8 +223,8 @@ extension EditView: UITextFieldDelegate {
         Task {
             try await viewModel.onEndEditing(withNewName: newName)
             
-            animateTitleLabelField(isEditing: viewModel.isEditing)
-            animateRenameButton(isEditingStarts: viewModel.isEditing)
+            animateTitleLabelField(isEditing: viewModel.isEditingNow())
+            animateRenameButton(isEditingStarts: viewModel.isEditingNow())
         }
         
         return true

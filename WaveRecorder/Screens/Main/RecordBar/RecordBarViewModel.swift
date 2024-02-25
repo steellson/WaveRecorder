@@ -10,17 +10,10 @@ import OSLog
 import WRAudio
 
 
-//MARK: - Protocol
-
-protocol RecordViewModel: AnyObject {
-    func record(isRecording: Bool) async throws
-}
-
-
 //MARK: - Impl
 
-final class RecordBarViewModelImpl: RecordViewModel {
-        
+final class RecordBarViewModelImpl {
+    
     private let audioRecorder: AudioRecorder = AudioRecorderImpl()
     private let parentViewModel: MainViewModel
     
@@ -53,13 +46,11 @@ private extension RecordBarViewModelImpl {
 }
 
 
-//MARK: Public
+//MARK: Output
 
-extension RecordBarViewModelImpl {
-    
-    func record(isRecording: Bool) async throws {
-        isRecording
-        ? try await stopRecord()
-        : try await startRecord()
+extension RecordBarViewModelImpl: RecordBarViewModel {
+
+    func setupRecordAnimated(_ isRecording: Bool) async throws {
+        try await isRecording ? stopRecord() : startRecord()
     }
 }

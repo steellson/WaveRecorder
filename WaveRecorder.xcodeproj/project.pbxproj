@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		3D1E70072B8B6C0A00BC30B5 /* CarretView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E70062B8B6C0A00BC30B5 /* CarretView.swift */; };
+		3D1E70092B8B941D00BC30B5 /* RecordBarConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E70082B8B941D00BC30B5 /* RecordBarConfigurator.swift */; };
+		3D1E700B2B8B977400BC30B5 /* PlayToolbarConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E700A2B8B977400BC30B5 /* PlayToolbarConfigurator.swift */; };
+		3D1E700D2B8B97FB00BC30B5 /* EditConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E700C2B8B97FB00BC30B5 /* EditConfigurator.swift */; };
+		3D1E700F2B8B981100BC30B5 /* MainConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E700E2B8B981100BC30B5 /* MainConfigurator.swift */; };
+		3D1E70112B8B985B00BC30B5 /* RedactorConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E70102B8B985B00BC30B5 /* RedactorConfigurator.swift */; };
 		3D5665F32B56B32D0047A32B /* HelpersStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5665F22B56B32D0047A32B /* HelpersStorage.swift */; };
 		3D5BFC0E2B7E449B000AFE73 /* VideoFramesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5BFC0D2B7E449B000AFE73 /* VideoFramesView.swift */; };
 		3D5BFC102B7E4FFC000AFE73 /* VideoFrameGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5BFC0F2B7E4FFC000AFE73 /* VideoFrameGenerator.swift */; };
@@ -40,11 +45,15 @@
 		3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFF902B0F65F3004CAE97 /* SceneDelegate.swift */; };
 		3DEAFF9B2B0F65F4004CAE97 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3DEAFF992B0F65F4004CAE97 /* LaunchScreen.storyboard */; };
 		3DEAFFD22B15F54D004CAE97 /* Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAFFD12B15F54D004CAE97 /* Formatter.swift */; };
-		3DFCE9AE2B331FF600D27A0B /* TimeRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3D1E70062B8B6C0A00BC30B5 /* CarretView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarretView.swift; sourceTree = "<group>"; };
+		3D1E70082B8B941D00BC30B5 /* RecordBarConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordBarConfigurator.swift; sourceTree = "<group>"; };
+		3D1E700A2B8B977400BC30B5 /* PlayToolbarConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayToolbarConfigurator.swift; sourceTree = "<group>"; };
+		3D1E700C2B8B97FB00BC30B5 /* EditConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditConfigurator.swift; sourceTree = "<group>"; };
+		3D1E700E2B8B981100BC30B5 /* MainConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainConfigurator.swift; sourceTree = "<group>"; };
+		3D1E70102B8B985B00BC30B5 /* RedactorConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactorConfigurator.swift; sourceTree = "<group>"; };
 		3D5665F22B56B32D0047A32B /* HelpersStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpersStorage.swift; sourceTree = "<group>"; };
 		3D5BFC0D2B7E449B000AFE73 /* VideoFramesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoFramesView.swift; sourceTree = "<group>"; };
 		3D5BFC0F2B7E4FFC000AFE73 /* VideoFrameGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoFrameGenerator.swift; sourceTree = "<group>"; };
@@ -75,7 +84,6 @@
 		3DEAFF9A2B0F65F4004CAE97 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3DEAFF9C2B0F65F4004CAE97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3DEAFFD12B15F54D004CAE97 /* Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatter.swift; sourceTree = "<group>"; };
-		3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeRefresher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,7 +105,6 @@
 			isa = PBXGroup;
 			children = (
 				3DEAFFD12B15F54D004CAE97 /* Formatter.swift */,
-				3DFCE9AD2B331FF600D27A0B /* TimeRefresher.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -143,6 +150,7 @@
 		3D6E75F42B76917D00656B39 /* Redactor */ = {
 			isa = PBXGroup;
 			children = (
+				3D1E70102B8B985B00BC30B5 /* RedactorConfigurator.swift */,
 				3D6E75F22B76917600656B39 /* RedactorViewController.swift */,
 				3D6E75F52B76919E00656B39 /* RedactorViewModel.swift */,
 				3D5BFC112B7E5892000AFE73 /* Sections */,
@@ -155,6 +163,7 @@
 		3D7CB1202B2C545900F5B91F /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				3D1E700E2B8B981100BC30B5 /* MainConfigurator.swift */,
 				3D682D992B1F297600067DFE /* MainViewModel.swift */,
 				3D682DA22B1F29B000067DFE /* MainViewController.swift */,
 				3D86A7952B70F89B006C492A /* MainTableView.swift */,
@@ -251,6 +260,7 @@
 		3DFEFF672B5FCE6500954745 /* Editor */ = {
 			isa = PBXGroup;
 			children = (
+				3D1E700C2B8B97FB00BC30B5 /* EditConfigurator.swift */,
 				3D682DA02B1F29B000067DFE /* EditView.swift */,
 				3D7CB1272B2C6FB900F5B91F /* EditViewModel.swift */,
 			);
@@ -260,6 +270,7 @@
 		3DFEFF682B5FCE7B00954745 /* PlayToolbar */ = {
 			isa = PBXGroup;
 			children = (
+				3D1E700A2B8B977400BC30B5 /* PlayToolbarConfigurator.swift */,
 				3D682DA92B1F29D300067DFE /* PlayToolbarView.swift */,
 				3D7CB1242B2C557A00F5B91F /* PlayToolbarViewModel.swift */,
 			);
@@ -269,6 +280,7 @@
 		3DFEFF692B5FCE8700954745 /* RecordBar */ = {
 			isa = PBXGroup;
 			children = (
+				3D1E70082B8B941D00BC30B5 /* RecordBarConfigurator.swift */,
 				3D682DAC2B1F29DA00067DFE /* RecordBarView.swift */,
 				3D682D982B1F297600067DFE /* RecordBarViewModel.swift */,
 			);
@@ -365,11 +377,13 @@
 				3D7CB1252B2C557A00F5B91F /* PlayToolbarViewModel.swift in Sources */,
 				3D5665F32B56B32D0047A32B /* HelpersStorage.swift in Sources */,
 				3D625B112B83622400F2EB50 /* VideoPlayer.swift in Sources */,
+				3D1E700D2B8B97FB00BC30B5 /* EditConfigurator.swift in Sources */,
 				3DA4B6CF2B7B6B4C00E1AC4E /* VideoSectionView.swift in Sources */,
 				3D1E70072B8B6C0A00BC30B5 /* CarretView.swift in Sources */,
+				3D1E70112B8B985B00BC30B5 /* RedactorConfigurator.swift in Sources */,
 				3D625B132B8366DE00F2EB50 /* VideoRecord.swift in Sources */,
-				3DFCE9AE2B331FF600D27A0B /* TimeRefresher.swift in Sources */,
 				3D682DAE2B1F29DA00067DFE /* RecordBarView.swift in Sources */,
+				3D1E700F2B8B981100BC30B5 /* MainConfigurator.swift in Sources */,
 				3D682DA52B1F29B000067DFE /* MainViewController.swift in Sources */,
 				3D682DAB2B1F29D300067DFE /* PlayToolbarView.swift in Sources */,
 				3DA4B6CD2B7B6B4500E1AC4E /* AudioSectionView.swift in Sources */,
@@ -379,7 +393,9 @@
 				3D86A79A2B711399006C492A /* AppCoordinator.swift in Sources */,
 				3D86A78E2B70F4A7006C492A /* UIView+Extension.swift in Sources */,
 				3D682D9B2B1F297600067DFE /* RecordBarViewModel.swift in Sources */,
+				3D1E70092B8B941D00BC30B5 /* RecordBarConfigurator.swift in Sources */,
 				3DEAFF8F2B0F65F3004CAE97 /* AppDelegate.swift in Sources */,
+				3D1E700B2B8B977400BC30B5 /* PlayToolbarConfigurator.swift in Sources */,
 				3D6E75F32B76917600656B39 /* RedactorViewController.swift in Sources */,
 				3D625B0F2B835FA200F2EB50 /* VideoMetadata.swift in Sources */,
 				3DEAFF912B0F65F3004CAE97 /* SceneDelegate.swift in Sources */,

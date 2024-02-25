@@ -12,7 +12,9 @@ import OSLog
 //MARK: - Protocols
 
 public protocol AudioPlayer: AnyObject {
-    func play(record: AudioRecord, onTime time: Float) throws
+    func play(record: AudioRecord, 
+              onTime time: Float,
+              updateTimeCompletion: @escaping (TimeInterval) -> Void) throws
     func stop() throws
 }
 
@@ -25,6 +27,7 @@ public enum AudioPlayerError: Error {
     case audioCantStartPlaying
     case audioIsNotPlayinngNow
     case cantSetupAudioPlayer
+    case cantUpdateTime
 }
 
 
@@ -35,7 +38,8 @@ final public class AudioPlayerImpl: AudioPlayer {
     private let audioPathManager: AudioPathManager
     
     private var audioPlayer: AVAudioPlayer?
-    
+    private var timer: Timer?
+
     
     public init() {
         self.audioPathManager = AudioPathManagerImpl()
@@ -55,6 +59,21 @@ private extension AudioPlayerImpl {
         
         audioPlayer.isMeteringEnabled = true
         audioPlayer.numberOfLoops = 0
+    }
+    
+    func updateTime(action: @escaping (TimeInterval) -> Void) throws {
+        guard
+            let audioPlayer,
+            audioPlayer.currentTime != audioPlayer.duration
+        else {
+            self.timer?.invalidate()
+            self.timer = nil
+            throw AudioPlayerError.cantUpdateTime
+        }
+        
+        self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+            action(audioPlayer.currentTime)
+        }
     }
     
     func startPlay(atTime time: Float, fromURL url: URL) throws {
@@ -84,7 +103,11 @@ public extension AudioPlayerImpl {
     
     //MARK: Play
     
-    func play(record: AudioRecord, onTime time: Float) throws {
+    func play(
+        record: AudioRecord,
+        onTime time: Float,
+        updateTimeCompletion: @escaping (TimeInterval) -> Void) throws
+    {
         let recordURL = audioPathManager.createURL(
             forRecordWithName: record.name,
             andFormat: record.format.rawValue
@@ -102,6 +125,7 @@ public extension AudioPlayerImpl {
             self.audioPlayer = audioPlayer
             
             try startPlay(atTime: time, fromURL: recordURL)
+            try self.updateTime(action: updateTimeCompletion)
             
             guard audioPlayer.isPlaying else {
                 os_log(">> Cant start playing audio with URL: \(recordURL)")
@@ -121,8 +145,10 @@ public extension AudioPlayerImpl {
     func stop() throws {
         if let player = self.audioPlayer, player.isPlaying {
             self.audioPlayer?.stop()
-            os_log("SUCCESS: Audio stopped!")
             self.audioPlayer = nil
+            self.timer = nil
+            
+            os_log("SUCCESS: Audio stopped!")
         } else {
             os_log("ERROR: Audio is not stopped because its not playing now!")
             throw AudioPlayerError.audioIsNotPlayinngNow

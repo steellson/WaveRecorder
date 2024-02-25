@@ -13,7 +13,7 @@ import WRResources
 
 final class RecordBarView: UIView {
     
-    private let viewModel: RecordViewModel
+    private let viewModel: RecordBarViewModel
     
     private let recordVisualizerView = RecordVisualizerView(backgroundColor: WRColors.primaryBackground)
     private let recordWaveView = RecordWaveView()
@@ -25,7 +25,7 @@ final class RecordBarView: UIView {
     //MARK: Lifecycle
     
     init(
-        viewModel: RecordViewModel
+        viewModel: RecordBarViewModel
     ) {
         self.viewModel = viewModel
         super.init(frame: .zero)
@@ -118,13 +118,13 @@ private extension RecordBarView {
 }
 
 
-//MARK: - RoundedRecButtonView Delegate
+//MARK: - View Output
 
-extension RecordBarView: RecordButtonViewDelegate {
+extension RecordBarView: RecordBarViewProtocol {
     
-    func recButtonDidTapped(_ isRecording: Bool) {
+    func recordButtonTapped(_ isRecording: Bool) {
         Task {
-            try await viewModel.record(isRecording: isRecording)
+            try await viewModel.setupRecordAnimated(isRecording)
             
             if !isRecording {
                 setupRecordVisualizerView()
@@ -135,5 +135,14 @@ extension RecordBarView: RecordButtonViewDelegate {
             
             layoutIfNeeded()
         }
+    }
+}
+
+//MARK: - RoundedRecButtonView Delegate
+
+extension RecordBarView: RecordButtonViewDelegate {
+    
+    func recButtonDidTapped(_ isRecording: Bool) {
+        recordButtonTapped(isRecording)
     }
 }

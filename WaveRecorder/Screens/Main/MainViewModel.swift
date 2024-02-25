@@ -19,8 +19,6 @@ protocol MainTableViewModel: AnyObject {
     func didSwipedForDelete(forIndexPath indexPath: IndexPath)
 }
 
-protocol MainViewModel: InterfaceUpdatable, Searcher, Editor, Notifier, MainTableViewModel, ModuleMaker { }
-
 
 //MARK: - Impl
 
@@ -67,8 +65,8 @@ final class MainViewModelImpl: MainViewModel {
 extension MainViewModelImpl {
     
     func makeRecordBar() -> RecordBarView {
-        let recordViewModel: RecordViewModel = RecordBarViewModelImpl(parentViewModel: self)
-        let recordBarView = RecordBarView(viewModel: recordViewModel)
+        let recordBarViewModel: RecordBarViewModel = RecordBarViewModelImpl(parentViewModel: self)
+        let recordBarView = RecordBarView(viewModel: recordBarViewModel)
         return recordBarView
     }
     

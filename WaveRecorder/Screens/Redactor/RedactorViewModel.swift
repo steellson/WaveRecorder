@@ -11,24 +11,6 @@ import WRAudio
 import WRResources
 
 
-typealias AudioRecordMetadata = (name: String, duration: String, date: String)
-
-
-//MARK: - Protocol
-
-protocol RedactorViewModel: InterfaceUpdatable {
-    var audioRecordMetadata: AudioRecordMetadata { get }
-    var videoRecord: VideoRecord? { get }
-    
-    var elapsedTimeFormatted: String { get }
-    var remainingTimeFormatted: String { get }
-    
-    func didSelected(videoWithURL url: URL) async throws -> AVPlayerLayer
-    func didSeletVideoButtonTapped(_ delegate: VideoPickerDelegate)
-    func didVideoPlayerTapped()
-}
-
-
 //MARK: - Impl
 
 final class RedactorViewModelImpl: RedactorViewModel {
@@ -38,10 +20,9 @@ final class RedactorViewModelImpl: RedactorViewModel {
     private(set) var audioRecordMetadata = AudioRecordMetadata(name: "", duration: "", date: "")
     private(set) var videoRecord: VideoRecord?
     
-    private(set) var elapsedTimeFormatted = "00:00"
-    private(set) var remainingTimeFormatted = "00:00"
-    
     private var isPlayingNow = false
+    private var elapsedTime = 0.0
+    private var remainingTime = 0.0
             
     private let audioRecord: AudioRecord
     private let videoPlayer: VideoPlayer
@@ -80,11 +61,8 @@ private extension RedactorViewModelImpl {
     
     func updateTime(withTimeProgress timeProgress: TimeInterval) {
         guard let videoRecord else { return }
-        let remainingTime = videoRecord.duration - timeProgress
-        let elapsedTime = Double(timeProgress)
-        
-        elapsedTimeFormatted = helpers.formatter.formatDuration(elapsedTime)
-        remainingTimeFormatted = helpers.formatter.formatDuration(remainingTime)
+        self.elapsedTime = Double(timeProgress)
+        self.remainingTime = videoRecord.duration - timeProgress
     }
     
     func play() {
@@ -114,9 +92,9 @@ private extension RedactorViewModelImpl {
 }
 
 
-//MARK: - Public
+//MARK: - Input
 
-extension RedactorViewModelImpl {
+extension RedactorViewModelImpl: RedactorViewProtocol {
     
     func didSelected(videoWithURL url: URL) async throws -> AVPlayerLayer {
         videoPlayer.configureWith(url: url)
@@ -128,8 +106,7 @@ extension RedactorViewModelImpl {
             duration: record.duration,
             frames: record.frames
         )
-        self.elapsedTimeFormatted = helpers.formatter.formatDuration(0.0)
-        self.remainingTimeFormatted = helpers.formatter.formatDuration(record.duration)
+        self.remainingTime = record.duration
         
         return try videoPlayer.getVideoPlayerLayer()
     }
@@ -140,5 +117,19 @@ extension RedactorViewModelImpl {
     
     func didVideoPlayerTapped() {
         isPlayingNow ? pause() : play()
+    }
+}
+
+
+//MARK: - Output
+
+extension RedactorViewModelImpl {
+    
+    func getElapsedTimeString() -> String {
+        helpers.formatter.formatDuration(elapsedTime)
+    }
+    
+    func getRemainingTimeString() -> String {
+        helpers.formatter.formatDuration(remainingTime)
     }
 }

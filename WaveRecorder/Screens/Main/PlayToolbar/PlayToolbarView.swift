@@ -188,8 +188,8 @@ private extension PlayToolbarView {
             return
         }
         UIView.animate(withDuration: 0.1) {
-            self.startTimeLabel.text = viewModel.elapsedTimeFormatted
-            self.endTimeLabel.text = viewModel.remainingTimeFormatted
+            self.startTimeLabel.text = viewModel.getElapsedTimeString()
+            self.endTimeLabel.text = viewModel.getRemainingTimeString()
             self.layoutIfNeeded()
         }
     }
@@ -201,7 +201,7 @@ private extension PlayToolbarView {
         }
         UIView.animate(withDuration: 0.5) {
             self.progressSlider.value = 0
-            self.progressSlider.maximumValue = viewModel.duration
+            self.progressSlider.maximumValue = viewModel.getDuration()
             self.animateLabels()
         }
     }

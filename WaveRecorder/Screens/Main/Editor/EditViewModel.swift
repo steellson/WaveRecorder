@@ -9,39 +9,16 @@ import Foundation
 import WRAudio
 
 
-//MARK: - Protocols
-
-protocol EditViewModel: AnyObject {
-    var recordName: String { get }
-    var recordedAt: String { get }
-    var isEditing: Bool { get }
-            
-    func switchEditing()
-    func onEndEditing(withNewName newName: String) async throws
-    func addToVideoButtonTapped()
-}
-
-
-
 //MARK: - Impl
 
-final class EditViewModelImpl: EditViewModel {
-        
-    var recordName: String {
-        helpers.formatter.formatName(record.name)
-    }
+final class EditViewModelImpl {
     
-    var recordedAt: String {
-        helpers.formatter.formatDate(record.date)
-    }
-    
-    private(set) var isEditing = false
-    
-    private var record: AudioRecord
     private let helpers: HelpersStorage
     private let parentViewModel: MainViewModel
     
-    
+    private var record: AudioRecord
+    private var isEditing: Bool = false
+
     
     //MARK: Init
     
@@ -56,17 +33,14 @@ final class EditViewModelImpl: EditViewModel {
     }
 }
 
-extension EditViewModelImpl {
-    
-    //MARK: Switch editing state
-    
-    func switchEditing() {
+//MARK: - Input
+
+extension EditViewModelImpl: EditViewProtocol {
+        
+    func editDidTapped() {
         isEditing.toggle()
     }
     
-    
-    //MARK: On end editing
-
     func onEndEditing(withNewName newName: String) async throws {
         isEditing = false
         
@@ -82,10 +56,25 @@ extension EditViewModelImpl {
         )
     }
     
-    
-    //MARK: Did details tapped
-    
     func addToVideoButtonTapped() {
         parentViewModel.openDetails(withAudioRecord: record)
+    }
+}
+
+
+//MARK: Output
+
+extension EditViewModelImpl: EditViewModel {
+    
+    func isEditingNow() -> Bool {
+        isEditing
+    }
+    
+    func getRecordName() -> String {
+        helpers.formatter.formatName(record.name)
+    }
+    
+    func getCreatinonDateString() -> String {
+        helpers.formatter.formatDate(record.date)
     }
 }

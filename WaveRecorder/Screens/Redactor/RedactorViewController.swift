@@ -155,8 +155,8 @@ private extension RedactorViewController {
             Task {
                 self.view.layoutSubviews()
                 self.videoSectionView.updateProgressWith(
-                    elapsedTime: self.viewModel.elapsedTimeFormatted,
-                    remainingTime: self.viewModel.remainingTimeFormatted
+                    elapsedTime: self.viewModel.getElapsedTimeString(),
+                    remainingTime: self.viewModel.getRemainingTimeString()
                 )
             }
         }
@@ -191,8 +191,8 @@ extension RedactorViewController: VideoPickerDelegate {
                 playerLayer: playerLayer
             )
             videoSectionView.updateProgressWith(
-                elapsedTime: viewModel.elapsedTimeFormatted,
-                remainingTime: viewModel.remainingTimeFormatted
+                elapsedTime: viewModel.getElapsedTimeString(),
+                remainingTime: viewModel.getRemainingTimeString()
             )
             picker.dismiss(animated: true)
         }

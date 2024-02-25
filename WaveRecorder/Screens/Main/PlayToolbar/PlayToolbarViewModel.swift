@@ -11,39 +11,18 @@ import WRAudio
 import WRResources
 
 
-//MARK: - Protocol
-
-protocol PlayToolbarViewModel: AnyObject {
-    var progress: Float { get }
-    var duration: Float { get }
-    
-    var elapsedTimeFormatted: String { get }
-    var remainingTimeFormatted: String { get }
-    
-    func goBack() throws
-    func play(atTime time: Float, animation: @escaping () -> Void) throws
-    func stop() throws
-    func goForward() throws
-    func deleteRecord() throws
-}
-
-
 //MARK: - Impl
 
-final class PlayToolbarViewModelImpl: PlayToolbarViewModel {
-        
-    var progress: Float = 0.0
-    var duration: Float { Float(record.duration ?? 0.0) }
-    
-    private(set) var elapsedTimeFormatted: String = "00:00"
-    private(set) var remainingTimeFormatted: String = "00:00"
-    
-    private var elapsedTime: Float = 0.0
-    private var remainingTime: Float = 0.0
-    
-    private var isPlaying = false
+final class PlayToolbarViewModelImpl {
     
     private var record: AudioRecord
+    private var isPlaying = false
+    
+    private var progress: Float = 0.0
+    private var duration: Float = 0.0
+    private var elapsedTimeString = "00:00"
+    private var remainingTimeString = "00:00"
+    
     private let audioPlayer: AudioPlayer
     private let helpers: HelpersStorage
     private let parentViewModel: MainViewModel
@@ -62,11 +41,14 @@ final class PlayToolbarViewModelImpl: PlayToolbarViewModel {
         self.helpers = helpers
         self.parentViewModel = parentViewModel
         
-        resetTime()
+        self.updateTime(withTimeProgress: 0)
     }
 }
 
-extension PlayToolbarViewModelImpl {
+
+//MARK: - Input
+
+extension PlayToolbarViewModelImpl: PlayToolbarViewProtocol {
     
     //MARK: Go back
     
@@ -84,16 +66,11 @@ extension PlayToolbarViewModelImpl {
         }
         
         do {
-            try audioPlayer.play(record: record, onTime: time)
-            isPlaying = true
-            
-            helpers.timeRefresher.register { [weak self] in
-                self?.updateTime(withValue: time)
+            try audioPlayer.play(record: record, onTime: time) { [weak self] progress in
+                self?.updateTime(withTimeProgress: progress)
+                self?.isPlaying = true
                 animation()
             }
-            
-            setTimeWithDifference(startTime: time)
-            helpers.timeRefresher.start()
         } catch {
             os_log("\(WRErrors.cantPlayAudio) \(error)")
             return
@@ -106,8 +83,7 @@ extension PlayToolbarViewModelImpl {
     func stop() throws {
         do {
             try audioPlayer.stop()
-            helpers.timeRefresher.stop()
-            resetTime()
+            updateTime(withTimeProgress: 0)
             isPlaying = false
         } catch {
             os_log("\(WRErrors.cantStopAudio) \(error)")
@@ -131,54 +107,41 @@ extension PlayToolbarViewModelImpl {
 }
 
 
+//MARK: - Output
+
+extension PlayToolbarViewModelImpl: PlayToolbarViewModel {
+    
+    func isPlayingNow() -> Bool {
+        isPlaying
+    }
+    
+    func getProgress() -> Float {
+        progress
+    }
+    
+    func getDuration() -> Float {
+        Float(record.duration ?? 0.0)
+    }
+    
+    func getElapsedTimeString() -> String {
+        elapsedTimeString
+    }
+    
+    func getRemainingTimeString() -> String {
+        remainingTimeString
+    }
+}
+
+
+//MARK: - Private
+
 private extension PlayToolbarViewModelImpl {
-    
-    enum FormatType {
-        case date(Date)
-        case duration(TimeInterval)
-    }
-    
-    //MARK: Format
-    
-    func format(withType type: FormatType) -> String {
-        switch type {
-        case .date(let date): helpers.formatter.formatDate(date)
-        case .duration(let duration): helpers.formatter.formatDuration(duration)
-        }
-    }
-    
-    func updateFormattedTime() {
-        elapsedTimeFormatted = format(withType: .duration(TimeInterval(elapsedTime)))
-        remainingTimeFormatted = format(withType: .duration(TimeInterval(remainingTime)))
-    }
-    
-    
-    //MARK: Time
-    
-    func setTimeWithDifference(startTime: Float) {
-        elapsedTime = startTime
-        remainingTime = duration - startTime
-    }
-    
-    func updateTime(withValue value: Float) {
-        let step: Float = 0.1
+
+    func updateTime(withTimeProgress timeProgress: TimeInterval) {
+        guard let duration = record.duration else { return }
+        let remainingTime = TimeInterval(Float(duration) - progress)
         
-        if elapsedTime <= duration {
-            progress += step
-            elapsedTime += step
-            remainingTime -= step
-            updateFormattedTime()
-        } else {
-            self.resetTime()
-            self.isPlaying = false
-        }
-    }
-    
-    func resetTime() {
-        helpers.timeRefresher.stop()
-        progress = 0.0
-        elapsedTime = 0.0
-        remainingTime = duration
-        updateFormattedTime()
+        self.elapsedTimeString = helpers.formatter.formatDuration(timeProgress)
+        self.remainingTimeString = helpers.formatter.formatDuration(remainingTime)
     }
 }
