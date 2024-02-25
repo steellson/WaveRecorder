@@ -21,6 +21,7 @@ protocol CarretViewDelegate: AnyObject {
 final class CarretView: UIView {
     
     private let backgroundMask = CAShapeLayer()
+    private let panGesture = UIPanGestureRecognizer()
 
     
     //MARK: Variables
@@ -54,7 +55,7 @@ final class CarretView: UIView {
     
     @objc
     private func didChangePosition() {
-        
+        print("panGesture")
     }
 }
 
@@ -80,7 +81,6 @@ private extension CarretView {
     }
     
     func setupPanGesture() {
-        let panGesture = UIPanGestureRecognizer()
         panGesture.maximumNumberOfTouches = 1
         panGesture.addTarget(self, action: #selector(didChangePosition))
         addGestureRecognizer(panGesture)

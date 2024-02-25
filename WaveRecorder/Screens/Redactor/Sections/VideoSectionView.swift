@@ -241,6 +241,7 @@ private extension VideoSectionView {
         UIView.animate(withDuration: 0.1) {
             self.startTimeLabel.text = elapsedTime
             self.endTimeLabel.text = remainingTime
+            self.videoFramesView.updateProgress()
         }
     }
 }

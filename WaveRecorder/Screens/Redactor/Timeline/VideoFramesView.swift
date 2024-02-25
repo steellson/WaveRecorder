@@ -22,6 +22,8 @@ final class VideoFramesView: UIView {
     
     private var frames = [UIImage]()
 
+    private var progress: CGFloat = 0.0
+    
     private var singleFrameWidth: CGFloat = 10.0
     private var cornerRadiusMultiplier: CGFloat = 0.25
     
@@ -48,6 +50,11 @@ final class VideoFramesView: UIView {
         setupCarretView()
         
         setNeedsLayout()
+    }
+    
+    func updateProgress() {
+        progress += 0.1
+        carretView.frame.origin.x = progress * (carretView.bounds.width * 2)
     }
 }
 
@@ -90,7 +97,7 @@ private extension VideoFramesView {
     
     func setupCarretView() {
         carretView.frame = CGRect(
-            x: 0.1,
+            x: 0.0,
             y: 0.0,
             width: bounds.height * 0.15,
             height: bounds.height
