@@ -131,7 +131,6 @@ extension VideoPlayerImpl {
     }
     
     func play(completion: @escaping (TimeInterval) -> Void) throws {
-        player = nil
         guard let player else {
             throw VideoPlayerError.cantGetVideoPlayerInstance
         }

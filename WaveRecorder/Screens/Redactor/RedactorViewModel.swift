@@ -40,6 +40,8 @@ final class RedactorViewModelImpl: RedactorViewModel {
     
     private(set) var elapsedTimeFormatted = "00:00"
     private(set) var remainingTimeFormatted = "00:00"
+    
+    private var isPlayingNow = false
             
     private let audioRecord: AudioRecord
     private let videoPlayer: VideoPlayer
@@ -91,6 +93,7 @@ private extension RedactorViewModelImpl {
                 guard let self else { return }
 
                 Task {
+                    self.isPlayingNow = true
                     self.updateTime(withTimeProgress: timeProgress)
                     try await self.shouldUpdateInterface?(false)
                 }
@@ -106,6 +109,7 @@ private extension RedactorViewModelImpl {
     
     func pause() {
         videoPlayer.pause()
+        isPlayingNow = false
     }
 }
 
@@ -135,7 +139,6 @@ extension RedactorViewModelImpl {
     }
     
     func didVideoPlayerTapped() {
-        play() // pause()
-
+        isPlayingNow ? pause() : play()
     }
 }
