@@ -15,49 +15,21 @@ import WRResources
 final class VideoFramesView: UIView {
     
     private let backgroundMask = CAShapeLayer()
-    private let progressLayer = CALayer()
+    private let carretView = UIView()
     
     
     //MARK: Variables
     
-    private var progress: CGFloat = 0 {
-        didSet { setNeedsDisplay() }
-    }
-    
     private var frames = [UIImage]()
+
     private var singleFrameWidth: CGFloat = 10.0
+    private var cornerRadiusMultiplier: CGFloat = 0.25
     
     
-    //MARK: Lifecycle
-    
-    init() {
-        super.init(frame: .zero)
-        setupLayers()
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupLayers()
-    }
+    //MARK: Draw
     
     override func draw(_ rect: CGRect) {
-        backgroundMask.path = UIBezierPath(
-            roundedRect: rect,
-            cornerRadius: rect.height * 0.25
-        ).cgPath
-        layer.mask = backgroundMask
-        
-        let progressRect = CGRect(
-            origin: .zero,
-            size: CGSize(
-                width: rect.width * progress,
-                height: rect.height
-        ))
-        
-        progressLayer.frame = progressRect
-        progressLayer.borderWidth = 0.5
-        progressLayer.borderColor = UIColor.black.cgColor
-        progressLayer.backgroundColor = UIColor.darkGray.cgColor
+        setupBackgroundMask(withRect: rect)
     }
     
     
@@ -72,13 +44,9 @@ final class VideoFramesView: UIView {
             return
         }
         
-        self.singleFrameWidth = singleFrameWidth
-        
-        frames.enumerated().forEach { index, frame in
-            let imageFrame = UIImage(cgImage: frame)
-            self.frames.append(imageFrame)
-            self.setupImageView(withIndex: index)
-        }
+        setupFrames(frames, width: singleFrameWidth)
+        seutpCarretView()
+        animateCarretViewOnAppear()
         
         setNeedsLayout()
     }
@@ -88,8 +56,22 @@ final class VideoFramesView: UIView {
 
 private extension VideoFramesView {
     
-    func setupLayers() {
-        layer.addSublayer(progressLayer)
+    func setupBackgroundMask(withRect rect: CGRect) {
+        self.backgroundMask.path = UIBezierPath(
+            roundedRect: rect,
+            cornerRadius: rect.height * cornerRadiusMultiplier
+        ).cgPath
+        self.layer.mask = backgroundMask
+    }
+    
+    func setupFrames(_ frames: [CGImage], width: CGFloat) {
+        self.singleFrameWidth = width
+
+        frames.enumerated().forEach { index, frame in
+            let imageFrame = UIImage(cgImage: frame)
+            self.frames.append(imageFrame)
+            self.setupImageView(withIndex: index)
+        }
     }
     
     func setupImageView(withIndex index: Int) {
@@ -105,5 +87,43 @@ private extension VideoFramesView {
         imageView.image = self.frames[index]
         
         self.addSubview(imageView)
+    }
+    
+    func seutpCarretView() {
+        let carretWidth = 5.0
+        carretView.frame = CGRect(
+            x: 0.1,
+            y: 0,
+            width: carretWidth,
+            height: bounds.height + carretWidth
+        )
+        carretView.backgroundColor = .white
+        carretView.layer.borderColor = UIColor.black.cgColor
+        carretView.layer.borderWidth = 1
+        carretView.layer.cornerRadius = 1
+        
+        self.addSubview(carretView)
+    }
+}
+
+
+//MARK: - Animation
+
+private extension VideoFramesView {
+    
+    func animateCarretViewOnAppear() {
+        carretView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+        carretView.backgroundColor = .clear
+        
+        UIView.animate(
+            withDuration: 0.5,
+            delay: 0.5,
+            usingSpringWithDamping: 1,
+            initialSpringVelocity: 1,
+            options: [.autoreverse]
+        ) {
+            self.carretView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.carretView.backgroundColor = .white
+        }
     }
 }

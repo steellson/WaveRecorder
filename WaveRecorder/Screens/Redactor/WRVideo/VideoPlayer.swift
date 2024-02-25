@@ -19,7 +19,7 @@ protocol VideoPlayer: AnyObject {
     func getVideoPlayerLayer() throws -> AVPlayerLayer
     func getVideo() async throws -> VideoRecord
     
-    func play(completion: @escaping (TimeInterval) -> Void) throws
+    func play(updateTimeCompletion: @escaping (TimeInterval) -> Void) throws
     func pause()
     func stop()
 }
@@ -130,14 +130,14 @@ extension VideoPlayerImpl {
         }
     }
     
-    func play(completion: @escaping (TimeInterval) -> Void) throws {
+    func play(updateTimeCompletion: @escaping (TimeInterval) -> Void) throws {
         guard let player else {
             throw VideoPlayerError.cantGetVideoPlayerInstance
         }
         
         do {
             player.play()
-            try updateTime(action: completion)
+            try updateTime(action: updateTimeCompletion)
         } catch {
             throw VideoPlayerError.cantUpdateTime
         }
