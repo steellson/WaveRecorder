@@ -8,19 +8,19 @@
 import Foundation
 
 //MARK: - Protocol
-
 protocol HelpersStorage: AnyObject {
     var formatter: FormatterProtocol { get }
     var notificationCenter: NotificationCenter { get }
     var fileManager: FileManager { get }
 }
 
+// MARK: - Impl
 final class HelpersStorageImpl: HelpersStorage {
-    
-    //MARK: Self created
+
+    /// Self created
     private(set) var formatter: FormatterProtocol = FormatterImpl()
-    
-    //MARK: Default
+
+    /// Default
     private(set) var notificationCenter: NotificationCenter = NotificationCenter.default
     private(set) var fileManager: FileManager = FileManager.default
 }

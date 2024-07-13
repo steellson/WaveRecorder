@@ -10,28 +10,24 @@ import OSLog
 import WRAudio
 import WRResources
 
-
-//MARK: - Impl
-
 final class RedactorViewModelImpl: RedactorViewModel {
-    
-    var shouldUpdateInterface: ((Bool) async throws -> Void)?
-    
-    private(set) var audioRecordMetadata = AudioRecordMetadata(name: "", duration: "", date: "")
-    private(set) var videoRecord: VideoRecord?
-    
+
+    public var shouldUpdateInterface: ((Bool) async throws -> Void)?
+
+    // MARK: - Properties
+    public var audioRecordMetadata = AudioRecordMetadata(name: "", duration: "", date: "")
+    public var videoRecord: VideoRecord?
+
     private var isPlayingNow = false
     private var elapsedTime = 0.0
     private var remainingTime = 0.0
-            
+
     private let audioRecord: AudioRecord
     private let videoPlayer: VideoPlayer
     private let helpers: HelpersStorage
     private let coordinator: AppCoordinator
     
-    
-    //MARK: Init
-    
+    //MARK: Injections
     init(
         audioRecord: AudioRecord,
         videoPlayer: VideoPlayer,
@@ -42,29 +38,68 @@ final class RedactorViewModelImpl: RedactorViewModel {
         self.videoPlayer = videoPlayer
         self.helpers = helpers
         self.coordinator = coordinator
-        
+
         loadRecordMetadata()
     }
 }
 
-//MARK: - Private
+//MARK: - Input
+extension RedactorViewModelImpl: RedactorViewProtocol {
 
+    func didSelected(videoWithURL url: URL) async throws -> AVPlayerLayer {
+        videoPlayer.configureWith(url: url)
+
+        let record = try await videoPlayer.getVideo()
+        videoRecord = VideoRecord(
+            name: record.name,
+            url: record.url,
+            duration: record.duration,
+            frames: record.frames
+        )
+        remainingTime = record.duration
+        
+        return try videoPlayer.getVideoPlayerLayer()
+    }
+
+    func didSeletVideoButtonTapped(_ delegate: VideoPickerDelegate) {
+        coordinator.showVideoPicker(forDelegate: delegate)
+    }
+
+    func didVideoPlayerTapped() {
+        isPlayingNow ? pause() : play()
+    }
+}
+
+//MARK: - Output
+extension RedactorViewModelImpl {
+
+    func getElapsedTimeString() -> String {
+        helpers.formatter.formatDuration(elapsedTime)
+    }
+
+    func getRemainingTimeString() -> String {
+        helpers.formatter.formatDuration(remainingTime)
+    }
+}
+
+//MARK: - Methods (Private)
 private extension RedactorViewModelImpl {
-    
+
     func loadRecordMetadata() {
-        self.audioRecordMetadata = AudioRecordMetadata(
+        audioRecordMetadata = AudioRecordMetadata(
             name: helpers.formatter.formatName(audioRecord.name),
             duration: helpers.formatter.formatDuration(audioRecord.duration ?? 0.0),
             date: helpers.formatter.formatDate(audioRecord.date)
         )
     }
-    
+
     func updateTime(withTimeProgress timeProgress: TimeInterval) {
         guard let videoRecord else { return }
-        self.elapsedTime = Double(timeProgress)
-        self.remainingTime = videoRecord.duration - timeProgress
+
+        elapsedTime = Double(timeProgress)
+        remainingTime = videoRecord.duration - timeProgress
     }
-    
+
     func play() {
         do {
             try videoPlayer.play() { [weak self] timeProgress in
@@ -84,52 +119,9 @@ private extension RedactorViewModelImpl {
             )
         }
     }
-    
+
     func pause() {
         videoPlayer.pause()
         isPlayingNow = false
-    }
-}
-
-
-//MARK: - Input
-
-extension RedactorViewModelImpl: RedactorViewProtocol {
-    
-    func didSelected(videoWithURL url: URL) async throws -> AVPlayerLayer {
-        videoPlayer.configureWith(url: url)
-        
-        let record = try await videoPlayer.getVideo()
-        self.videoRecord = VideoRecord(
-            name: record.name,
-            url: record.url,
-            duration: record.duration,
-            frames: record.frames
-        )
-        self.remainingTime = record.duration
-        
-        return try videoPlayer.getVideoPlayerLayer()
-    }
-
-    func didSeletVideoButtonTapped(_ delegate: VideoPickerDelegate) {
-        coordinator.showVideoPicker(forDelegate: delegate)
-    }
-    
-    func didVideoPlayerTapped() {
-        isPlayingNow ? pause() : play()
-    }
-}
-
-
-//MARK: - Output
-
-extension RedactorViewModelImpl {
-    
-    func getElapsedTimeString() -> String {
-        helpers.formatter.formatDuration(elapsedTime)
-    }
-    
-    func getRemainingTimeString() -> String {
-        helpers.formatter.formatDuration(remainingTime)
     }
 }

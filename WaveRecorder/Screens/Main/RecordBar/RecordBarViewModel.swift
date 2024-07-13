@@ -9,17 +9,12 @@ import Foundation
 import OSLog
 import WRAudio
 
-
-//MARK: - Impl
-
 final class RecordBarViewModelImpl {
-    
+
     private let audioRecorder: AudioRecorder = AudioRecorderImpl()
     private let parentViewModel: MainViewModel
     
-    
-    //MARK: Init
-    
+    //MARK: Injections
     init(
         parentViewModel: MainViewModel
     ) {
@@ -27,30 +22,26 @@ final class RecordBarViewModelImpl {
     }
 }
 
+//MARK: Output
+extension RecordBarViewModelImpl: RecordBarViewModel {
 
-//MARK: - Private
+    func setupRecordAnimated(_ isRecording: Bool) async throws {
+        try await isRecording ? stopRecord() : startRecord()
+    }
+}
 
+//MARK: - Methods (Private)
 private extension RecordBarViewModelImpl {
-    
+
     func startRecord() async throws {
         try await audioRecorder.startRecord()
         try await self.parentViewModel.updateData()
         try await self.parentViewModel.shouldUpdateInterface?(true)
     }
-    
+
     func stopRecord() async throws {
         let _ = try await audioRecorder.stopRecord()
         try await self.parentViewModel.updateData()
         try await self.parentViewModel.shouldUpdateInterface?(false)
-    }
-}
-
-
-//MARK: Output
-
-extension RecordBarViewModelImpl: RecordBarViewModel {
-
-    func setupRecordAnimated(_ isRecording: Bool) async throws {
-        try await isRecording ? stopRecord() : startRecord()
     }
 }

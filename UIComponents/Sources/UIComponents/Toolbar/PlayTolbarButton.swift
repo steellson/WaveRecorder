@@ -7,9 +7,7 @@
 
 import UIKit
 
-
 //MARK: - Type
-
 public enum PlayToolbarButtonType {
     case goBack
     case play
@@ -18,14 +16,11 @@ public enum PlayToolbarButtonType {
     case delete
 }
 
-
 //MARK: - Impl
-
 public final class PlayTolbarButton: UIButton {
-    
+
     public var type: PlayToolbarButtonType
-    
-    
+
     public init(
         type: PlayToolbarButtonType
     ) {
@@ -34,13 +29,16 @@ public final class PlayTolbarButton: UIButton {
         
         setupButton(ofType: type)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
-    private func setupButton(ofType type: PlayToolbarButtonType) {
+}
+
+// MARK: - Setup (Private)
+private extension PlayTolbarButton {
+
+    func setupButton(ofType type: PlayToolbarButtonType) {
         switch type {
         case .goBack:
             setImage(UIImage(systemName: "gobackward.15"), for: .normal)

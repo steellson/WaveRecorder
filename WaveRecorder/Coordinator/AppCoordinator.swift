@@ -8,34 +8,27 @@
 import UIKit
 import WRAudio
 
-
 //MARK: Protocol
-
 protocol Coordinator {
     var parentCoordinator: Coordinator? { get set }
     var children: [Coordinator] { get set }
-    
+
     var navigationController: UINavigationController { get set }
-    
+
     func startWithMainView()
     func showRedactorView(withAudioRecord record: AudioRecord)
     func showVideoPicker(forDelegate delegate: VideoPickerDelegate)
     func showDefaultAlert(withTitle title: String, message: String)
 }
 
-
 //MARK: - Impl
-
 final class AppCoordinator: Coordinator {
-    
-    var parentCoordinator: Coordinator?
-    var children: [Coordinator] = []
-    var navigationController: UINavigationController
-    
+
+    public var parentCoordinator: Coordinator?
+    public var children: [Coordinator] = []
+    public var navigationController: UINavigationController
+
     private let helpersStorage: HelpersStorage = HelpersStorageImpl()
-    
-    
-    //MARK: Init
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
@@ -43,10 +36,9 @@ final class AppCoordinator: Coordinator {
 }
 
 
-//MARK: - Public
-
+//MARK: - Methods (Public)
 extension AppCoordinator {
-    
+
     func startWithMainView() {
         let audioRepository: AudioRepository = AudioRepositoryImpl()
         let audioPlayer: AudioPlayer = AudioPlayerImpl()
@@ -57,9 +49,9 @@ extension AppCoordinator {
             coordinator: self
         )
         let mainViewController = MainViewController(viewModel: mainViewModel)
-        self.navigationController.pushViewController(mainViewController, animated: true)
+        navigationController.pushViewController(mainViewController, animated: true)
     }
-    
+
     func showRedactorView(withAudioRecord record: AudioRecord) {
         let videoPlayer: VideoPlayer = VideoPlayerImpl()
         let redactorViewModel: RedactorViewModel = RedactorViewModelImpl(
@@ -71,26 +63,34 @@ extension AppCoordinator {
         let redactorViewController: RedactorViewController = RedactorViewController(
             viewModel: redactorViewModel
         )
-        self.navigationController.pushViewController(redactorViewController, animated: true)
+        navigationController.pushViewController(redactorViewController, animated: true)
     }
-    
-    func showVideoPicker(forDelegate delegate: UIImagePickerControllerDelegate & UINavigationControllerDelegate) {
+
+    func showVideoPicker(forDelegate delegate: VideoPickerDelegate) {
         let picker = UIImagePickerController()
         picker.delegate = delegate
         picker.sourceType = .savedPhotosAlbum
         picker.mediaTypes = ["public.movie"]
         picker.allowsEditing = true
-        
-        self.navigationController.present(picker, animated: true)
+
+        navigationController.present(picker, animated: true)
     }
-    
+
     func showDefaultAlert(withTitle title: String, message: String) {
-        let defaultAlert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "Ok", style: .cancel, handler: { _ in
+        let defaultAlert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(
+            title: "Ok",
+            style: .cancel,
+            handler: { _ in
                 defaultAlert.dismiss(animated: true)
-            })
-        
+            }
+        )
         defaultAlert.addAction(okAction)
-        self.navigationController.present(defaultAlert, animated: true)
+
+        navigationController.present(defaultAlert, animated: true)
     }
 }

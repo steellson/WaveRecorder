@@ -10,7 +10,6 @@ import WRAudio
 
 
 //MARK: - Data
-
 protocol Searcher: AnyObject {
     func updateData() async throws
     func search(withText text: String) async throws
@@ -22,31 +21,23 @@ protocol Editor: AnyObject {
     func openDetails(withAudioRecord record: AudioRecord)
 }
 
-
 //MARK: - Interface
-
 protocol InterfaceUpdatable: AnyObject {
     var shouldUpdateInterface: ((Bool) async throws -> Void)? { get set }
 }
 
-
 //MARK: - Reusable View
-
 protocol ReusableView {
     func reset()
 }
 
-
 //MARK: - Notifications
-
 protocol Notifier: AnyObject {
     func activateNotification(withName name: NSNotification.Name, selector: Selector, from: Any?)
     func removeNotification(withName name: NSNotification.Name, from: Any?)
 }
 
-
 //MARK: - Parents
-
 protocol ModuleMaker: AnyObject {
     func makeRecordBar() -> RecordBarView
     func makeEditViewModel(withIndexPath indexPath: IndexPath) -> EditViewModel

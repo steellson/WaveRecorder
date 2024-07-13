@@ -7,15 +7,11 @@
 
 import UIKit
 
-
-//MARK: - Impl
-
 final public class RecordWaveView: UIView {
     
     private let shapeLayer = CAShapeLayer()
     
-    //MARK: Variables
-    
+    // MARK: Variables
     private var speed = 10.0
     private var frequency = 8.0
     private var parameterA = 1.5
@@ -29,18 +25,15 @@ final public class RecordWaveView: UIView {
     private var startTime: CFTimeInterval = 0
     private weak var displayLink: CADisplayLink?
     
-    
     public enum Direction {
         case right
         case left
     }
     
-    
-    //MARK: Methods
-    
+    // MARK: Draw
     override public func draw(_ rect: CGRect) {
         super.draw(rect)
-                
+        
         let path = UIBezierPath()
         let width = Double(self.frame.width)
         let height = Double(self.frame.height) - 30
@@ -57,13 +50,11 @@ final public class RecordWaveView: UIView {
             
             path.addLine(to: CGPoint(x: x, y: y))
         }
-   
+        
         setupShapeLayer(withRect: rect, andPath: path.cgPath)
     }
     
-    
-    //MARK: Configure
-    
+    // MARK: Configuration
     public func configureWith(
         direction: Direction,
         speed: Double,
@@ -95,11 +86,50 @@ final public class RecordWaveView: UIView {
         self.waveWidth = waveWidth
         self.color = color
     }
-                      
-    
-    //MARK: Setup
+}
 
-    private func setupShapeLayer(withRect rect: CGRect, andPath path: CGPath) {
+// MARK: - Methods (Public)
+public extension RecordWaveView {
+
+    func animationStart() {
+        speed = direction == .right ? -speed : speed
+        startDisplayLink()
+    }
+
+    func animationStop() {
+        stopDisplayLink()
+    }
+}
+
+// MARK: - Methods (Private)
+private extension RecordWaveView {
+
+    func startDisplayLink() {
+        startTime = CACurrentMediaTime()
+        displayLink?.invalidate()
+
+        let displayLink = CADisplayLink(target: self, selector:#selector(handleDisplayLink(_:)))
+        displayLink.add(to: .main, forMode: .common)
+
+        self.displayLink = displayLink
+    }
+
+    func stopDisplayLink() {
+        displayLink?.remove(from: .main, forMode: .common)
+        displayLink?.invalidate()
+    }
+
+    @objc func handleDisplayLink(_ displayLink: CADisplayLink) {
+        phase = (CACurrentMediaTime() - startTime) * speed
+        layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+        setNeedsDisplay()
+    }
+}
+
+// MARK: - Setup (Private)
+private extension RecordWaveView {
+
+    func setupShapeLayer(withRect rect: CGRect, andPath path: CGPath) {
         shapeLayer.frame = CGRect(
             x: -8,
             y: rect.midY,
@@ -110,50 +140,7 @@ final public class RecordWaveView: UIView {
         shapeLayer.lineWidth = waveWidth
         shapeLayer.fillColor = .none
         shapeLayer.strokeColor = color.cgColor
-       
+
         layer.addSublayer(shapeLayer)
-    }
-}
-
-
-//MARK: - Public
-
-public extension RecordWaveView {
-    
-    func animationStart() {
-        speed = direction == .right ? -speed : speed
-        startDisplayLink()
-    }
-    
-    func animationStop() {
-        stopDisplayLink()
-    }
-}
-
-
-//MARK: - Private
-
-private extension RecordWaveView {
-    
-    func startDisplayLink() {
-        self.startTime = CACurrentMediaTime()
-        self.displayLink?.invalidate()
-        
-        let displayLink = CADisplayLink(target: self, selector:#selector(handleDisplayLink(_:)))
-        displayLink.add(to: .main, forMode: .common)
-        
-        self.displayLink = displayLink
-    }
-    
-    func stopDisplayLink() {
-        self.displayLink?.remove(from: .main, forMode: .common)
-        self.displayLink?.invalidate()
-    }
-    
-    @objc
-    func handleDisplayLink(_ displayLink: CADisplayLink) {
-        self.phase = (CACurrentMediaTime() - startTime) * speed
-        self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
-        self.setNeedsDisplay()
     }
 }

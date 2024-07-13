@@ -7,15 +7,13 @@
 
 import Foundation
 
-
-//MARK: - Metadata
-
+// MARK: - PrimaryVideoData
 public struct PrimaryVideoData {
-    
-    let name: String
-    let url: URL
-    
-    init(
+
+    public let name: String
+    public let url: URL
+
+    public init(
         name: String,
         url: URL
     ) {
@@ -24,22 +22,24 @@ public struct PrimaryVideoData {
     }
 }
 
+// MARK: - SecondaryVideoData
 public struct SecondaryVideoData {
-    
-    let duration: TimeInterval
-    
-    init(
+
+    public let duration: TimeInterval
+
+    public init(
         duration: TimeInterval
     ) {
         self.duration = duration
     }
 }
 
+// MARK: - VideoMetadata
 public struct VideoMetadata {
-    
+
     public let primary: PrimaryVideoData
     public let secondary: SecondaryVideoData
-    
+
     public init(
         primary: PrimaryVideoData,
         secondary: SecondaryVideoData
@@ -48,4 +48,3 @@ public struct VideoMetadata {
         self.secondary = secondary
     }
 }
-

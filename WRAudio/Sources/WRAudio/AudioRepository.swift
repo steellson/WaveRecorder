@@ -8,9 +8,7 @@
 import AVFoundation
 import OSLog
 
-
-//MARK: - Protocol
-
+// MARK: - Protocol
 public protocol AudioRepository: AnyObject {
     func fetchRecords() async throws -> [AudioRecord]
     func search(withText text: String) async throws -> [AudioRecord]
@@ -18,9 +16,7 @@ public protocol AudioRepository: AnyObject {
     func delete(record: AudioRecord) async throws
 }
 
-
-//MARK: - Error
-
+// MARK: - Error
 public enum AudioRepositoryError: Error {
     case cantFetchRecords
     case cantFetchRecord
@@ -30,35 +26,19 @@ public enum AudioRepositoryError: Error {
     case cantHandleFormat
 }
 
-
-//MARK: - Impl
-
+// MARK: - Impl
 final public class AudioRepositoryImpl: AudioRepository {
-  
+
     private let audioMetadataManager: AudioMetadataManager
-    
+
     public init() {
         self.audioMetadataManager = AudioMetadataManagerImpl()
     }
 }
 
-
-//MARK: - Private
-
-private extension AudioRepositoryImpl {
-    
-    func handleStringFormat(_ format: String) -> AudioFormat {
-        let avalibleFormats = AudioFormat.allCases
-        let defaultFormat = AudioFormat.m4a
-        return avalibleFormats.first(where: { $0.rawValue == format }) ?? defaultFormat
-    }
-}
-
-
-//MARK: - Public
-
+//MARK: - Methods (Public)
 public extension AudioRepositoryImpl {
-  
+
     func fetchRecords() async throws -> [AudioRecord] {
         do {
             let metadata = try await audioMetadataManager.loadMetadataList()
@@ -75,8 +55,7 @@ public extension AudioRepositoryImpl {
             throw AudioRepositoryError.cantFetchRecords
         }
     }
-    
-    
+
     func search(withText text: String) async throws -> [AudioRecord] {
         do {
             let metadata = try await audioMetadataManager.loadMetadataList()
@@ -96,64 +75,63 @@ public extension AudioRepositoryImpl {
             throw AudioRepositoryError.cantFetchRecords
         }
     }
-    
+
     func rename(record: AudioRecord, newName: String) async throws {
         do {
             let metadata = try await audioMetadataManager.loadMetadataList()
             let searchedResults = metadata.filter { $0.primary.name == record.name }
-            
-            guard
-                !searchedResults.isEmpty,
-                !(searchedResults.count > 1),
-                let result = searchedResults.first
-            else {
+
+            guard !searchedResults.isEmpty,
+                  !(searchedResults.count > 1),
+                  let result = searchedResults.first else {
                 os_log("ERROR: Cant rename record!")
                 throw AudioRepositoryError.cantRenameRecord
             }
-  
+
             let namePath = "\(newName).\(record.format.rawValue)"
             let isRewrited = audioMetadataManager.rewrite(
                 url: result.secondary.url,
                 withNewPath: namePath
             )
-            
+
             guard isRewrited else {
                 os_log("ATTENTION: Record isn't renamed!")
                 throw AudioRepositoryError.cantRenameRecord
             }
             os_log("SUCCESS: Record renamed!")
-            
+
         } catch {
             os_log("ERROR: Cant rename records!")
             throw AudioRepositoryError.cantFetchRecords
         }
     }
-    
+
     func delete(record: AudioRecord) async throws {
         do {
             let metadata = try await audioMetadataManager.loadMetadataList()
             let searchedResults = metadata.filter { $0.primary.name == record.name }
-            
-            guard
-                !searchedResults.isEmpty,
-                !(searchedResults.count > 1),
-                let result = searchedResults.first
-            else {
+
+            guard !searchedResults.isEmpty,
+                  !(searchedResults.count > 1),
+                  let result = searchedResults.first,
+                  audioMetadataManager.destroyFile(withURL: result.secondary.url) else {
                 os_log("ERROR: Cant delete record!")
                 throw AudioRepositoryError.cantDeleteRecord
             }
-            
-            let isDeleted = audioMetadataManager.destroyFile(withURL: result.secondary.url)
-            guard isDeleted else {
-                os_log("ATTENTION: Record isn't deleted!")
-                throw AudioRepositoryError.cantDeleteRecord
-            }
-            
             os_log("SUCCESS: Record deleted!")
-            
         } catch {
             os_log("ERROR: Cant delete record!")
             throw AudioRepositoryError.cantFetchRecords
         }
+    }
+}
+
+// MARK: - Methods (Private)
+private extension AudioRepositoryImpl {
+
+    func handleStringFormat(_ format: String) -> AudioFormat {
+        let avalibleFormats = AudioFormat.allCases
+        let defaultFormat = AudioFormat.m4a
+        return avalibleFormats.first(where: { $0.rawValue == format }) ?? defaultFormat
     }
 }

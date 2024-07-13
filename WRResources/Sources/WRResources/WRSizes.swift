@@ -1,9 +1,6 @@
 import UIKit
 
-//MARK: Sizes
-
 public enum WRSizes {
-    
     //MARK: Main Screen
     public static let tableViewCellHeight: CGFloat = 200.0
     public static let recordButtonSize: CGFloat = 30.0

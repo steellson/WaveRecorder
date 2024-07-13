@@ -7,36 +7,29 @@
 
 import UIKit
 
-
 //MARK: - Protocol
-
 public protocol RecordButtonViewDelegate: AnyObject {
     func recButtonDidTapped(_ isRecording: Bool)
 }
 
-
 //MARK: - Impl
-
 final public class RecordButtonView: UIView {
-    
+
     public weak var delegate: RecordButtonViewDelegate?
-    
-    //MARK: Variables
-    
-    private let radius: CGFloat
-    
+
+    //MARK: Properties
     private let button = UIButton()
     private let roundedLayer = CAShapeLayer()
-    
+
     private var isRecording = false {
         didSet {
             animateRecordButton(isRecording)
         }
     }
-    
+
+    private let radius: CGFloat
     
     //MARK: - Lifecycle
-    
     public init(
         radius: CGFloat
     ) {
@@ -45,31 +38,83 @@ final public class RecordButtonView: UIView {
         
         setupContentView()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override public func layoutSubviews() {
         super.layoutSubviews()
         setupButtonAppearence()
         setupRoundedLayer()
         setupConstraints()
     }
-        
-    
-    
-    
-    //MARK: - Methods
-    
-    private func animateRecordButton(_ isRecording: Bool) {
-        // Tap effect
+
+    //MARK: Actions
+    @objc private func buttonDidTapped() {
+        delegate?.recButtonDidTapped(isRecording)
+        isRecording.toggle()
+    }
+}
+
+//MARK: - Setup (Private)
+private extension RecordButtonView {
+
+    func setupContentView() {
+        backgroundColor = .clear
+        addSubview(button)
+    }
+
+    func setupButtonAppearence() {
+        button.backgroundColor = .red
+        button.layer.cornerRadius = radius
+        button.clipsToBounds = true
+        button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
+    }
+
+    func setupRoundedLayer() {
+        let circularPath = UIBezierPath(
+            arcCenter: CGPoint(x: radius, y: radius),
+            radius: radius + 2,
+            startAngle: 0,
+            endAngle: 2 * CGFloat.pi,
+            clockwise: false
+        )
+
+        roundedLayer.path = circularPath.cgPath
+        roundedLayer.strokeColor = UIColor.gray.cgColor
+        roundedLayer.fillColor = UIColor.clear.cgColor
+        roundedLayer.lineWidth = 2.5
+
+        layer.addSublayer(roundedLayer)
+    }
+
+    //MARK: Constraints
+    func setupConstraints() {
+        button.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            button.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.95),
+            button.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.95),
+            button.centerXAnchor.constraint(equalTo: centerXAnchor),
+            button.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
+    }
+}
+
+// MARK: - Animation (Private)
+private extension RecordButtonView {
+
+    func animateRecordButton(_ isRecording: Bool) {
+        /// Tap effect
         UIView.animate(withDuration: 0.2) {
             self.button.alpha = 0.5
         } completion: { _ in
             self.button.alpha = 1
         }
-        // Transformation
+
+        /// Transformation
         UIView.animate(withDuration: 0.3) {
             if isRecording {
                 self.button.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
@@ -81,63 +126,5 @@ final public class RecordButtonView: UIView {
                 self.button.backgroundColor = .red
             }
         }
-    }
-    
-    
-    //MARK: Actions
-    
-    @objc private func buttonDidTapped() {
-        delegate?.recButtonDidTapped(isRecording)
-        isRecording.toggle()
-    }
-}
-
-
-//MARK: - Setup
-
-private extension RecordButtonView {
-    
-    func setupContentView() {
-        backgroundColor = .clear
-        addSubview(button)
-    }
-    
-    func setupButtonAppearence() {
-        button.backgroundColor = .red
-        button.layer.cornerRadius = radius
-        button.clipsToBounds = true
-        button.layer.masksToBounds = true
-        button.addTarget(self, action: #selector(buttonDidTapped), for: .touchUpInside)
-    }
-    
-    func setupRoundedLayer() {
-        let circularPath = UIBezierPath(
-            arcCenter: CGPoint(x: radius, y: radius),
-            radius: radius + 2,
-            startAngle: 0,
-            endAngle: 2 * CGFloat.pi,
-            clockwise: false
-        )
-        
-        roundedLayer.path = circularPath.cgPath
-        roundedLayer.strokeColor = UIColor.gray.cgColor
-        roundedLayer.fillColor = UIColor.clear.cgColor
-        roundedLayer.lineWidth = 2.5
-        
-        layer.addSublayer(roundedLayer)
-    }
-    
-
-    //MARK: Constraints
-    
-    func setupConstraints() {
-        button.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            button.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.95),
-            button.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.95),
-            button.centerXAnchor.constraint(equalTo: centerXAnchor),
-            button.centerYAnchor.constraint(equalTo: centerYAnchor)
-        ])
     }
 }

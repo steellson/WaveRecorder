@@ -1,18 +1,14 @@
 //
-//  File.swift
-//  
+//  TitleLabelView.swift
+//
 //
 //  Created by Andrew Steellson on 12.02.2024.
 //
 
 import UIKit
 
-//MARK: - Impl
-
 final public class TitleLabelView: UILabel {
-    
-    //MARK: Init
-    
+
     public init(
         text: String,
         tColor: UIColor,
@@ -27,7 +23,7 @@ final public class TitleLabelView: UILabel {
             alignment: alignment
         )
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(frame: .zero)
         setupLabelView(
@@ -39,10 +35,9 @@ final public class TitleLabelView: UILabel {
     }
 }
 
-//MARK: - Setuup
-
+//MARK: - Setup (Private)
 private extension TitleLabelView {
-    
+
     func setupLabelView(
         text: String,
         tColor: UIColor,
@@ -53,7 +48,7 @@ private extension TitleLabelView {
         self.textColor = tColor
         self.font = font
         self.textAlignment = alignment
-        
+
         self.numberOfLines = 0
     }
 }

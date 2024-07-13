@@ -7,9 +7,6 @@
 
 import UIKit
 
-
-//MARK: - Impl
-
 final public class RecordVisualizerView: UIView {
     
     private let stackView: UIStackView = {
@@ -21,7 +18,6 @@ final public class RecordVisualizerView: UIView {
     }()
     
     //MARK: Variables
-    
     private var numbreOfColumns: Int = 10
     private var duration: Double = 0.2
     private var rate: Double = 0.5
@@ -29,9 +25,7 @@ final public class RecordVisualizerView: UIView {
     
     private var timer: Timer?
     
-    
-    //MARK: Init
-    
+    //MARK: Lifecycle
     public init(backgroundColor: UIColor) {
         super.init(frame: .zero)
         setupView(withBackgroundColor: backgroundColor)
@@ -41,10 +35,6 @@ final public class RecordVisualizerView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-
-    
-    //MARK: Configure
     
     public func configureWith(
         numbreOfColumns: Int,
@@ -58,73 +48,33 @@ final public class RecordVisualizerView: UIView {
         self.color = color
         self.setupStackViewContent()
     }
-               
-    
-    //MARK: Setup
-    
-    private func setupView(withBackgroundColor color: UIColor) {
-        backgroundColor = color
-        stackView.backgroundColor = color
-        addSubview(stackView)
-    }
-    
-    private func setupStackViewContent() {
-        (0..<numbreOfColumns).forEach { _ in
-            let view = self.makeColumnView()
-            let height = self.makeRandomHeight()
-            
-            view.transform = CGAffineTransform(scaleX: 1, y: height)
-            
-            self.stackView.addArrangedSubview(view)
-        }
-    }
-    
-    private func resetStackViewContent() {
-        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        stackView.layoutIfNeeded()
-    }
-    
-    private func setupLayout() {
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
-    }
 }
 
-
-//MARK: - Public
-
+//MARK: - Methods (Public)
 public extension RecordVisualizerView {
-    
+
     func animationStart() {
         setupStackViewContent()
         setupLayout()
         startTimer()
     }
-    
+
     func animationStop() {
         resetStackViewContent()
         stopTimer()
     }
 }
 
-
-//MARK: - Helpers (Private)
-
+//MARK: - Methods (Private)
 private extension RecordVisualizerView {
-    
+
     func makeColumnView() -> UIView {
         let view = UIView()
         view.backgroundColor = color
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }
-    
+
     func makeRandomHeight() -> CGFloat {
         let projectedValue = Double(arc4random_uniform(10)) * 0.1
         let minimumValue = 0.05
@@ -138,7 +88,7 @@ private extension RecordVisualizerView {
             return projectedValue
         }
     }
-    
+
     func transformSubviews() {
         stackView.arrangedSubviews.forEach {
             $0.transform = CGAffineTransform(
@@ -147,9 +97,8 @@ private extension RecordVisualizerView {
             )
         }
     }
-    
-    @objc
-    func makeImpulseAnimated() {
+
+    @objc func makeImpulseAnimated() {
         UIView.animate(
             withDuration: self.duration,
             delay: 0,
@@ -167,12 +116,10 @@ private extension RecordVisualizerView {
     }
 }
 
-
 //MARK: - Timer (Private)
-
 private extension RecordVisualizerView {
-    
-    private func startTimer() {
+
+    func startTimer() {
         self.timer = Timer.scheduledTimer(
             timeInterval: rate,
             target: self,
@@ -181,9 +128,46 @@ private extension RecordVisualizerView {
             repeats: true
         )
     }
-    
-    private func stopTimer() {
-        self.timer?.invalidate()
-        self.timer = nil
+
+    func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+}
+
+// MARK: Setup (Private)
+private extension RecordVisualizerView {
+
+    func setupView(withBackgroundColor color: UIColor) {
+        backgroundColor = color
+        stackView.backgroundColor = color
+        addSubview(stackView)
+    }
+
+    func setupStackViewContent() {
+        (0..<numbreOfColumns).forEach { _ in
+            let view = self.makeColumnView()
+            let height = self.makeRandomHeight()
+
+            view.transform = CGAffineTransform(scaleX: 1, y: height)
+
+            stackView.addArrangedSubview(view)
+        }
+    }
+
+    func resetStackViewContent() {
+        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        stackView.layoutIfNeeded()
+    }
+
+    func setupLayout() {
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
     }
 }

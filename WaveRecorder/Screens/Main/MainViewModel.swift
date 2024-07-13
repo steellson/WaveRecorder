@@ -10,35 +10,29 @@ import OSLog
 import WRAudio
 import WRResources
 
-
 //MARK: - Protocols
-
 protocol MainTableViewModel: AnyObject {
     var numberOfItems: Int { get }
     var tableViewCellHeight: CGFloat { get }
     func didSwipedForDelete(forIndexPath indexPath: IndexPath)
 }
 
-
 //MARK: - Impl
-
 final class MainViewModelImpl: MainViewModel {
-        
-    var shouldUpdateInterface: ((Bool) async throws -> Void)?
     
-    var numberOfItems: Int = 0
-    var tableViewCellHeight: CGFloat = WRSizes.tableViewCellHeight
-    
+    public var shouldUpdateInterface: ((Bool) async throws -> Void)?
+
+    public var numberOfItems: Int = 0
+    public var tableViewCellHeight: CGFloat = WRSizes.tableViewCellHeight
+
     private var records: [AudioRecord] = []
-    
+
     private let audioRepository: AudioRepository
     private let audioPlayer: AudioPlayer
     private let helpers: HelpersStorage
     private let coordinator: Coordinator
   
-    
-    //MARK: Init
-    
+    //MARK: Injections
     init(
         audioRepository: AudioRepository,
         audioPlayer: AudioPlayer,
@@ -49,27 +43,24 @@ final class MainViewModelImpl: MainViewModel {
         self.audioPlayer = audioPlayer
         self.helpers = helpers
         self.coordinator = coordinator
-        
+
         Task { try await updateData() }
     }
 
-    
     func didSwipedForDelete(forIndexPath indexPath: IndexPath) {
         Task { try await delete(record: records[indexPath.row]) }
     }
 }
 
-
 //MARK: Module Maker
-
 extension MainViewModelImpl {
-    
+
     func makeRecordBar() -> RecordBarView {
         let recordBarViewModel: RecordBarViewModel = RecordBarViewModelImpl(parentViewModel: self)
         let recordBarView = RecordBarView(viewModel: recordBarViewModel)
         return recordBarView
     }
-    
+
     func makeEditViewModel(withIndexPath indexPath: IndexPath) -> EditViewModel {
         EditViewModelImpl(
             record: records[indexPath.row],
@@ -77,7 +68,7 @@ extension MainViewModelImpl {
             parentViewModel: self
         )
     }
-    
+
     func makePlayToolbarViewModel(withIndexPath indexPath: IndexPath) -> PlayToolbarViewModel {
         PlayToolbarViewModelImpl(
             record: records[indexPath.row],
@@ -88,36 +79,33 @@ extension MainViewModelImpl {
     }
 }
 
-
 //MARK: - Searcher
-
 extension MainViewModelImpl {
-        
+
     func updateData() async throws {
         do {
             let records = try await audioRepository.fetchRecords()
             self.records = records.sorted(by: { $0.name > $1.name })
             self.numberOfItems = records.count
-            
+
             try await self.shouldUpdateInterface?(false)
         } catch {
             os_log("\(WRErrors.cantGetRecordsFromStorage + " \(error)")")
         }
     }
 
-    
     func search(withText text: String) async throws {
         guard !text.isEmpty else { return }
 
         do {
             let searchedRecords = try await audioRepository.search(withText: text)
-            
+
             guard searchedRecords.count > 0 else {
                 os_log("\(WRLogs.searchedRecordsEmpty)")
                 try await self.updateData()
                 return
             }
-            
+
             self.records = searchedRecords
             self.numberOfItems = records.count
             try await self.shouldUpdateInterface?(false)
@@ -127,9 +115,7 @@ extension MainViewModelImpl {
     }
 }
 
-
 //MARK: - Editor
-
 extension MainViewModelImpl {
 
     func rename(record: AudioRecord, newName name: String) async throws {
@@ -144,7 +130,6 @@ extension MainViewModelImpl {
         }
     }
 
-    
     func delete(record: AudioRecord) async throws {
         do {
             try await audioRepository.delete(record: record)
@@ -155,47 +140,45 @@ extension MainViewModelImpl {
             os_log("\(WRErrors.cantDeleteRecordWithName + record.name + " \(error)")")
         }
     }
-    
+
     func openDetails(withAudioRecord record: AudioRecord) {
         coordinator.showRedactorView(withAudioRecord: record)
     }
 }
 
-
 //MARK: Notifier
-
 extension MainViewModelImpl {
-    
-    func activateNotification(withName
-                              name: NSNotification.Name,
-                              selector: Selector, 
-                              from: Any?) {
-        guard 
-            let recievedFrom = from
-        else {
+
+    func activateNotification(
+        withName name: NSNotification.Name,
+        selector: Selector,
+        from: Any?
+    ) {
+        guard let recievedFrom = from else {
             os_log("\(WRErrors.notificationCouldntBeActivated)")
             return
         }
-        
-        helpers.notificationCenter.addObserver(recievedFrom,
-                                       selector: selector,
-                                       name: name,
-                                       object: nil)
+        helpers.notificationCenter.addObserver(
+            recievedFrom,
+            selector: selector,
+            name: name,
+            object: nil
+        )
     }
-    
-    
-    func removeNotification(withName
-                            name: NSNotification.Name,
-                            from: Any?) {
-        guard 
-            let recievedFrom = from
-        else {
+
+    func removeNotification(
+        withName
+        name: NSNotification.Name,
+        from: Any?
+    ) {
+        guard let recievedFrom = from else {
             os_log("\(WRErrors.notificationCouldntBeRemoved)")
             return
         }
-        
-        helpers.notificationCenter.removeObserver(recievedFrom,
-                                          name: name,
-                                          object: nil)
+        helpers.notificationCenter.removeObserver(
+            recievedFrom,
+            name: name,
+            object: nil
+        )
     }
 }

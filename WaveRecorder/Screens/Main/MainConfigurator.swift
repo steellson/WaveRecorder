@@ -7,14 +7,11 @@
 
 import Foundation
 
-
 //MARK: - View
-
 protocol MainViewProtocol: InterfaceUpdatable { }
 
 
 //MARK: - ViewModel
-
 protocol MainViewModel: MainViewProtocol,
                         Searcher,
                         Editor,

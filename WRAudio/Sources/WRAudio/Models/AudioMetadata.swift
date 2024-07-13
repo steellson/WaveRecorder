@@ -7,14 +7,12 @@
 
 import Foundation
 
-
-//MARK: - Metadata
-
+// MARK: - PrimaryAudioData
 public struct PrimaryAudioData {
-    
+
     public let name: String
     public let format: String
-    
+
     public init(
         name: String,
         format: String
@@ -24,12 +22,13 @@ public struct PrimaryAudioData {
     }
 }
 
+// MARK: - SecondaryAudioData
 public struct SecondaryAudioData {
-    
+
     public let date: Date
     public let duration: TimeInterval
     public let url: URL
-    
+
     public init(
         date: Date,
         duration: TimeInterval,
@@ -41,11 +40,12 @@ public struct SecondaryAudioData {
     }
 }
 
+// MARK: - AudioMetadata
 public struct AudioMetadata {
-    
+
     public let primary: PrimaryAudioData
     public let secondary: SecondaryAudioData
-    
+
     public init(
         primary: PrimaryAudioData,
         secondary: SecondaryAudioData
@@ -54,4 +54,3 @@ public struct AudioMetadata {
         self.secondary = secondary
     }
 }
-

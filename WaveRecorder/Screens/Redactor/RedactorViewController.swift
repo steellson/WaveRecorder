@@ -12,26 +12,21 @@ import WRResources
 
 typealias VideoPickerDelegate = UIImagePickerControllerDelegate & UINavigationControllerDelegate
 
-
-//MARK: - Impl
-
 final class RedactorViewController: UIViewController {
-        
+
+    // MARK: - UI
     private let titleLabel = TitleLabelView(
         text: WRTitles.redactorMainTite,
         tColor: WRColors.primaryText,
         font: .systemFont(ofSize: 22, weight: .bold),
         alignment: .center
     )
-    
     private let audioSectionView = AudioSectionView()
     private let videoSectionView = VideoSectionView()
-    
-    private let viewModel: RedactorViewModel
 
+    private let viewModel: RedactorViewModel
     
     //MARK: Lifecycle
-    
     init(
         viewModel: RedactorViewModel
     ) {
@@ -39,17 +34,17 @@ final class RedactorViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         seutpNavigationBar()
         setupContentView()
     }
-    
+
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         setupAudioSectionView()
@@ -57,21 +52,56 @@ final class RedactorViewController: UIViewController {
         setupUpdatingLayout()
         setupConstrtaints()
     }
-    
-    
+
     //MARK: Actions
-    
-    @objc
-    private func selectVideoButtonTapped() {
+    @objc private func selectVideoButtonTapped() {
         viewModel.didSeletVideoButtonTapped(self)
     }
 }
 
+//MARK: - Video Picker Delegate
+extension RedactorViewController: VideoPickerDelegate {
 
-//MARK: - Setup
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
 
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]
+    ) {
+        guard let url = info[.mediaURL] as? URL else {
+            picker.dismiss(animated: true)
+            videoSectionView.configureEmpty()
+            return
+        }
+
+        Task {
+            let playerLayer = try await viewModel.didSelected(videoWithURL: url)
+            videoSectionView.configureWith(
+                videoRecord: viewModel.videoRecord,
+                playerLayer: playerLayer
+            )
+            videoSectionView.updateProgressWith(
+                elapsedTime: viewModel.getElapsedTimeString(),
+                remainingTime: viewModel.getRemainingTimeString()
+            )
+            picker.dismiss(animated: true)
+        }
+    }
+}
+
+//MARK: - VideoSectionViewDelegate
+extension RedactorViewController: VideoSectionViewDelegate {
+
+    func didVideoPlayerTapped() {
+        viewModel.didVideoPlayerTapped()
+    }
+}
+
+//MARK: - Setup (Private)
 private extension RedactorViewController {
-    
+
     func seutpNavigationBar() {
         navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem()
         navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -81,14 +111,14 @@ private extension RedactorViewController {
             action: #selector(selectVideoButtonTapped)
         )
     }
-    
+
     func setupContentView() {
         view.backgroundColor = WRColors.primaryBackground
         view.addNewSubview(titleLabel)
         view.addNewSubview(audioSectionView)
         view.addNewSubview(videoSectionView)
     }
-    
+
     func setupAudioSectionView() {
         audioSectionView.configureWith(
             title: viewModel.audioRecordMetadata.name,
@@ -100,7 +130,7 @@ private extension RedactorViewController {
             shadowColor: WRColors.commonShadow
         )
     }
-    
+
     func setupVideoSectionView() {
         videoSectionView.delegate = self
         videoSectionView.configureEmpty()
@@ -110,16 +140,14 @@ private extension RedactorViewController {
             videoPlayerHeight: WRSizes.videoPlayerHeight
         )
     }
-    
+
     func setupUpdatingLayout() {
         viewModel.shouldUpdateInterface = { [weak self] _ in
             self?.animateUpdatedLayout()
         }
     }
-    
-    
+
     //MARK: Constraints
-    
     func setupConstrtaints() {
         guard let navBar = self.navigationController?.navigationBar else { return }
             
@@ -141,10 +169,9 @@ private extension RedactorViewController {
     }
 }
 
-//MARK: - Animation
-
+//MARK: - Animation (Private)
 private extension RedactorViewController {
-    
+
     func animateUpdatedLayout() {
         UIView.animate(
             withDuration: 0.5,
@@ -160,51 +187,5 @@ private extension RedactorViewController {
                 )
             }
         }
-    }
-}
-
-
-//MARK: - Video Picker Delegate
-
-extension RedactorViewController: VideoPickerDelegate {
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: true)
-    }
-    
-    func imagePickerController(
-        _ picker: UIImagePickerController,
-        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]
-    ) {
-        guard 
-            let url = info[.mediaURL] as? URL
-        else {
-            picker.dismiss(animated: true)
-            videoSectionView.configureEmpty()
-            return
-        }
-       
-        Task {
-            let playerLayer = try await viewModel.didSelected(videoWithURL: url)
-            videoSectionView.configureWith(
-                videoRecord: viewModel.videoRecord,
-                playerLayer: playerLayer
-            )
-            videoSectionView.updateProgressWith(
-                elapsedTime: viewModel.getElapsedTimeString(),
-                remainingTime: viewModel.getRemainingTimeString()
-            )
-            picker.dismiss(animated: true)
-        }
-    }
-}
-
-
-//MARK: - Video Section View Delegate
-
-extension RedactorViewController: VideoSectionViewDelegate {
-    
-    func didVideoPlayerTapped() {
-        viewModel.didVideoPlayerTapped()
     }
 }

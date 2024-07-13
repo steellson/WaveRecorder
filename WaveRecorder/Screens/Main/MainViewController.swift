@@ -11,31 +11,29 @@ import WRParts
 import WRResources
 import UIComponents
 
-
-//MARK: - Impl
-
 final class MainViewController: UIViewController {
-    
-    private let editButton = UIBarButtonItem()
-    
+
+    // MARK: - UI
+    private let editButton: UIBarButtonItem = {
+        UIBarButtonItem()
+    }()
     private let titleLabel = TitleLabelView(
         text: WRTitles.navigationTitleMain,
         tColor: .black,
         font: .systemFont(ofSize: 26, weight: .bold),
         alignment: .left
     )
-    
     private let searchController = WRSearchController(
         placeholderText: WRTitles.searchTextFieldPlaceholder
     )
-    
     private let tableView = MainTableView(
         frame: .zero, 
         style: .plain
     )
-    
-    private lazy var recordBarView = viewModel.makeRecordBar()
-    
+    private lazy var recordBarView: RecordBarView = {
+        viewModel.makeRecordBar()
+    }()
+
     private lazy var recViewHeightConstraint: NSLayoutConstraint = {
         NSLayoutConstraint(
             item: recordBarView,
@@ -47,20 +45,17 @@ final class MainViewController: UIViewController {
             constant: WRSizes.recordBarViewInactiveHeight
         )
     }()
-    
+
     private let viewModel: MainViewModel
 
-    
     //MARK: Lifecycle
-    
     init(
         viewModel: MainViewModel
     ) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -91,92 +86,17 @@ final class MainViewController: UIViewController {
         removeNotifications()
     }
     
-    
     //MARK: Actions
-    
-    @objc
-    private func editButtonDidTapped() {
+    @objc private func editButtonDidTapped() {
         guard viewModel.numberOfItems != 0 else { return }
-        
-        Task {
-            self.animateEditButton()
-        }
+
+        Task { animateEditButton() }
     }
 }
 
-
-//MARK: - Setup
-
+//MARK: Notifications (Private)
 private extension MainViewController {
-    
-    func seutpNavigationBar() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
-        navigationItem.rightBarButtonItem = editButton
-        navigationItem.searchController = searchController
-    }
-    
-    func setupContentView() {
-        view.backgroundColor = WRColors.primaryBackground
-        view.addNewSubview(recordBarView)
-        view.addNewSubview(tableView)
-    }
-    
-    func setupEditButton() {
-        editButton.title = WRTitles.editButtonTitle
-        editButton.tintColor = WRColors.primaryText
-        editButton.target = self
-        editButton.action = #selector(editButtonDidTapped)
-        editButton.isHidden = viewModel.numberOfItems == 0
-    }
-    
-    func setupSearchController() {
-        let searchControllerInput = WRSearchControllerInput(
-            searchWithTextAction: viewModel.search, 
-            updateDataAction: viewModel.updateData
-        )
-        searchController.configure(withInput: searchControllerInput)
-    }
-    
-    func setupTableView() {
-        tableView.configure(withViewModel: viewModel)
-        tableView.register(MainTableViewCell.self, forCellReuseIdentifier: MainTableViewCell.cellIdentifier)
-    }
 
-    func setupRecordViewHeight() {
-        viewModel.shouldUpdateInterface = { [weak self] isRecording in
-             
-            self?.recViewHeightConstraint.constant = isRecording
-            ? WRSizes.recordBarViewActiveHeight
-            : WRSizes.recordBarViewInactiveHeight
-     
-            self?.animateUpdatedLayout()
-        }
-    }
-    
-    
-    //MARK: Constraints
-    
-    func setupConstrtaints() {
-        guard let navBar = self.navigationController?.navigationBar else { return }
-            
-        NSLayoutConstraint.activate([
-            recViewHeightConstraint,
-            recordBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            recordBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            recordBarView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            tableView.topAnchor.constraint(equalTo: navBar.bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: recordBarView.topAnchor)
-        ])
-    }
-}
-
-//MARK: Notifications
-
-private extension MainViewController {
-    
     func activateNorifications() {
         viewModel.activateNotification(
             withName: UIResponder.keyboardWillHideNotification,
@@ -189,7 +109,7 @@ private extension MainViewController {
             from: self
         )
     }
-    
+
     func removeNotifications() {
         viewModel.removeNotification(
             withName: UIResponder.keyboardWillHideNotification,
@@ -202,11 +122,121 @@ private extension MainViewController {
     }
 }
 
-
-//MARK: Animation
-
+//MARK: - Keyboard (Private)
 private extension MainViewController {
+
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(MainViewController.dismissKeyboard)
+        )
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc func dismissKeyboard() {
+        searchController.searchBar.searchTextField.endEditing(true)
+    }
     
+    @objc func adjustForKeyboard(notification: Notification) {
+        guard let keyboardValue = notification.userInfo?[
+            UIResponder.keyboardFrameEndUserInfoKey
+        ] as? NSValue else {
+            return
+        }
+        let keyboardScreenEndFrame = keyboardValue.cgRectValue
+        let keyboardViewEndFrame = view.convert(
+            keyboardScreenEndFrame,
+            from: view.window
+        )
+
+        if notification.name == UIResponder.keyboardWillHideNotification {
+            tableView.contentInset = .zero
+        } else {
+            let bottomSafeArea = view.safeAreaInsets.bottom
+            let bottomInset = keyboardViewEndFrame.height - bottomSafeArea
+            tableView.contentInset = UIEdgeInsets(
+                top: 0,
+                left: 0,
+                bottom: bottomInset,
+                right: 0
+            )
+        }
+
+        tableView.scrollIndicatorInsets = tableView.contentInset
+    }
+}
+
+//MARK: - Setup (Private)
+private extension MainViewController {
+
+    func seutpNavigationBar() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
+        navigationItem.rightBarButtonItem = editButton
+        navigationItem.searchController = searchController
+    }
+
+    func setupContentView() {
+        view.backgroundColor = WRColors.primaryBackground
+        view.addNewSubview(recordBarView)
+        view.addNewSubview(tableView)
+    }
+
+    func setupEditButton() {
+        editButton.title = WRTitles.editButtonTitle
+        editButton.tintColor = WRColors.primaryText
+        editButton.target = self
+        editButton.action = #selector(editButtonDidTapped)
+        editButton.isHidden = viewModel.numberOfItems == 0
+    }
+
+    func setupSearchController() {
+        let searchControllerInput = WRSearchControllerInput(
+            searchWithTextAction: viewModel.search, 
+            updateDataAction: viewModel.updateData
+        )
+        searchController.configure(withInput: searchControllerInput)
+    }
+
+    func setupTableView() {
+        tableView.configure(withViewModel: viewModel)
+        tableView.register(
+            MainTableViewCell.self,
+            forCellReuseIdentifier: MainTableViewCell.cellIdentifier
+        )
+    }
+
+    func setupRecordViewHeight() {
+        viewModel.shouldUpdateInterface = { [weak self] isRecording in
+            self?.recViewHeightConstraint.constant = isRecording
+            ? WRSizes.recordBarViewActiveHeight
+            : WRSizes.recordBarViewInactiveHeight
+
+            self?.animateUpdatedLayout()
+        }
+    }
+
+    //MARK: Constraints
+    func setupConstrtaints() {
+        guard let navBar = self.navigationController?.navigationBar else { return }
+
+        NSLayoutConstraint.activate([
+            recViewHeightConstraint,
+            recordBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            recordBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            recordBarView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            tableView.topAnchor.constraint(equalTo: navBar.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: recordBarView.topAnchor)
+        ])
+    }
+}
+
+//MARK: Animation (Private)
+private extension MainViewController {
+
     func animateEditButton() {
         UIView.animate(withDuration: 0.3) {
             self.tableView.isEditing.toggle()
@@ -216,7 +246,7 @@ private extension MainViewController {
             : WRTitles.editButtonTitle
         }
     }
-    
+
     func animateUpdatedLayout() {
         UIView.animate(
             withDuration: 0.2,
@@ -229,46 +259,5 @@ private extension MainViewController {
                 self.tableView.reloadData()
             }
         }
-    }
-}
-
-
-//MARK: - Hide Keyboard
-
-private extension MainViewController {
-    
-    func hideKeyboardWhenTappedAround() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(MainViewController.dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-    }
-    
-    @objc 
-    func dismissKeyboard() {
-        searchController.searchBar.searchTextField.endEditing(true)
-    }
-    
-    @objc func adjustForKeyboard(notification: Notification) {
-        guard
-            let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
-        else {
-            return
-        }
-        
-        let keyboardScreenEndFrame = keyboardValue.cgRectValue
-        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
-        
-        if notification.name == UIResponder.keyboardWillHideNotification {
-            tableView.contentInset = .zero
-        } else {
-            tableView.contentInset = UIEdgeInsets(
-                top: 0,
-                left: 0,
-                bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom,
-                right: 0
-            )
-        }
-        
-        tableView.scrollIndicatorInsets = tableView.contentInset
     }
 }

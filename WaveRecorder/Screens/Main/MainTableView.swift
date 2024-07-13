@@ -9,16 +9,11 @@ import UIKit
 import OSLog
 import WRResources
 
-
-//MARK: - Impl
-
 final class MainTableView: UITableView {
-    
+
     private var viewModel: MainViewModel?
-        
-    
+
     //MARK: Lifecycle
-    
     override init(
         frame: CGRect,
         style: UITableView.Style
@@ -27,12 +22,12 @@ final class MainTableView: UITableView {
             frame: frame,
             style: style
         )
-       
+
         seutupAppereance()
         setupSettings()
         setupDelegate()
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         seutupAppereance()
@@ -45,88 +40,98 @@ final class MainTableView: UITableView {
     }
 }
 
-
-//MARK: - Setup
-
-private extension MainTableView {
-    
-    func seutupAppereance() {
-        backgroundColor = WRColors.secondaryBackground
-        rowHeight = viewModel?.tableViewCellHeight ?? 200
-        layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        layer.cornerRadius = 26
-    }
-    
-    func setupSettings() {
-        keyboardDismissMode = .onDrag
-        showsVerticalScrollIndicator = false
-        alwaysBounceVertical = true
-    }
-    
-    func setupDelegate() {
-        dataSource = self
-        delegate = self
-    }
-}
-
-
-//MARK: - Data Source
-
+// MARK: - UITableViewDataSource
 extension MainTableView: UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
+    func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int
+    ) -> Int {
          viewModel?.numberOfItems ?? 0
     }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard
-            let cell = dequeueReusableCell(
-                withIdentifier: MainTableViewCell.cellIdentifier,
-                for: indexPath) as? MainTableViewCell,
-            let viewModel,
-            viewModel.numberOfItems > 0
-        else {
+
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+        guard let cell = dequeueReusableCell(
+            withIdentifier: MainTableViewCell.cellIdentifier,
+            for: indexPath
+        ) as? MainTableViewCell,
+              let viewModel,
+              viewModel.numberOfItems > 0 else {
             os_log("\(WRErrors.cantDequeReusableCell)")
             return UITableViewCell()
         }
-        
+
         cell.configureCellWith(
             editViewModel: viewModel.makeEditViewModel(withIndexPath: indexPath),
             playToolbarViewModel: viewModel.makePlayToolbarViewModel(withIndexPath: indexPath)
         )
-        
+
         return cell
     }
 }
 
-
-//MARK: - Delegate
-
+// MARK: - UITableViewDelegate
 extension MainTableView: UITableViewDelegate {
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+
+    func tableView(
+        _ tableView: UITableView,
+        heightForRowAt indexPath: IndexPath
+    ) -> CGFloat {
         guard let viewModel else {
             os_log("\(WRErrors.tableViewModelIsntSetted)")
             return 0.0
         }
         return viewModel.tableViewCellHeight
     }
-    
-    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+
+    func tableView(
+        _ tableView: UITableView,
+        shouldHighlightRowAt indexPath: IndexPath
+    ) -> Bool {
         false
     }
 
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        UISwipeActionsConfiguration(actions: [ UIContextualAction(
-            style: .destructive,
-            title: "Kill",
-            handler: { _, _, _ in
-                guard let viewModel = self.viewModel else {
-                    os_log("\(WRErrors.tableViewModelIsntSetted)")
-                    return
+    func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+        UISwipeActionsConfiguration(actions: [
+            UIContextualAction(
+                style: .destructive,
+                title: "Kill",
+                handler: { _, _, _ in
+                    guard let viewModel = self.viewModel else {
+                        os_log("\(WRErrors.tableViewModelIsntSetted)")
+                        return
+                    }
+                    viewModel.didSwipedForDelete(forIndexPath: indexPath)
                 }
-                viewModel.didSwipedForDelete(forIndexPath: indexPath)
-            }
-        )])
+            )
+        ])
+    }
+}
+
+//MARK: - Setup (Private)
+private extension MainTableView {
+
+    func seutupAppereance() {
+        backgroundColor = WRColors.secondaryBackground
+        rowHeight = viewModel?.tableViewCellHeight ?? 200
+        layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        layer.cornerRadius = 26
+    }
+
+    func setupSettings() {
+        keyboardDismissMode = .onDrag
+        showsVerticalScrollIndicator = false
+        alwaysBounceVertical = true
+    }
+
+    func setupDelegate() {
+        dataSource = self
+        delegate = self
     }
 }

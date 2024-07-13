@@ -7,18 +7,14 @@
 
 import AVFoundation
 
-
 //MARK: - View
-
 protocol RedactorViewProtocol: AnyObject {
     func didSelected(videoWithURL url: URL) async throws -> AVPlayerLayer
     func didSeletVideoButtonTapped(_ delegate: VideoPickerDelegate)
     func didVideoPlayerTapped()
 }
 
-
 //MARK: - ViewModel
-
 typealias AudioRecordMetadata = (name: String, duration: String, date: String)
 
 protocol RedactorViewModel: InterfaceUpdatable, RedactorViewProtocol {

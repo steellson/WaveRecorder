@@ -7,9 +7,7 @@
 
 import Foundation
 
-
 //MARK: - View
-
 protocol PlayToolbarViewProtocol: AnyObject {
     func goBack() throws
     func play(atTime time: Float, animation: @escaping () -> Void) throws
@@ -18,9 +16,7 @@ protocol PlayToolbarViewProtocol: AnyObject {
     func deleteRecord() throws
 }
 
-
 //MARK: - ViewModel
-
 protocol PlayToolbarViewModel: PlayToolbarViewProtocol {
     func isPlayingNow() -> Bool
     func getProgress() -> Float

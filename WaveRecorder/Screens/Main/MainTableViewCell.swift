@@ -9,32 +9,25 @@ import UIKit
 import OSLog
 import WRResources
 
+final class MainTableViewCell: UITableViewCell {
 
-//MARK: - Impl
-
-final class MainTableViewCell:  UITableViewCell {
-    
     static let cellIdentifier = WRIdentifiers.cellIdentifier
-    
-    //MARK: Variables
-    
+
+    //MARK: UI
     private var editView = EditView()
     private var playToolbar = PlayToolbarView()
-    
-    
-    //MARK: Methods
-    
+
+    //MARK: Lifecycle
      func configureCellWith(
         editViewModel: EditViewModel,
         playToolbarViewModel: PlayToolbarViewModel
     ) {
-        self.editView.configureWith(viewModel: editViewModel)
-        self.playToolbar.configureWith(viewModel: playToolbarViewModel)
+        editView.configureWith(viewModel: editViewModel)
+        playToolbar.configureWith(viewModel: playToolbarViewModel)
         setupSubviews()
         setupConstraints()
     }
-    
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
         editView.reset()
@@ -42,26 +35,22 @@ final class MainTableViewCell:  UITableViewCell {
     }
 }
 
-
-//MARK: - Setup
-
+//MARK: - Setup (Private)
 private extension MainTableViewCell {
-    
+
     func setupContentView() {
         contentView.clipsToBounds = true
         contentView.backgroundColor = WRColors.secondaryBackground
-        
+
         setupSubviews()
     }
-    
+
     func setupSubviews() {
         contentView.addNewSubview(editView)
         contentView.addNewSubview(playToolbar)
     }
-    
-    
-    //MARK: Constriants
 
+    //MARK: Constriants
     func setupConstraints() {
         NSLayoutConstraint.activate([
             editView.topAnchor.constraint(equalTo: contentView.topAnchor),

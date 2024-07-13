@@ -7,18 +7,14 @@
 
 import Foundation
 
-
 //MARK: - View
-
 protocol EditViewProtocol: AnyObject {
     func editDidTapped()
     func onEndEditing(withNewName newName: String) async throws
     func addToVideoButtonTapped()
 }
 
-
 //MARK: - ViewModel
-
 protocol EditViewModel: EditViewProtocol {
     func isEditingNow() -> Bool
     func getRecordName() -> String

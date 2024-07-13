@@ -10,15 +10,9 @@ import OSLog
 import WRResources
 import UIComponents
 
-
-//MARK: - Impl
-
 final class EditView: UIView {
-    
-    private var viewModel: EditViewModel?
-        
-    //MARK: Variables
-    
+
+    //MARK: UI
     private lazy var titleLabelField: UITextField = {
         let field = UITextField()
         field.font = .systemFont(ofSize: 18, weight: .semibold)
@@ -32,14 +26,12 @@ final class EditView: UIView {
         field.delegate = self
         return field
     }()
-    
     private let dateLabel = TitleLabelView(
         text: "",
         tColor: WRColors.secondaryText,
         font: .systemFont(ofSize: 16, weight: .light),
         alignment: .left
     )
-    
     private lazy var renameButton: UIButton = {
         let button = UIButton()
         button.tintColor = WRColors.primaryText
@@ -47,7 +39,6 @@ final class EditView: UIView {
         button.addTarget(self, action: #selector(renameButtonDidTapped), for: .touchUpInside)
         return button
     }()
-    
     private lazy var addToVideoButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = WRColors.liteText
@@ -58,45 +49,40 @@ final class EditView: UIView {
         button.addTarget(self, action: #selector(addToVideoButtonTapped), for: .touchUpInside)
         return button
     }()
-    
-    
+
+    private var viewModel: EditViewModel?
+
     //MARK: Lifecycle
-    
     init() {
         super.init(frame: .zero)
         
         setupContentView()
         setupConstraints()
         setupSubviewsAnimated()
-
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func configureWith(viewModel: EditViewModel) {
         self.viewModel = viewModel
         setupSubviewsAnimated()
     }
-    
-    
-    //MARK: Action
-    
-    @objc
-    private func renameButtonDidTapped() {
+
+    //MARK: Actions
+    @objc private func renameButtonDidTapped() {
         guard let viewModel else {
             os_log("\(WRErrors.editViewModelIsNotSetted)")
             return
         }
         viewModel.editDidTapped()
-        
+
         animateTitleLabelField(isEditing: viewModel.isEditingNow())
         animateRenameButton(isEditingStarts: viewModel.isEditingNow())
     }
-    
-    @objc
-    private func addToVideoButtonTapped() {
+
+    @objc private func addToVideoButtonTapped() {
         guard let viewModel else {
             os_log("\(WRErrors.editViewModelIsNotSetted)")
             return
@@ -104,38 +90,74 @@ final class EditView: UIView {
         viewModel.addToVideoButtonTapped()
     }
 }
-            
-//MARK: - Setup
 
-private extension EditView {
+//MARK: - Reusable
+extension EditView: ReusableView {
     
+    func reset() {
+        titleLabelField.text = ""
+        dateLabel.text = ""
+        animateRenameButton(isEditingStarts: false)
+    }
+}
+
+//MARK: - UITextFieldDelegate
+extension EditView: UITextFieldDelegate {
+
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        guard let viewModel, let newName = textField.text else {
+            return
+        }
+        Task {
+            try await viewModel.onEndEditing(withNewName: newName)
+
+            animateTitleLabelField(isEditing: viewModel.isEditingNow())
+            animateRenameButton(isEditingStarts: viewModel.isEditingNow())
+        }
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        guard let viewModel, let newName = textField.text else {
+            return false
+        }
+        Task {
+            try await viewModel.onEndEditing(withNewName: newName)
+
+            animateTitleLabelField(isEditing: viewModel.isEditingNow())
+            animateRenameButton(isEditingStarts: viewModel.isEditingNow())
+        }
+        return true
+    }
+}
+            
+//MARK: - Setup (Private)
+private extension EditView {
+
     func setupContentView() {
         addNewSubview(titleLabelField)
         addNewSubview(dateLabel)
         addNewSubview(renameButton)
         addNewSubview(addToVideoButton)
     }
-    
-    
+
     //MARK: Constraints
-    
     func setupConstraints() {
         NSLayoutConstraint.activate([
             renameButton.topAnchor.constraint(equalTo: topAnchor, constant: 18),
             renameButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -24),
             renameButton.heightAnchor.constraint(equalToConstant: 24),
             renameButton.widthAnchor.constraint(equalToConstant: 24),
-            
+
             titleLabelField.topAnchor.constraint(equalTo: topAnchor, constant: 18),
             titleLabelField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
             titleLabelField.trailingAnchor.constraint(equalTo: renameButton.leadingAnchor, constant: -12),
             titleLabelField.heightAnchor.constraint(equalToConstant: 18),
-            
+
             dateLabel.topAnchor.constraint(equalTo: titleLabelField.bottomAnchor, constant: 12),
             dateLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
             dateLabel.trailingAnchor.constraint(equalTo: centerXAnchor),
             dateLabel.heightAnchor.constraint(equalToConstant: 18),
-            
+
             addToVideoButton.topAnchor.constraint(equalTo: titleLabelField.bottomAnchor, constant: 12),
             addToVideoButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -18),
             addToVideoButton.widthAnchor.constraint(equalToConstant: 100),
@@ -144,17 +166,16 @@ private extension EditView {
     }
 }
 
-//MARK: Animation
-
+//MARK: Animation (Private)
 private extension EditView {
-    
+
     func setupSubviewsAnimated() {
         guard let viewModel else {
             os_log("\(WRErrors.editViewModelIsNotSetted)")
             return
         }
+
         let isEditingNow = viewModel.isEditingNow()
-        
         UIView.animate(withDuration: 0.3) {
             self.titleLabelField.text = viewModel.getRecordName()
             self.titleLabelField.isEnabled = isEditingNow
@@ -163,22 +184,24 @@ private extension EditView {
         }
     }
     
-    
     func animateRenameButton(isEditingStarts isEditing: Bool) {
         UIView.animate(withDuration: 0.2) {
             self.renameButton.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
             self.renameButton.alpha = 0.2
         } completion: { _ in
             self.renameButton.setImage(
-                UIImage(systemName: isEditing ? "xmark.circle.fill" : "pencil.circle"), for: .normal
+                UIImage(
+                    systemName: isEditing ? "xmark.circle.fill" : "pencil.circle"),
+                    for: .normal
             )
             self.renameButton.transform = .identity
             self.renameButton.alpha = 1
         }
     }
-    
+
     func animateTitleLabelField(isEditing: Bool) {
-        self.titleLabelField.isEnabled = isEditing
+        titleLabelField.isEnabled = isEditing
+
         UIView.animate(withDuration: 0.2) {
             if isEditing {
                 self.titleLabelField.becomeFirstResponder()
@@ -188,57 +211,5 @@ private extension EditView {
                 self.titleLabelField.backgroundColor = WRColors.secondaryBackground
             }
         }
-    }
-}
-
-
-//MARK: - TextField Delegate
-
-extension EditView: UITextFieldDelegate {
-
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        guard 
-            let newName = textField.text,
-            let viewModel
-        else {
-            return
-        }
-        
-        Task {
-            try await viewModel.onEndEditing(withNewName: newName)
-            
-            animateTitleLabelField(isEditing: viewModel.isEditingNow())
-            animateRenameButton(isEditingStarts: viewModel.isEditingNow())
-        }
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        guard 
-            let newName = textField.text,
-            let viewModel
-        else {
-            return false
-        }
-        
-        Task {
-            try await viewModel.onEndEditing(withNewName: newName)
-            
-            animateTitleLabelField(isEditing: viewModel.isEditingNow())
-            animateRenameButton(isEditingStarts: viewModel.isEditingNow())
-        }
-        
-        return true
-    }
-}
-
-
-//MARK: - Reusable
-
-extension EditView: ReusableView {
-    
-    func reset() {
-        titleLabelField.text = ""
-        dateLabel.text = ""
-        animateRenameButton(isEditingStarts: false)
     }
 }
