@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3D16F9F82C43EB3500C330B6 /* Builder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D16F9F72C43EB3500C330B6 /* Builder.swift */; };
 		3D1E70072B8B6C0A00BC30B5 /* CarretView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E70062B8B6C0A00BC30B5 /* CarretView.swift */; };
 		3D1E70092B8B941D00BC30B5 /* RecordBarConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E70082B8B941D00BC30B5 /* RecordBarConfigurator.swift */; };
 		3D1E700B2B8B977400BC30B5 /* PlayToolbarConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E700A2B8B977400BC30B5 /* PlayToolbarConfigurator.swift */; };
@@ -48,6 +49,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3D16F9F72C43EB3500C330B6 /* Builder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Builder.swift; sourceTree = "<group>"; };
 		3D1E70062B8B6C0A00BC30B5 /* CarretView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarretView.swift; sourceTree = "<group>"; };
 		3D1E70082B8B941D00BC30B5 /* RecordBarConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordBarConfigurator.swift; sourceTree = "<group>"; };
 		3D1E700A2B8B977400BC30B5 /* PlayToolbarConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayToolbarConfigurator.swift; sourceTree = "<group>"; };
@@ -101,6 +103,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3D16F9F62C43EB2400C330B6 /* Builder */ = {
+			isa = PBXGroup;
+			children = (
+				3D16F9F72C43EB3500C330B6 /* Builder.swift */,
+			);
+			path = Builder;
+			sourceTree = "<group>";
+		};
 		3D297BFE2B57B09A002D0F01 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
@@ -212,6 +222,7 @@
 			children = (
 				3DEAFF9C2B0F65F4004CAE97 /* Info.plist */,
 				3DEAFFA22B0F6669004CAE97 /* App */,
+				3D16F9F62C43EB2400C330B6 /* Builder */,
 				3D86A79B2B7115A8006C492A /* Coordinator */,
 				3DEAFFB22B0F7F0B004CAE97 /* Extensions */,
 				3DEAFFD02B15F53D004CAE97 /* Helpers */,
@@ -375,6 +386,7 @@
 				3D5BFC0E2B7E449B000AFE73 /* VideoFramesView.swift in Sources */,
 				3D86A7962B70F89B006C492A /* MainTableView.swift in Sources */,
 				3D7CB1252B2C557A00F5B91F /* PlayToolbarViewModel.swift in Sources */,
+				3D16F9F82C43EB3500C330B6 /* Builder.swift in Sources */,
 				3D5665F32B56B32D0047A32B /* HelpersStorage.swift in Sources */,
 				3D625B112B83622400F2EB50 /* VideoPlayer.swift in Sources */,
 				3D1E700D2B8B97FB00BC30B5 /* EditConfigurator.swift in Sources */,

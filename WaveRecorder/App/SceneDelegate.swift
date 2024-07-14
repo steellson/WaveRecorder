@@ -9,9 +9,6 @@ import UIKit
 import WRResources
 import WRParts
  
-
-//MARK: - Impl
-
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -41,4 +38,3 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_ scene: UIScene) {}
     func sceneDidEnterBackground(_ scene: UIScene) {}
 }
-
